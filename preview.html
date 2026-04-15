@@ -154,6 +154,128 @@
     .service-grid, .small-grid, .contacts-grid { grid-template-columns: 1fr 1fr; }
   }
 
+  /* LOGIN GATE */
+  .login-gate {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(8, 18, 50, 0.72);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transition: opacity 0.4s ease;
+  }
+  .login-gate.fade-out {
+    opacity: 0;
+    pointer-events: none;
+  }
+  .login-box {
+    background: linear-gradient(160deg, #0e2460 0%, #132e74 60%, #0a1e50 100%);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 16px;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.5);
+    padding: 40px 44px;
+    width: 380px;
+    max-width: 92vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    text-align: center;
+  }
+  .login-logo {
+    background: white;
+    border-radius: 10px;
+    padding: 8px 20px;
+    margin-bottom: 4px;
+  }
+  .login-logo img {
+    height: 38px;
+    width: auto;
+    object-fit: contain;
+  }
+  .login-box h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0;
+  }
+  .login-box p {
+    font-size: 13px;
+    color: rgba(255,255,255,0.55);
+    margin: -6px 0 0;
+    line-height: 1.5;
+  }
+  .login-input-wrap {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .login-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: rgba(110,193,255,0.85);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    text-align: left;
+  }
+  .login-input {
+    width: 100%;
+    background: rgba(255,255,255,0.09);
+    border: 1px solid rgba(255,255,255,0.22);
+    border-radius: 8px;
+    color: #fff;
+    font-size: 15px;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    padding: 11px 14px;
+    outline: none;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: border-color 0.15s, background 0.15s;
+    text-align: center;
+  }
+  .login-input:focus {
+    border-color: #4a90e2;
+    background: rgba(255,255,255,0.14);
+  }
+  .login-input::placeholder {
+    color: rgba(255,255,255,0.28);
+    letter-spacing: 0;
+    text-transform: none;
+  }
+  .login-error {
+    font-size: 12px;
+    color: #ff7070;
+    min-height: 16px;
+    text-align: center;
+  }
+  .login-btn {
+    width: 100%;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #1e57c5, #1647a5);
+    color: white;
+    font-weight: 700;
+    font-size: 14px;
+    padding: 12px 14px;
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.1s;
+  }
+  .login-btn:hover { opacity: 0.9; }
+  .login-btn:active { transform: scale(0.98); }
+
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    20%      { transform: translateX(-8px); }
+    40%      { transform: translateX(8px); }
+    60%      { transform: translateX(-6px); }
+    80%      { transform: translateX(6px); }
+  }
+  .shake { animation: shake 0.4s ease; }
+
   /* FTS OVERLAY */
   .fts-overlay {
     position: fixed;
@@ -362,6 +484,31 @@
 </style>
 </head>
 <body>
+
+<div class="login-gate" id="login-gate">
+  <div class="login-box">
+    <div class="login-logo">
+      <img src="https://www.marketsource.com/wp-content/uploads/sites/5/2019/04/logo-1.png" alt="MarketSource">
+    </div>
+    <h2>FSC Operations Hub</h2>
+    <p>Enter your TID to access the hub</p>
+    <div class="login-input-wrap">
+      <div class="login-label">Team ID (TID)</div>
+      <input
+        class="login-input"
+        id="tid-input"
+        type="text"
+        placeholder="e.g. T0300P2"
+        maxlength="10"
+        autocomplete="off"
+        onkeydown="if(event.key==='Enter') attemptLogin()"
+      >
+      <div class="login-error" id="login-error"></div>
+    </div>
+    <button class="login-btn" onclick="attemptLogin()">Access Hub</button>
+  </div>
+</div>
+
 <nav>
   <div class="nav-left">
     <div class="nav-title">FSC Operations Hub</div>
@@ -711,6 +858,120 @@
 </div>
 
 <script>
+  const TID_MAP = {
+    'T0453V4': 'Alex',
+    'T0351T6': 'Ali',
+    'T0311PW': 'Austin',
+    'T0471OP': 'Ben',
+    'T0458AH': 'Brandon',
+    'T0306FH': 'Brandon',
+    'T0090ZU': 'Brandon',
+    'T0300P6': 'Carlos',
+    'T0304XV': 'Chad',
+    'T0304KU': 'Charlie',
+    'T0317UZ': 'Christopher',
+    'T0317U0': 'Christopher',
+    'T0294M4': 'Curtis',
+    'T0390ZI': 'Daniel',
+    'T0306FJ': 'Dean',
+    'T0306FK': 'Edwin',
+    'T0307EH': 'Gary',
+    'T0338N1': 'Scotty',
+    'T0294MV': 'Hamit',
+    'T0419PW': 'Hayder',
+    'T0453V3': 'Ilaweni',
+    'T0300HT': 'Jack',
+    'T0327UU': 'Jamal',
+    'T0318DT': 'James',
+    'T0304XW': 'James',
+    'T0294MO': 'Jason',
+    'T0471OK': 'Jeff',
+    'T0300HV': 'Jemell',
+    'T0400IJ': 'Jeremy',
+    'T0312AH': 'Jesus',
+    'T0300HY': 'Jon',
+    'T0300P2': 'Jonathan',
+    'T0471OJ': 'Jose',
+    'T0311PD': 'Joseph',
+    'T0311PX': 'Joshua',
+    'T0314R5': 'Justin',
+    'T0458AG': 'Justin',
+    'T0311PV': 'Justin',
+    'T0471OO': 'Keith',
+    'T0314R4': 'Kenneth',
+    'T0378EV': 'Kenneth',
+    'T0312AE': 'Kevin',
+    'T0471OD': 'Kevin',
+    'T0294MP': 'Kevin',
+    'T0390ZG': 'Kumasi',
+    'T0314R6': 'Kyle',
+    'T0304KR': 'Llewelyn',
+    'T0294M5': 'Luis',
+    'T0419PV': 'Manny',
+    'T0322OO': 'Matt',
+    'T0346ZR': 'Michael',
+    'T0307EF': 'Michael',
+    'T0335UJ': 'Michael',
+    'T0294M9': 'Michael',
+    'T0320I3': 'Michael',
+    'T0378EZ': 'Michael',
+    'T0320I5': 'Mitch',
+    'T0294M6': 'Paul',
+    'T0311PC': 'Philip',
+    'T0300P5': 'Richard',
+    'T0346ZQ': 'Richard',
+    'T0471OI': 'Rob',
+    'T0322OR': 'Robert',
+    'T0300HX': 'Robert',
+    'T0306L5': 'Robert',
+    'T0322OQ': 'Robert',
+    'T0329IF': 'Roderick',
+    'T0423HH': 'Rodrigo',
+    'T0304KV': 'Ryan',
+    'T04710N': 'Scot',
+    'T0300P3': 'Thomas',
+    'T0458AK': 'Tim',
+    'T2237TR': 'Timothy',
+    'T0440PG': 'Todd',
+    'T0318DS': 'Victor',
+    'T0332YY': 'William',
+    'T0317U1': 'Zedric'
+  };
+
+  function attemptLogin() {
+    const input = document.getElementById('tid-input');
+    const errorEl = document.getElementById('login-error');
+    const tid = input.value.trim().toUpperCase();
+
+    if (TID_MAP[tid]) {
+      const firstName = TID_MAP[tid];
+
+      // Update welcome text in nav
+      const welcomeEl = document.querySelector('.welcome');
+      if (welcomeEl) welcomeEl.textContent = 'Welcome, ' + firstName + ' ▾';
+
+      // Fade out and remove the gate
+      const gate = document.getElementById('login-gate');
+      gate.classList.add('fade-out');
+      setTimeout(() => { gate.style.display = 'none'; }, 420);
+
+      errorEl.textContent = '';
+    } else {
+      errorEl.textContent = 'Invalid TID. Please try again.';
+      input.classList.remove('shake');
+      void input.offsetWidth; // force reflow to restart animation
+      input.classList.add('shake');
+      input.value = '';
+      input.focus();
+    }
+  }
+
+  // Auto-focus the TID input on load
+  window.addEventListener('load', () => {
+    const input = document.getElementById('tid-input');
+    if (input) input.focus();
+  });
+
   const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
   const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 
