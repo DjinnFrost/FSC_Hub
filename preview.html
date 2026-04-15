@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FSC Operations Hub</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg1: #0d2356;
+    --bg2: #1a3a7c;
+    --bg3: #0a1e4d;
+    --glass: rgba(255,255,255,0.14);
+    --glass-border: rgba(255,255,255,0.20);
+    --tile-bg: rgba(255,255,255,0.94);
+    --tile-text: #16315f;
+    --accent: #1b56c5;
+    --accent-2: #6ec1ff;
+  }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    min-height: 100vh;
+    color: white;
+    background:
+      radial-gradient(circle at top center, rgba(74,123,212,0.40), transparent 25%),
+      linear-gradient(135deg, var(--bg1) 0%, var(--bg2) 40%, #11306d 68%, var(--bg3) 100%);
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(circle at 8% 22%, rgba(255,255,255,0.14) 0 1px, transparent 1px),
+      radial-gradient(circle at 92% 80%, rgba(255,255,255,0.14) 0 1px, transparent 1px),
+      linear-gradient(150deg, transparent 0%, transparent 48%, rgba(255,255,255,0.05) 49%, transparent 50%, transparent 100%),
+      linear-gradient(155deg, transparent 0%, transparent 66%, rgba(255,255,255,0.04) 67%, transparent 68%, transparent 100%);
+    background-size: 14px 14px, 14px 14px, 100% 100%, 100% 100%;
+    pointer-events: none;
+    opacity: 0.45;
+  }
+  nav {
+    height: 74px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 28px;
+    border-bottom: 1px solid rgba(255,255,255,0.16);
+    background: rgba(7,20,58,0.38);
+    backdrop-filter: blur(10px);
+    position: sticky; top: 0; z-index: 10;
+  }
+  .nav-left, .nav-right { display: flex; align-items: center; gap: 14px; flex: 1; }
+  .nav-right { justify-content: flex-end; }
+  .nav-center { display: flex; align-items: center; justify-content: center; }
+  .logo-wrap { background: white; border-radius: 10px; padding: 6px 14px; display: flex; align-items: center; }
+  .logo-wrap img { height: 42px; width: auto; object-fit: contain; }
+  .nav-title { font-size: 1.05rem; font-weight: 700; letter-spacing: .2px; }
+  .welcome { font-size: 14px; color: rgba(255,255,255,0.95); }
+
+  .main { max-width: 1400px; margin: 18px auto; padding: 0 18px 24px; display: grid; grid-template-columns: minmax(0,1fr) 310px; gap: 18px; }
+  .left-col, .right-col { display: flex; flex-direction: column; gap: 18px; }
+
+  .panel {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 14px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    overflow: hidden;
+  }
+  .panel-header {
+    padding: 14px 18px; font-size: 14px; font-weight: 700;
+    border-bottom: 1px solid rgba(255,255,255,0.16);
+    background: rgba(255,255,255,0.06);
+  }
+  .panel-body { padding: 18px; }
+
+  .service-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0,1fr));
+    gap: 12px;
+  }
+  .tile {
+    background: rgba(255,255,255,0.92);
+    border: 1px solid rgba(14,40,92,0.08);
+    border-radius: 12px;
+    min-height: 118px;
+    padding: 14px 12px;
+    text-decoration: none;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+    box-shadow: 0 8px 20px rgba(13,35,86,0.08);
+    transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease, background .16s ease;
+    cursor: pointer;
+  }
+  .tile:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(13,35,86,0.16);
+    border-color: rgba(27,86,197,0.22);
+    background: #fff;
+  }
+  .tile.pending { opacity: 0.6; cursor: not-allowed; }
+  .tile img { max-width: 92px; max-height: 42px; object-fit: contain; }
+  .tile-label { font-size: 12px; font-weight: 700; color: #1a2b5e; text-align: center; }
+  .tile-sub { font-size: 10px; color: #5b6f9a; text-align: center; }
+
+  .two-col { display: grid; grid-template-columns: 2fr 1fr; gap: 18px; }
+  .small-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; }
+
+  .calendar-grid { display: grid; grid-template-columns: 1.15fr .85fr; gap: 16px; }
+  .calendar-card, .notes-card { background: rgba(255,255,255,0.92); color: var(--tile-text); border-radius: 12px; padding: 16px; }
+  .cal-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .cal-month { font-size: 14px; font-weight: 700; }
+  .cal-actions { display: flex; gap: 6px; }
+  .cal-btn { width: 32px; height: 28px; border: none; border-radius: 6px; background: #eef3fc; color: #4d6291; cursor: pointer; font-size: 14px; }
+  .cal-btn:hover { background: #d8e4f8; }
+  table.calendar { width: 100%; border-collapse: collapse; }
+  table.calendar th { font-size: 11px; color: #6f7fa4; padding: 8px 0; }
+  table.calendar td { height: 52px; text-align: center; font-size: 12px; color: #334b7b; border: 1px solid #edf1f8; vertical-align: top; padding-top: 5px; cursor: default; }
+  table.calendar td.has-events { cursor: pointer; }
+  table.calendar td.has-events:hover { background: #f0f5ff; }
+  table.calendar td.today { background: var(--accent); color: white; font-weight: 700; }
+  table.calendar td.today .event-dot { background: rgba(255,255,255,0.85); }
+  table.calendar td.selected { outline: 2px solid var(--accent); outline-offset: -2px; font-weight: 700; color: var(--accent); }
+  table.calendar td.today.selected { outline: 2px solid white; outline-offset: -3px; }
+  table.calendar td.sunday { color: #d55a5a; }
+  table.calendar td.selected.sunday { color: #d55a5a; }
+  .event-dots { display: flex; gap: 3px; justify-content: center; margin-top: 3px; flex-wrap: wrap; padding: 0 2px; }
+  .event-dot { width: 5px; height: 5px; border-radius: 50%; background: #1b56c5; flex-shrink: 0; }
+  .notes-card h3 { font-size: 14px; font-weight: 700; margin-bottom: 12px; }
+  .notes-card .meeting-item { font-size: 12px; line-height: 1.5; color: #2f4570; margin-bottom: 6px; display: flex; gap: 6px; align-items: flex-start; }
+  .meeting-time { font-weight: 700; white-space: nowrap; color: #1b56c5; min-width: 42px; }
+  .meeting-tag { font-size: 10px; background: #e8eef8; color: #1b56c5; border-radius: 4px; padding: 1px 5px; font-weight: 600; white-space: nowrap; }
+  .meeting-tag.ms { background: #fff0e0; color: #c05a00; }
+  .no-meetings { font-size: 12px; color: #8898b8; font-style: italic; }
+
+  .side-card { padding: 16px 18px; }
+  .side-title { font-size: 14px; font-weight: 700; margin-bottom: 14px; }
+  .side-list { display: flex; flex-direction: column; gap: 12px; }
+  .side-item { display: flex; gap: 9px; align-items: flex-start; font-size: 13px; line-height: 1.45; color: rgba(255,255,255,0.92); }
+  .dot { width: 10px; height: 10px; border-radius: 50%; background: #2f83ff; margin-top: 4px; flex: 0 0 auto; }
+  .dot.sm { width: 8px; height: 8px; }
+  .btn-fts { margin-top: 12px; width: 100%; border: none; border-radius: 8px; background: linear-gradient(180deg, #1e57c5, #1647a5); color: white; font-weight: 700; padding: 12px 14px; cursor: pointer; transition: opacity .15s; }
+  .btn-fts:hover { opacity: 0.88; }
+
+  .contacts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 18px; }
+  .contact-item { font-size: 12px; line-height: 1.45; color: rgba(255,255,255,0.94); }
+  .contact-item strong { display: block; color: #fff; }
+
+  @media (max-width: 1100px) {
+    .main { grid-template-columns: 1fr; }
+    .service-grid { grid-template-columns: repeat(3, minmax(0,1fr)); }
+    .calendar-grid, .two-col { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 760px) {
+    nav { height: auto; padding: 14px; flex-wrap: wrap; gap: 12px; }
+    .nav-center { order: -1; width: 100%; }
+    .service-grid, .small-grid, .contacts-grid { grid-template-columns: 1fr 1fr; }
+  }
+
+  /* FTS OVERLAY */
+  .fts-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(5, 15, 45, 0.55);
+    backdrop-filter: blur(3px);
+    z-index: 200;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  .fts-overlay.open {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  /* FTS DRAWER */
+  .fts-drawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 480px;
+    max-width: 100vw;
+    background: linear-gradient(160deg, #0e2460 0%, #132e74 60%, #0a1e50 100%);
+    border-left: 1px solid rgba(255,255,255,0.18);
+    box-shadow: -12px 0 40px rgba(0,0,0,0.4);
+    z-index: 201;
+    transform: translateX(100%);
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .fts-drawer.open {
+    transform: translateX(0);
+  }
+
+  /* DRAWER HEADER */
+  .fts-drawer-header {
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.14);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    background: rgba(255,255,255,0.05);
+    flex-shrink: 0;
+  }
+  .fts-drawer-header h2 {
+    font-size: 17px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 3px;
+  }
+  .fts-drawer-header p {
+    font-size: 12px;
+    color: rgba(255,255,255,0.5);
+    line-height: 1.4;
+    max-width: 340px;
+  }
+  .fts-close {
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
+    flex-shrink: 0;
+  }
+  .fts-close:hover {
+    background: rgba(255,255,255,0.22);
+  }
+
+  /* DRAWER BODY */
+  .fts-drawer-body {
+    padding: 20px 24px;
+    overflow-y: auto;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  /* FORM ELEMENTS */
+  .fts-section-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: rgba(110, 193, 255, 0.85);
+    text-transform: uppercase;
+    letter-spacing: 0.9px;
+    margin-top: 4px;
+  }
+  .fts-divider {
+    height: 1px;
+    background: rgba(255,255,255,0.1);
+  }
+  .fts-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .fts-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.8);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .fts-label .req {
+    color: #ff6b6b;
+    font-size: 13px;
+    line-height: 1;
+  }
+  .fts-sublabel {
+    font-size: 10px;
+    color: rgba(255,255,255,0.38);
+    margin-top: -2px;
+  }
+  .fts-input,
+  .fts-select,
+  .fts-textarea {
+    background: rgba(255,255,255,0.09);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 8px;
+    color: #fff;
+    font-size: 13px;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    padding: 9px 12px;
+    outline: none;
+    transition: border-color 0.15s, background 0.15s;
+    width: 100%;
+  }
+  .fts-input:focus,
+  .fts-select:focus,
+  .fts-textarea:focus {
+    border-color: #4a90e2;
+    background: rgba(255,255,255,0.13);
+  }
+  .fts-input::placeholder,
+  .fts-textarea::placeholder {
+    color: rgba(255,255,255,0.28);
+  }
+  .fts-select option {
+    background: #132e74;
+    color: #fff;
+  }
+  .fts-textarea {
+    resize: vertical;
+  }
+  .fts-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  /* DRAWER FOOTER */
+  .fts-drawer-footer {
+    padding: 14px 24px 18px;
+    border-top: 1px solid rgba(255,255,255,0.14);
+    background: rgba(255,255,255,0.04);
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .btn-submit {
+    width: 100%;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #1e57c5, #1647a5);
+    color: white;
+    font-weight: 700;
+    font-size: 14px;
+    padding: 13px 14px;
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .btn-submit:hover { opacity: 0.9; }
+  .btn-submit:active { transform: scale(0.98); }
+  .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+  .fts-status {
+    font-size: 12px;
+    text-align: center;
+    min-height: 16px;
+    color: rgba(255,255,255,0.6);
+  }
+  .fts-status.success { color: #5ee87a; }
+  .fts-status.error   { color: #ff7070; }
+  .fts-note {
+    font-size: 11px;
+    color: rgba(255,255,255,0.35);
+    text-align: center;
+    line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-left">
+    <div class="nav-title">FSC Operations Hub</div>
+  </div>
+  <div class="nav-center">
+    <div class="logo-wrap">
+      <img src="https://www.marketsource.com/wp-content/uploads/sites/5/2019/04/logo-1.png" alt="MarketSource">
+    </div>
+  </div>
+  <div class="nav-right">
+    <div class="welcome">Welcome, John ▾</div>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="left-col">
+
+    <section class="panel">
+      <div class="panel-header">Case &amp; Service Systems</div>
+      <div class="panel-body">
+        <div class="service-grid">
+          <a class="tile" href="https://csms.extra.chrysler.com/" target="_blank" rel="noopener">
+            <img src="csms.png" alt="CSMS">
+            <div class="tile-label">CSMS</div>
+          </a>
+          <a class="tile" href="https://fcagroup.lightning.force.com/lightning/o/Service_Triage__c/list?filterName=All" target="_blank" rel="noopener">
+            <img src="https://www.pngkey.com/png/full/198-1988825_salesforce-logo.png" alt="Salesforce">
+            <div class="tile-label">Salesforce</div>
+          </a>
+          <a class="tile" href="https://my.authen2cate.com/a2c/star" target="_blank" rel="noopener">
+            <div style="font-size:22px;font-weight:800;color:#1a3a8c;letter-spacing:-1px;">Cherwell</div>
+            <div class="tile-label">Cherwell</div>
+          </a>
+          <a class="tile" href="https://dealerconnect.chrysler.com/" target="_blank" rel="noopener">
+            <img src="https://dealerconnect.chrysler.com/portal/images/logo_1.png" alt="DealerCONNECT">
+            <div class="tile-label">DealerCONNECT</div>
+          </a>
+          <a class="tile" href="https://library.fcaservices.com/web/secure/dashboard/user" target="_blank" rel="noopener">
+            <img src="https://library.fcaservices.com/web/assets/images/service-library-logo-stellantis.png" alt="Service Library">
+            <div class="tile-label">Service Library</div>
+          </a>
+          <a class="tile" href="https://my.authen2cate.com/a2c/fca?appId=308" target="_blank" rel="noopener">
+            <img src="https://static.authen2cate.com/application/308/img/308-header.png" alt="STAR Cases">
+            <div class="tile-label">STAR Cases</div>
+          </a>
+          <a class="tile" href="https://app.n.fcawitech.com/wt2/auth/login.html" target="_blank" rel="noopener">
+            <img src="https://www.fcawitech.com/wp-content/themes/fca-witech/img/brand/logo.png" alt="wiTECH">
+            <div class="tile-label">wiTECH</div>
+          </a>
+          <a class="tile" href="https://bistre.palantircloud.com/" target="_blank" rel="noopener">
+            <img src="https://1000logos.net/wp-content/uploads/2022/08/Palantir-Symbol.png" alt="Palantir">
+            <div class="tile-label">Palantir</div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <div class="two-col">
+      <section class="panel">
+        <div class="panel-header">Training &amp; Development</div>
+        <div class="panel-body">
+          <div class="small-grid">
+            <a class="tile" href="https://degreed.com/account/login?ReturnUrl=%2Fme%2F" target="_blank" rel="noopener">
+              <img src="https://s4-recruiting.cdn.greenhouse.io/external_greenhouse_job_boards/logos/400/307/100/original/degreed-logo-1200x627.png?1649705486" alt="Degreed">
+              <div class="tile-label">Degreed</div>
+            </a>
+            <a class="tile" href="https://stellantisperformanceinstitute.csod.com/ui/lms-learner-home/home" target="_blank" rel="noopener">
+              <img src="Stel_PI.png" alt="Performance Institute">
+              <div class="tile-label">Performance Institute</div>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">E-mail</div>
+        <div class="panel-body" style="display:flex; align-items:flex-start; justify-content:center;">
+          <a class="tile" href="https://www.outlook.com" target="_blank" rel="noopener" style="width:100%;">
+            <img src="https://img.icons8.com/fluency/96/microsoft-outlook-2019.png" alt="Outlook">
+            <div class="tile-label">Outlook</div>
+          </a>
+        </div>
+      </section>
+    </div>
+
+    <section class="panel">
+      <div class="panel-header">Time, Travel &amp; Expense</div>
+      <div class="panel-body">
+        <div class="service-grid">
+          <a class="tile" href="https://app.navan.com/app/" target="_blank" rel="noopener">
+            <img src="https://accessipos.com/wp-content/uploads/2024/04/Navan-Logo-1400px.png" alt="Navan">
+            <div class="tile-label">Navan</div>
+          </a>
+          <a class="tile" href="https://us2.concursolutions.com/" target="_blank" rel="noopener">
+            <img src="https://static-assets.business.amazon.com/assets/global/polaris/logos/sap_concur_v3.png.transform/1450x664/image.jpg" alt="SAP Concur">
+            <div class="tile-label">SAP Concur</div>
+          </a>
+          <a class="tile" href="https://marketsource2.prd.mykronos.com/wfd/home" target="_blank" rel="noopener">
+            <img src="https://marketsource2.prd.mykronos.com/images/logo/22cebdce-db0d-48a7-908a-fc5f5865b332" alt="UKG">
+            <div class="tile-label">UKG</div>
+          </a>
+          <a class="tile" href="https://www.paperlessemployee.com/allegis" target="_blank" rel="noopener">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT1u9aBOVmKIUjqtqG_bRXZ-pOBJnz07JWdDg&s" alt="Paperless Employee">
+            <div class="tile-label">Pay Statement</div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-header">Calendar &amp; Meeting Notes</div>
+      <div class="panel-body">
+        <div class="calendar-grid">
+          <div class="calendar-card">
+            <div class="cal-top">
+              <div class="cal-month" id="cal-month-label"></div>
+              <div class="cal-actions">
+                <button class="cal-btn" onclick="changeMonth(-1)">‹</button>
+                <button class="cal-btn" onclick="changeMonth(1)">›</button>
+              </div>
+            </div>
+            <table class="calendar">
+              <thead><tr><th>S</th><th>M</th><th>T</th><th>W</th><th>T</th><th>F</th><th>S</th></tr></thead>
+              <tbody id="cal-body"></tbody>
+            </table>
+          </div>
+          <div class="notes-card">
+            <h3 id="notes-date"></h3>
+            <div id="notes-meetings"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <div class="right-col">
+    <section class="panel side-card">
+      <div class="side-title">Today's Meetings</div>
+      <div class="side-list" id="today-meetings"></div>
+    </section>
+
+    <section class="panel side-card">
+      <div class="side-title">Recent Highlights</div>
+      <div class="side-list">
+        <div class="side-item"><span class="dot sm"></span><span>New process for escalations</span></div>
+        <div class="side-item"><span class="dot sm"></span><span>Training deadlines confirmed</span></div>
+        <div class="side-item"><span class="dot sm"></span><span>FTS request review process discussed</span></div>
+      </div>
+    </section>
+
+    <section class="panel side-card">
+      <button class="btn-fts" onclick="openFTS()">FTS Request Form</button>
+    </section>
+
+    <section class="panel side-card">
+      <div class="side-title">Support Contacts</div>
+      <div class="contacts-grid">
+        <div class="contact-item"><strong>Parts / Accessories</strong>800.846.6727</div>
+        <div class="contact-item"><strong>DealerCONNECT Help</strong>800.374.4040</div>
+        <div class="contact-item"><strong>STAR Center</strong>800.850.7827</div>
+        <div class="contact-item"><strong>Training Institute</strong>888.321.4321</div>
+        <div class="contact-item"><strong>FCA Customer Care</strong>800.992.1997</div>
+        <div class="contact-item"><strong>MSER Mopar</strong>866.909.6737</div>
+        <div class="contact-item"><strong>Transportation Claims</strong>855.683.7062</div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<!-- FTS OVERLAY -->
+<div class="fts-overlay" id="fts-overlay" onclick="closeFTS()"></div>
+
+<!-- FTS DRAWER -->
+<div class="fts-drawer" id="fts-drawer">
+
+  <div class="fts-drawer-header">
+    <div>
+      <h2>FTS Support Request</h2>
+      <p>This form is to request FTS assistance for solving customer issues.</p>
+      <p style="margin-top:8px; color:rgba(255,255,255,0.65); font-size:12px;"><strong style="color:rgba(110,193,255,0.9);">Instructions:</strong> Fill form with necessary details, download form, then email form to your Lead.</p>
+    </div>
+    <button class="fts-close" onclick="closeFTS()">✕</button>
+  </div>
+
+  <div class="fts-drawer-body" id="fts-drawer-body">
+
+    <!-- REQUESTER INFO -->
+    <div class="fts-section-label">Requester Info</div>
+
+    <div class="fts-group">
+      <label class="fts-label" for="fts-ta">Assigned TA <span class="req">*</span></label>
+      <input class="fts-input" id="fts-ta" type="text" placeholder="Enter a name or email address">
+    </div>
+
+    <div class="fts-group">
+      <label class="fts-label" for="fts-request-type">Request Type <span class="req">*</span></label>
+      <select class="fts-select" id="fts-request-type">
+        <option value="">—</option>
+        <option>Field Training Support</option>
+        <option>Product Knowledge Session</option>
+        <option>Dealer Visit Support</option>
+        <option>Event Coverage</option>
+        <option>Escalation Assistance</option>
+        <option>Other</option>
+      </select>
+    </div>
+
+    <div class="fts-divider"></div>
+
+    <!-- VEHICLE INFO -->
+    <div class="fts-section-label">Vehicle Info</div>
+
+    <div class="fts-group">
+      <label class="fts-label" for="fts-vin">VIN</label>
+      <div class="fts-sublabel">17 Digit VIN ONLY</div>
+      <input class="fts-input" id="fts-vin" type="text" placeholder="Enter value here" maxlength="17">
+    </div>
+
+    <div class="fts-group">
+      <label class="fts-label" for="fts-model-year">Model Year <span class="req">*</span></label>
+      <select class="fts-select" id="fts-model-year">
+        <option value="">—</option>
+        <option>2027</option><option>2026</option><option>2025</option><option>2024</option>
+        <option>2023</option><option>2022</option><option>2021</option><option>2020</option>
+        <option>2019</option><option>2018</option><option>2017</option><option>2016</option>
+        <option>2015</option>
+      </select>
+    </div>
+
+    <div class="fts-group">
+      <label class="fts-label" for="fts-model-family">Model (Family) <span class="req">*</span></label>
+      <select class="fts-select" id="fts-model-family">
+        <option value="">—</option>
+        <option>4C</option><option>BA</option><option>BU</option><option>BV</option>
+        <option>CA</option><option>CS</option><option>D2</option><option>DD</option>
+        <option>DF</option><option>DJ</option><option>DP</option><option>DS</option>
+        <option>DT</option><option>EJ</option><option>FD</option><option>FG</option>
+        <option>GA</option><option>GC</option><option>GG</option><option>GU</option>
+        <option>JJ</option><option>JK</option><option>JL</option><option>JT</option>
+        <option>KL</option><option>KM</option><option>LA</option><option>LB</option>
+        <option>LD</option><option>LX</option><option>MP</option><option>PF</option>
+        <option>RU</option><option>RS</option><option>VF</option><option>VM</option>
+        <option>WD</option><option>WL</option><option>WS</option>
+      </select>
+    </div>
+
+    <div class="fts-group">
+      <label class="fts-label" for="fts-engine">Engine Type <span class="req">*</span></label>
+      <select class="fts-select" id="fts-engine">
+        <option value="">—</option>
+        <option>GMET4 - ESS</option>
+        <option>GMET4 - EVO</option>
+        <option>GMET4 - PHEV</option>
+        <option>GMET6 3.0L - HO</option>
+        <option>GMET6 - SO</option>
+        <option>PentaStar - 3.6L</option>
+        <option>PentaStar - 3.2L</option>
+        <option>PentaStar - 3.0L</option>
+        <option>HEMI - 5.7L</option>
+        <option>HEMI - 6.4L</option>
+        <option>HEMI - 6.2L</option>
+        <option>GSET - 1.3L PHEV</option>
+        <option>EP6 - 1.6L</option>
+        <option>400V EDM</option>
+        <option>Cummins - 6.7L</option>
+        <option>EBC - 1.7L Turbo 4cyl</option>
+        <option>3.0L Eco Diesel</option>
+        <option>Tigershark - 2.4L Multiair</option>
+        <option>1.4L Multiair</option>
+      </select>
+    </div>
+
+    <div class="fts-group">
+      <label class="fts-label" for="fts-sales-code">Sales Code</label>
+      <input class="fts-input" id="fts-sales-code" type="text" placeholder="Enter value here">
+    </div>
+
+    <div class="fts-group">
+      <label class="fts-label" for="fts-star-case">STAR Center Case ID</label>
+      <input class="fts-input" id="fts-star-case" type="number" placeholder="Enter a number">
+    </div>
+
+    <div class="fts-group">
+      <label class="fts-label" for="fts-buyback-score">BuyBack Risk Score</label>
+      <input class="fts-input" id="fts-buyback-score" type="number" placeholder="0" value="0">
+    </div>
+
+    <div class="fts-divider"></div>
+
+    <!-- CASE DETAILS -->
+    <div class="fts-section-label">Case Details</div>
+
+    <div class="fts-group">
+      <label class="fts-label" for="fts-reason">Reason for Request <span class="req">*</span></label>
+      <textarea class="fts-textarea" id="fts-reason" placeholder="Enter value here" style="min-height:80px;"></textarea>
+    </div>
+
+    <div class="fts-group">
+      <label class="fts-label" for="fts-concern">Customer Concern <span class="req">*</span></label>
+      <textarea class="fts-textarea" id="fts-concern" placeholder="Enter value here" style="min-height:80px;"></textarea>
+    </div>
+
+    <div class="fts-group">
+      <label class="fts-label" for="fts-symptom">Vehicle Symptom <span class="req">*</span></label>
+      <textarea class="fts-textarea" id="fts-symptom" placeholder="Enter value here" style="min-height:80px;"></textarea>
+    </div>
+
+    <div class="fts-group">
+      <label class="fts-label" for="fts-diag-steps">Diagnostic Steps to Date</label>
+      <textarea class="fts-textarea" id="fts-diag-steps" placeholder="Enter value here" style="min-height:70px;"></textarea>
+    </div>
+
+    <div class="fts-group">
+      <label class="fts-label" for="fts-parts">Parts Already Replaced</label>
+      <textarea class="fts-textarea" id="fts-parts" placeholder="Enter value here" style="min-height:70px;"></textarea>
+    </div>
+
+    <div class="fts-group">
+      <label class="fts-label" for="fts-commodity">Commodity <span class="req">*</span></label>
+      <select class="fts-select" id="fts-commodity">
+        <option value="">—</option>
+        <option>Audio</option>
+        <option>Body / Chassis</option>
+        <option>Diesel</option>
+        <option>Driveline</option>
+        <option>Electrical</option>
+        <option>Electrified Propulsion</option>
+        <option>Gas Engine</option>
+        <option>HVAC</option>
+        <option>Interior</option>
+        <option>Transmission</option>
+      </select>
+    </div>
+
+  </div>
+
+  <div class="fts-drawer-footer">
+    <div class="fts-status" id="fts-status"></div>
+    <button class="btn-submit" id="fts-submit-btn" onclick="submitFTS()">
+      <span>Download Form</span>
+      <span style="font-size:16px;">↓</span>
+    </button>
+    <div class="fts-note">Download the form and email it to your Lead.</div>
+  </div>
+
+</div>
+
+<script>
+  const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+  // Bi-weekly reference: April 6, 2026 is a "bi-weekly Monday"
+  const BIWEEKLY_REF = new Date(2026, 3, 6);
+
+  function getEventsForDate(year, month, day) {
+    const date = new Date(year, month, day);
+    const dow = date.getDay();
+    const events = [];
+
+    if (dow === 1) { // Monday
+      // Every Monday
+      events.push({ time: '3 PM', label: 'FSC/TA Shop Talk', tag: 'Stellantis Meeting' });
+
+      // Bi-weekly Mondays (every 14 days from reference)
+      const diffDays = Math.round((date - BIWEEKLY_REF) / 86400000);
+      if (((diffDays % 14) + 14) % 14 === 0) {
+        events.push({ time: '1 PM', label: 'FSC Bi-Weekly Meeting', tag: 'Stellantis Meeting' });
+      }
+    }
+
+    if (dow === 5) { // Friday
+      const firstDow = new Date(year, month, 1).getDay();
+      const firstFri  = 1 + ((5 - firstDow + 7) % 7);
+      const secondFri = firstFri + 7;
+      const thirdFri  = firstFri + 14;
+
+      if (day === secondFri) {
+        events.push({ time: '', label: 'MarketSource Monthly National Team Meeting', tag: 'MarketSource Meeting' });
+      }
+      if (day === thirdFri) {
+        events.push({ time: '10 AM', label: 'MANDATORY — Monthly TA Call', tag: 'Stellantis Meeting' });
+      }
+    }
+
+    return events;
+  }
+
+  function formatEventsList(events) {
+    if (!events.length) return '<span class="no-meetings">No Stellantis meetings scheduled</span>';
+    return events.map(e => {
+      const tagClass = e.tag === 'MarketSource Meeting' ? 'meeting-tag ms' : 'meeting-tag';
+      return `<div class="meeting-item">
+        ${e.time ? `<span class="meeting-time">${e.time}</span>` : ''}
+        <span>${e.label} <span class="${tagClass}">${e.tag}</span></span>
+      </div>`;
+    }).join('');
+  }
+
+  const now = new Date();
+  let viewYear  = now.getFullYear();
+  let viewMonth = now.getMonth();
+  let selectedDay = now.getDate();
+  let selectedMonth = now.getMonth();
+  let selectedYear  = now.getFullYear();
+
+  function selectDay(year, month, day) {
+    selectedYear  = year;
+    selectedMonth = month;
+    selectedDay   = day;
+    renderCalendar();
+    renderNotes(year, month, day);
+  }
+
+  function renderNotes(year, month, day) {
+    const date = new Date(year, month, day);
+    document.getElementById('notes-date').textContent =
+      DAYS[date.getDay()] + ', ' + MONTHS[month] + ' ' + day + ', ' + year;
+    const events = getEventsForDate(year, month, day);
+    document.getElementById('notes-meetings').innerHTML = formatEventsList(events);
+  }
+
+  function renderCalendar() {
+    const today = new Date();
+    const firstDay   = new Date(viewYear, viewMonth, 1).getDay();
+    const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
+    const isCurrentMonth = (viewYear === today.getFullYear() && viewMonth === today.getMonth());
+    const todayDate  = today.getDate();
+
+    document.getElementById('cal-month-label').textContent = MONTHS[viewMonth] + ' ' + viewYear;
+
+    let html = '';
+    let day = 1;
+    for (let row = 0; row < 6; row++) {
+      if (day > daysInMonth) break;
+      html += '<tr>';
+      for (let col = 0; col < 7; col++) {
+        if ((row === 0 && col < firstDay) || day > daysInMonth) {
+          html += '<td></td>';
+        } else {
+          const isSunday  = col === 0;
+          const isToday   = isCurrentMonth && day === todayDate;
+          const isSelected = (viewYear === selectedYear && viewMonth === selectedMonth && day === selectedDay);
+          const events    = getEventsForDate(viewYear, viewMonth, day);
+          const hasEvents = events.length > 0;
+
+          let cls = [];
+          if (isToday)    cls.push('today');
+          if (isSelected) cls.push('selected');
+          if (!isToday && !isSelected && isSunday) cls.push('sunday');
+          if (hasEvents)  cls.push('has-events');
+
+          const dots = hasEvents
+            ? `<div class="event-dots">${events.map(() => '<span class="event-dot"></span>').join('')}</div>`
+            : '';
+
+          const d = day;
+          html += `<td${cls.length ? ` class="${cls.join(' ')}"` : ''}${hasEvents ? ` onclick="selectDay(${viewYear},${viewMonth},${d})" title="${events.map(e=>e.time+' '+e.label).join(' | ')}"` : ''}>${day}${dots}</td>`;
+          day++;
+        }
+      }
+      html += '</tr>';
+    }
+    document.getElementById('cal-body').innerHTML = html;
+  }
+
+  function renderTodayMeetings() {
+    const events = getEventsForDate(now.getFullYear(), now.getMonth(), now.getDate());
+    const container = document.getElementById('today-meetings');
+    if (!events.length) {
+      container.innerHTML = '<div class="side-item"><span class="dot sm"></span><span>No Stellantis meetings today</span></div>';
+      return;
+    }
+    container.innerHTML = events.map(e =>
+      `<div class="side-item"><span class="dot"></span><span>${e.time ? `<strong>${e.time}</strong> ` : ''}${e.label}</span></div>`
+    ).join('');
+  }
+
+  function changeMonth(delta) {
+    viewMonth += delta;
+    if (viewMonth < 0)  { viewMonth = 11; viewYear--; }
+    if (viewMonth > 11) { viewMonth = 0;  viewYear++; }
+    renderCalendar();
+  }
+
+  renderCalendar();
+  renderNotes(selectedYear, selectedMonth, selectedDay);
+  renderTodayMeetings();
+
+  function openFTS() {
+    document.getElementById('fts-overlay').classList.add('open');
+    document.getElementById('fts-drawer').classList.add('open');
+    document.body.style.overflow = 'hidden';
+    setStatus('', '');
+  }
+
+  function closeFTS() {
+    document.getElementById('fts-overlay').classList.remove('open');
+    document.getElementById('fts-drawer').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeFTS();
+  });
+
+  function setStatus(msg, type) {
+    const el = document.getElementById('fts-status');
+    if (!el) return;
+    el.textContent = msg;
+    el.className = 'fts-status' + (type ? ' ' + type : '');
+  }
+
+  const FTS_REQUIRED = [
+    { id: 'fts-ta',           label: 'Assigned TA' },
+    { id: 'fts-request-type', label: 'Request Type' },
+    { id: 'fts-model-year',   label: 'Model Year' },
+    { id: 'fts-model-family', label: 'Model (Family)' },
+    { id: 'fts-engine',       label: 'Engine Type' },
+    { id: 'fts-reason',       label: 'Reason for Request' },
+    { id: 'fts-concern',      label: 'Customer Concern' },
+    { id: 'fts-symptom',      label: 'Vehicle Symptom' },
+    { id: 'fts-commodity',    label: 'Commodity' },
+  ];
+
+  function validateForm() {
+    for (const f of FTS_REQUIRED) {
+      const el = document.getElementById(f.id);
+      if (!el || !el.value.trim()) {
+        setStatus('Required: ' + f.label, 'error');
+        el && el.focus();
+        return false;
+      }
+    }
+    return true;
+  }
+
+  function ftsVal(id) {
+    const el = document.getElementById(id);
+    return el ? (el.value || '').trim() : '';
+  }
+
+  function submitFTS() {
+    if (!validateForm()) return;
+
+    const btn = document.getElementById('fts-submit-btn');
+    btn.disabled = true;
+    setStatus('Generating PDF…', '');
+
+    try {
+      const ts = new Date().toLocaleString();
+      const lines = [];
+
+      const hr  = '─'.repeat(52);
+      const dhr = '═'.repeat(52);
+
+      lines.push('FTS SUPPORT REQUEST');
+      lines.push(dhr);
+      lines.push('Generated: ' + ts);
+      lines.push('');
+
+      // Section 1
+      lines.push('REQUESTER INFO');
+      lines.push(hr);
+      lines.push('Assigned TA    : ' + ftsVal('fts-ta'));
+      lines.push('Request Type   : ' + ftsVal('fts-request-type'));
+      lines.push('');
+
+      // Section 2
+      lines.push('VEHICLE INFO');
+      lines.push(hr);
+      lines.push('VIN                  : ' + (ftsVal('fts-vin') || '—'));
+      lines.push('Model Year           : ' + ftsVal('fts-model-year'));
+      lines.push('Model (Family)       : ' + ftsVal('fts-model-family'));
+      lines.push('Engine Type          : ' + ftsVal('fts-engine'));
+      lines.push('Sales Code           : ' + (ftsVal('fts-sales-code') || '—'));
+      lines.push('STAR Center Case ID  : ' + (ftsVal('fts-star-case') || '—'));
+      lines.push('BuyBack Risk Score   : ' + (ftsVal('fts-buyback-score') || '0'));
+      lines.push('');
+
+      // Section 3
+      lines.push('CASE DETAILS');
+      lines.push(hr);
+      lines.push('Reason for Request:');
+      lines.push(ftsVal('fts-reason'));
+      lines.push('');
+      lines.push('Customer Concern:');
+      lines.push(ftsVal('fts-concern'));
+      lines.push('');
+      lines.push('Vehicle Symptom:');
+      lines.push(ftsVal('fts-symptom'));
+      lines.push('');
+      lines.push('Diagnostic Steps to Date:');
+      lines.push(ftsVal('fts-diag-steps') || '—');
+      lines.push('');
+      lines.push('Parts Already Replaced:');
+      lines.push(ftsVal('fts-parts') || '—');
+      lines.push('');
+      lines.push('Commodity: ' + ftsVal('fts-commodity'));
+      lines.push('');
+      lines.push(dhr);
+      lines.push('Attach this document to an email and send to your lead.');
+
+      const text = lines.join('\n');
+      const blob = new Blob([text], { type: 'text/plain' });
+      const url  = URL.createObjectURL(blob);
+      const a    = document.createElement('a');
+      const safeName = (ftsVal('fts-ta') || 'FTS').replace(/[^a-z0-9]/gi, '_');
+      a.href     = url;
+      a.download = 'FTS_Request_' + safeName + '_' + Date.now() + '.txt';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      setStatus('Downloaded successfully.', 'success');
+      resetForm();
+    } catch (err) {
+      setStatus('Error generating file. Please try again.', 'error');
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  function resetForm() {
+    const ids = [
+      'fts-ta', 'fts-request-type', 'fts-vin', 'fts-model-year', 'fts-model-family',
+      'fts-engine', 'fts-sales-code', 'fts-star-case', 'fts-buyback-score',
+      'fts-reason', 'fts-concern', 'fts-symptom', 'fts-diag-steps', 'fts-parts', 'fts-commodity'
+    ];
+    ids.forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (el.tagName === 'SELECT') el.selectedIndex = 0;
+      else el.value = id === 'fts-buyback-score' ? '0' : '';
+    });
+  }
+</script>
+</body>
+</html>
