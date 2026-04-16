@@ -153,6 +153,7 @@
     .main { grid-template-columns: 1fr; }
     .service-grid { grid-template-columns: repeat(3, minmax(0,1fr)); }
     .calendar-grid, .two-col { grid-template-columns: 1fr; }
+    .tte-gauge-row { grid-template-columns: 1fr !important; }
   }
   @media (max-width: 760px) {
     nav { height: auto; padding: 14px; flex-wrap: wrap; gap: 12px; }
@@ -543,7 +544,7 @@
       <div class="panel-header">Case &amp; Service Systems</div>
       <div class="panel-body">
         <div class="service-grid">
-          <a class="tile" href="https://csms.extra.chrysler.com/CSMS/dashboard" target="_blank" rel="noopener">
+          <a class="tile" href="https://csms.extra.chrysler.com/" target="_blank" rel="noopener">
             <img src="csms.png" alt="CSMS">
             <div class="tile-label">CSMS</div>
           </a>
@@ -574,6 +575,7 @@
           <a class="tile" href="https://bistre.palantircloud.com/" target="_blank" rel="noopener">
             <img src="https://1000logos.net/wp-content/uploads/2022/08/Palantir-Symbol.png" alt="Palantir">
             <div class="tile-label">Palantir</div>
+            <div class="tile-sub" style="color:#b94a00;font-weight:600;">Stellantis VPN Req*</div>
           </a>
         </div>
       </div>
@@ -680,13 +682,22 @@
     <section class="panel side-card">
       <div class="side-title">Support Contacts</div>
       <div class="contacts-grid">
-        <div class="contact-item"><strong>Parts / Accessories</strong>800.846.6727</div>
-        <div class="contact-item"><strong>DealerCONNECT Help</strong>800.374.4040</div>
         <div class="contact-item"><strong>STAR Center</strong>800.850.7827</div>
-        <div class="contact-item"><strong>Training Institute</strong>888.321.4321</div>
-        <div class="contact-item"><strong>FCA Customer Care</strong>800.992.1997</div>
         <div class="contact-item"><strong>MSER Mopar</strong>866.909.6737</div>
+        <div class="contact-item"><strong>Stellantis IT</strong>800.332.9978</div>
+        <div class="contact-item"><strong>Marketsource IT</strong>800.416.6505</div>
+        <div class="contact-item"><strong>DealerCONNECT Help</strong>800.374.4040</div>
+        <div class="contact-item"><strong>FCA Customer Care</strong>800.992.1997</div>
+        <div class="contact-item"><strong>Training Institute</strong>888.321.4321</div>
+        <div class="contact-item"><strong>Parts / Accessories</strong>800.846.6727</div>
         <div class="contact-item"><strong>Transportation Claims</strong>855.683.7062</div>
+      </div>
+    </section>
+
+    <section class="panel side-card" id="gauge-panel">
+      <div class="side-title">My Case Pace</div>
+      <div id="gauge-container">
+        <div style="font-size:12px;color:rgba(255,255,255,0.5);text-align:center;padding:18px 0;">Sign in to view your pace</div>
       </div>
     </section>
   </div>
@@ -951,6 +962,8 @@
     'T0317U1': 'Zedric'
   };
 
+  let currentTID = null;
+
   function attemptLogin() {
     const input = document.getElementById('tid-input');
     const errorEl = document.getElementById('login-error');
@@ -958,6 +971,7 @@
 
     if (TID_MAP[tid]) {
       const firstName = TID_MAP[tid];
+      currentTID = tid;
 
       // Update welcome text in nav
       const welcomeEl = document.querySelector('.welcome');
@@ -969,6 +983,9 @@
       setTimeout(() => { gate.style.display = 'none'; }, 420);
 
       errorEl.textContent = '';
+
+      // Initialize gauge with this user's MTD data
+      initUserGauge(tid);
     } else {
       errorEl.textContent = 'Invalid TID. Please try again.';
       input.classList.remove('shake');
@@ -1273,6 +1290,233 @@
       if (el.tagName === 'SELECT') el.selectedIndex = 0;
       else el.value = id === 'fts-buyback-score' ? '0' : '';
     });
+  }
+
+  // ── CASE PACE GAUGE ──────────────────────────────────────────────────────────
+
+  const FSC_METRICS = {"updated_at":"2026-04-16T16:48:05.925508-04:00","users":{"T0453V4":{"name":"Alex Torres-Irizarry","qtd_pct_to_goal":"13.3%","qtd_repairs":6,"mtd_repairs":6},"T0351T6":{"name":"Ali Shafqat","qtd_pct_to_goal":"22.2%","qtd_repairs":10,"mtd_repairs":10},"T0304XT":{"name":"Andrew Brockmeyer","qtd_pct_to_goal":"13.3%","qtd_repairs":6,"mtd_repairs":6},"T0311PW":{"name":"Austin Mickelson","qtd_pct_to_goal":"4.4%","qtd_repairs":2,"mtd_repairs":2},"T0471OP":{"name":"Ben Jaenke","qtd_pct_to_goal":"6.7%","qtd_repairs":3,"mtd_repairs":3},"T0458AH":{"name":"Brandon Allen","qtd_pct_to_goal":"11.1%","qtd_repairs":5,"mtd_repairs":5},"T0306FH":{"name":"Brandon Cook","qtd_pct_to_goal":"22.2%","qtd_repairs":10,"mtd_repairs":10},"T0090ZU":{"name":"Brandon Tiede","qtd_pct_to_goal":"33.3%","qtd_repairs":15,"mtd_repairs":15},"T0304XV":{"name":"Chad Attaway","qtd_pct_to_goal":"11.1%","qtd_repairs":5,"mtd_repairs":5},"T0304KU":{"name":"Charlie Hawkins","qtd_pct_to_goal":"8.9%","qtd_repairs":4,"mtd_repairs":4},"T0317UZ":{"name":"Christopher Anderson","qtd_pct_to_goal":"17.8%","qtd_repairs":8,"mtd_repairs":8},"T0317U0":{"name":"Christopher Hotchkiss","qtd_pct_to_goal":"13.3%","qtd_repairs":6,"mtd_repairs":6},"T0294M4":{"name":"Curtis Hochtman","qtd_pct_to_goal":"35.6%","qtd_repairs":16,"mtd_repairs":16},"T0390ZI":{"name":"Daniel Peper","qtd_pct_to_goal":"8.9%","qtd_repairs":4,"mtd_repairs":4},"T0306FJ":{"name":"Dean Danas","qtd_pct_to_goal":"28.9%","qtd_repairs":13,"mtd_repairs":13},"T0306FK":{"name":"Edwin Alexander","qtd_pct_to_goal":"11.1%","qtd_repairs":5,"mtd_repairs":5},"T0307EH":{"name":"Gary Christiansen","qtd_pct_to_goal":"22.2%","qtd_repairs":10,"mtd_repairs":10},"T0338N1":{"name":"George Dobler Iii","qtd_pct_to_goal":"24.4%","qtd_repairs":11,"mtd_repairs":11},"T0294MV":{"name":"Hamit Yasarturk","qtd_pct_to_goal":"8.9%","qtd_repairs":4,"mtd_repairs":4},"T0419PW":{"name":"Hayder Thanee","qtd_pct_to_goal":"4.4%","qtd_repairs":2,"mtd_repairs":2},"T0453V3":{"name":"Ilaweni Rajkumar","qtd_pct_to_goal":"15.6%","qtd_repairs":7,"mtd_repairs":7},"T0318DT":{"name":"James Deacon","qtd_pct_to_goal":"48.9%","qtd_repairs":22,"mtd_repairs":22},"T0304XW":{"name":"James Jackson","qtd_pct_to_goal":"40.0%","qtd_repairs":18,"mtd_repairs":18},"T0294MO":{"name":"Jason Nunnally","qtd_pct_to_goal":"40.0%","qtd_repairs":18,"mtd_repairs":18},"T0300H0":{"name":"Jay Safford","qtd_pct_to_goal":"22.2%","qtd_repairs":10,"mtd_repairs":10},"T0471OK":{"name":"Jeff Gay","qtd_pct_to_goal":"15.6%","qtd_repairs":7,"mtd_repairs":7},"T0300HV":{"name":"Jemell Braithwaite","qtd_pct_to_goal":"57.8%","qtd_repairs":26,"mtd_repairs":26},"T0400IJ":{"name":"Jeremy Kihnke","qtd_pct_to_goal":"13.3%","qtd_repairs":6,"mtd_repairs":6},"T0322OO":{"name":"John Eilenberg","qtd_pct_to_goal":"20.0%","qtd_repairs":9,"mtd_repairs":9},"T0300HT":{"name":"John Shaab","qtd_pct_to_goal":"15.6%","qtd_repairs":7,"mtd_repairs":7},"T0300HY":{"name":"Jon Stachkunas","qtd_pct_to_goal":"8.9%","qtd_repairs":4,"mtd_repairs":4},"T0471OJ":{"name":"Jose Rivera","qtd_pct_to_goal":"0.0%","qtd_repairs":0,"mtd_repairs":0},"T0311PD":{"name":"Joseph Lipford","qtd_pct_to_goal":"17.8%","qtd_repairs":8,"mtd_repairs":8},"T0311PX":{"name":"Joshua Suruda","qtd_pct_to_goal":"20.0%","qtd_repairs":9,"mtd_repairs":9},"T0314R5":{"name":"Justin Harbison","qtd_pct_to_goal":"28.9%","qtd_repairs":13,"mtd_repairs":13},"T0458AG":{"name":"Justin Moring","qtd_pct_to_goal":"20.0%","qtd_repairs":9,"mtd_repairs":9},"T0471OD":{"name":"Justin Odell","qtd_pct_to_goal":"2.2%","qtd_repairs":1,"mtd_repairs":1},"T0311PV":{"name":"Justin Reynolds","qtd_pct_to_goal":"20.0%","qtd_repairs":9,"mtd_repairs":9},"T0471OO":{"name":"Keith Whitaker","qtd_pct_to_goal":"2.2%","qtd_repairs":1,"mtd_repairs":1},"T0314R4":{"name":"Kenneth Hawkes","qtd_pct_to_goal":"60.0%","qtd_repairs":27,"mtd_repairs":27},"T0378EV":{"name":"Kenneth Warg","qtd_pct_to_goal":"31.1%","qtd_repairs":14,"mtd_repairs":14},"T0312AE":{"name":"Kevin Colley","qtd_pct_to_goal":"24.4%","qtd_repairs":11,"mtd_repairs":11},"T0390ZG":{"name":"Kumasi Rayford","qtd_pct_to_goal":"33.3%","qtd_repairs":15,"mtd_repairs":15},"T0314R6":{"name":"Kyle Tibbetts","qtd_pct_to_goal":"4.4%","qtd_repairs":2,"mtd_repairs":2},"T0304KR":{"name":"Llewelyn Mcclamy","qtd_pct_to_goal":"28.9%","qtd_repairs":13,"mtd_repairs":13},"T0294M5":{"name":"Luis Colon","qtd_pct_to_goal":"11.1%","qtd_repairs":5,"mtd_repairs":5},"T0419PV":{"name":"Manny Duran","qtd_pct_to_goal":"15.6%","qtd_repairs":7,"mtd_repairs":7},"T0318DR":{"name":"Mark Simon II","qtd_pct_to_goal":"31.1%","qtd_repairs":14,"mtd_repairs":14},"T0294MI":{"name":"Marvez Newman","qtd_pct_to_goal":"33.3%","qtd_repairs":15,"mtd_repairs":15},"T0306V9":{"name":"Matthew Williams","qtd_pct_to_goal":"15.6%","qtd_repairs":7,"mtd_repairs":7},"T0346ZR":{"name":"Michael Amos","qtd_pct_to_goal":"26.7%","qtd_repairs":12,"mtd_repairs":12},"T0307EF":{"name":"Michael Lewis","qtd_pct_to_goal":"8.9%","qtd_repairs":4,"mtd_repairs":4},"T0335UJ":{"name":"Michael Meddley","qtd_pct_to_goal":"31.1%","qtd_repairs":14,"mtd_repairs":14},"T0294M9":{"name":"Michael Salemme","qtd_pct_to_goal":"26.7%","qtd_repairs":12,"mtd_repairs":12},"T0320I3":{"name":"Michael Santos","qtd_pct_to_goal":"33.3%","qtd_repairs":15,"mtd_repairs":15},"T0378EZ":{"name":"Michael Schmitt","qtd_pct_to_goal":"8.9%","qtd_repairs":4,"mtd_repairs":4},"T0320I5":{"name":"Mitch Brockman","qtd_pct_to_goal":"53.3%","qtd_repairs":24,"mtd_repairs":24},"T0311PU":{"name":"Pablo Alanis","qtd_pct_to_goal":"20.0%","qtd_repairs":9,"mtd_repairs":9},"T0311PC":{"name":"Philip Turner","qtd_pct_to_goal":"26.7%","qtd_repairs":12,"mtd_repairs":12},"T0300P5":{"name":"Richard Mastriano","qtd_pct_to_goal":"8.9%","qtd_repairs":4,"mtd_repairs":4},"T0346ZQ":{"name":"Richard Walker","qtd_pct_to_goal":"15.6%","qtd_repairs":7,"mtd_repairs":7},"T0471OI":{"name":"Rob LaChance","qtd_pct_to_goal":"17.8%","qtd_repairs":8,"mtd_repairs":8},"T0322OR":{"name":"Robert Chialastri","qtd_pct_to_goal":"26.7%","qtd_repairs":12,"mtd_repairs":12},"T0300HX":{"name":"Robert Chung","qtd_pct_to_goal":"13.3%","qtd_repairs":6,"mtd_repairs":6},"T0306L5":{"name":"Robert Plizga","qtd_pct_to_goal":"24.4%","qtd_repairs":11,"mtd_repairs":11},"T0322OQ":{"name":"Robert White","qtd_pct_to_goal":"6.7%","qtd_repairs":3,"mtd_repairs":3},"T0329IF":{"name":"Roderick Shaw","qtd_pct_to_goal":"26.7%","qtd_repairs":12,"mtd_repairs":12},"T0423HH":{"name":"Rodrigo Elizondo","qtd_pct_to_goal":"31.1%","qtd_repairs":14,"mtd_repairs":14},"T0304KV":{"name":"Ryan Frey","qtd_pct_to_goal":"37.8%","qtd_repairs":17,"mtd_repairs":17},"T04710N":{"name":"Scot Hayes","qtd_pct_to_goal":"0.0%","qtd_repairs":0,"mtd_repairs":0},"T0300P3":{"name":"Thomas Cueman","qtd_pct_to_goal":"24.4%","qtd_repairs":11,"mtd_repairs":11},"T0294M8":{"name":"Thomas Sapkowski","qtd_pct_to_goal":"35.6%","qtd_repairs":16,"mtd_repairs":16},"T0458AK":{"name":"Tim Graber","qtd_pct_to_goal":"0.0%","qtd_repairs":0,"mtd_repairs":0},"T2237TR":{"name":"Timothy Roell","qtd_pct_to_goal":"28.9%","qtd_repairs":13,"mtd_repairs":13},"T0440PG":{"name":"Todd Howe","qtd_pct_to_goal":"33.3%","qtd_repairs":15,"mtd_repairs":15},"T0318DS":{"name":"Victor Gray","qtd_pct_to_goal":"15.6%","qtd_repairs":7,"mtd_repairs":7},"T0332YY":{"name":"William Wood","qtd_pct_to_goal":"46.7%","qtd_repairs":21,"mtd_repairs":21},"T0317U1":{"name":"Zedric Ford","qtd_pct_to_goal":"77.8%","qtd_repairs":35,"mtd_repairs":35}}};
+
+  const GAUGE_GOAL = 15;
+  const GAUGE_DEG_PER_CASE = 12;
+
+  function gaugeGetWorkingDaysInMonth(year, month) {
+    const days = new Date(year, month + 1, 0).getDate();
+    let count = 0;
+    for (let d = 1; d <= days; d++) {
+      const dow = new Date(year, month, d).getDay();
+      if (dow !== 0 && dow !== 6) count++;
+    }
+    return count;
+  }
+
+  function gaugeGetWorkingDaysElapsed(year, month, throughDay) {
+    let count = 0;
+    for (let d = 1; d <= throughDay; d++) {
+      const dow = new Date(year, month, d).getDay();
+      if (dow !== 0 && dow !== 6) count++;
+    }
+    return count;
+  }
+
+  function gaugeLerpHex(c1, c2, t) {
+    const h = s => [parseInt(s.slice(1,3),16), parseInt(s.slice(3,5),16), parseInt(s.slice(5,7),16)];
+    const a = h(c1), b = h(c2);
+    const fn = v => Math.round(v).toString(16).padStart(2,'0');
+    return '#' + fn(a[0]+(b[0]-a[0])*t) + fn(a[1]+(b[1]-a[1])*t) + fn(a[2]+(b[2]-a[2])*t);
+  }
+
+  function gaugeGetThemeColors(paceRatio) {
+    const ratio = Math.max(0, Math.min(2, paceRatio));
+    if (ratio >= 1.0) {
+      const t = Math.min((ratio - 1.0) / 1.0, 1);
+      const a = gaugeLerpHex('#22d3ee','#4ade80',t), b = gaugeLerpHex('#0e7490','#15803d',t);
+      return { a, b, mid: gaugeLerpHex(a, b, 0.5), status: ratio >= 1.5 ? 'Excellent' : 'On track', behind: false };
+    } else {
+      const t = 1 - ratio;
+      const a = gaugeLerpHex('#facc15','#ef4444',t), b = gaugeLerpHex('#d97706','#b91c1c',t);
+      return { a, b, mid: gaugeLerpHex(a, b, 0.5), status: ratio >= 0.75 ? 'Slightly behind' : ratio >= 0.5 ? 'Behind' : 'At risk', behind: true };
+    }
+  }
+
+  function gaugeDrawHalf(canvas, opts) {
+    const { displayValue, themeA, themeB, themeMid } = opts;
+    const strokeWidth = 14;
+    const dpr = window.devicePixelRatio || 1;
+    const displayW = canvas.clientWidth || canvas.width;
+    const displayH = canvas.clientHeight || canvas.height;
+    if (canvas.width !== Math.round(displayW*dpr) || canvas.height !== Math.round(displayH*dpr)) {
+      canvas.width  = Math.round(displayW*dpr);
+      canvas.height = Math.round(displayH*dpr);
+    }
+    const ctx = canvas.getContext('2d');
+    ctx.save();
+    ctx.scale(dpr, dpr);
+    const W = displayW, H = displayH;
+    ctx.clearRect(0, 0, W, H);
+
+    const font = 'system-ui, -apple-system, sans-serif';
+    const tickLabelFontSize = 11;
+    const tickLabelMargin   = 14;
+    const bottomPad = tickLabelFontSize + tickLabelMargin + 8;
+    const sidePad   = 28;
+    const cx = W / 2;
+    const cy = H - bottomPad;
+    const r  = Math.min(W / 2 - sidePad, cy - strokeWidth / 2 - 4);
+
+    const textSecondary = 'rgba(255,255,255,0.5)';
+    const trackColor    = 'rgba(255,255,255,0.1)';
+    const ARC_START = Math.PI;
+
+    // Track
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, ARC_START, 2 * Math.PI, false);
+    ctx.strokeStyle = trackColor;
+    ctx.lineWidth   = strokeWidth;
+    ctx.lineCap     = 'round';
+    ctx.stroke();
+
+    // Progress arc
+    const casesForArc = Math.min(displayValue, GAUGE_GOAL);
+    const sweepRad    = (casesForArc * GAUGE_DEG_PER_CASE) * (Math.PI / 180);
+    const progressEnd = ARC_START + sweepRad;
+
+    if (sweepRad > 0.01) {
+      const grd = ctx.createLinearGradient(cx - r, cy, cx + r, cy);
+      grd.addColorStop(0, themeA);
+      grd.addColorStop(1, themeB);
+      ctx.strokeStyle = grd;
+      ctx.lineWidth   = strokeWidth;
+      ctx.lineCap     = 'round';
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, ARC_START, progressEnd, false);
+      ctx.stroke();
+    }
+
+    // 0 and goal ticks
+    [0, GAUGE_GOAL].forEach(tv => {
+      const angle  = ARC_START + (tv * GAUGE_DEG_PER_CASE) * (Math.PI / 180);
+      const sinA   = Math.sin(angle), cosA = Math.cos(angle);
+      const isGoal = tv === GAUGE_GOAL;
+      const innerR = r - strokeWidth / 2 - (isGoal ? 6 : 4);
+      const outerR = r + strokeWidth / 2 + (isGoal ? 8 : 4);
+
+      ctx.beginPath();
+      ctx.moveTo(cx + innerR * cosA, cy + innerR * sinA);
+      ctx.lineTo(cx + outerR * cosA, cy + outerR * sinA);
+      ctx.strokeStyle = isGoal ? 'rgba(255,255,255,0.55)' : 'rgba(255,255,255,0.2)';
+      ctx.lineWidth = isGoal ? 2 : 1.5;
+      ctx.lineCap   = 'butt';
+      ctx.stroke();
+
+      const labelR = outerR + tickLabelMargin;
+      ctx.font         = `${isGoal ? '600' : '400'} ${tickLabelFontSize}px ${font}`;
+      ctx.fillStyle    = isGoal ? 'rgba(255,255,255,0.85)' : textSecondary;
+      ctx.textBaseline = 'middle';
+      ctx.textAlign    = tv === 0 ? 'right' : 'left';
+      ctx.fillText(String(tv), cx + labelR * cosA, cy + labelR * sinA);
+    });
+
+    // "goal" sub-label
+    const goalAngle = ARC_START + (GAUGE_GOAL * GAUGE_DEG_PER_CASE) * (Math.PI / 180);
+    ctx.font         = `400 10px ${font}`;
+    ctx.fillStyle    = 'rgba(255,255,255,0.3)';
+    ctx.textAlign    = 'left';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('goal', cx + (r + strokeWidth/2 + 20) * Math.cos(goalAngle), cy + (r + strokeWidth/2 + 20) * Math.sin(goalAngle) - 10);
+
+    // Center text
+    const countFontSize = Math.round(r * 0.52);
+    const labelFontSize = Math.max(12, Math.round(r * 0.14));
+    const blockCenterY  = cy - r * 0.38;
+    const countY  = blockCenterY - countFontSize * 0.3;
+    const labelY  = countY + countFontSize * 0.6 + 4;
+
+    ctx.textAlign    = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.font      = `600 ${countFontSize}px ${font}`;
+    ctx.fillStyle = displayValue === 0 ? textSecondary : themeMid;
+    ctx.fillText(String(Math.round(displayValue)), cx, countY);
+
+    ctx.font      = `400 ${labelFontSize}px ${font}`;
+    ctx.fillStyle = textSecondary;
+    ctx.fillText('cases', cx, labelY);
+
+    // Baseline rule
+    ctx.beginPath();
+    ctx.moveTo(cx - r - strokeWidth/2 - 2, cy);
+    ctx.lineTo(cx + r + strokeWidth/2 + 2, cy);
+    ctx.strokeStyle = 'rgba(255,255,255,0.07)';
+    ctx.lineWidth   = 1;
+    ctx.stroke();
+
+    ctx.restore();
+  }
+
+  let gaugeAnimFrame;
+  let gaugePrevVal = 0;
+
+  function gaugeAnimateTo(canvas, fromVal, toVal, opts) {
+    const duration = 700;
+    const start    = performance.now();
+    if (gaugeAnimFrame) cancelAnimationFrame(gaugeAnimFrame);
+    const step = now => {
+      const t    = Math.min((now - start) / duration, 1);
+      const ease = 1 - Math.pow(1 - t, 3);
+      gaugeDrawHalf(canvas, { ...opts, displayValue: fromVal + (toVal - fromVal) * ease });
+      if (t < 1) gaugeAnimFrame = requestAnimationFrame(step);
+    };
+    gaugeAnimFrame = requestAnimationFrame(step);
+  }
+
+  function initUserGauge(tid) {
+    const userData = FSC_METRICS.users[tid];
+    const container = document.getElementById('gauge-container');
+    if (!container) return;
+
+    if (!userData) {
+      container.innerHTML = '<div style="font-size:12px;color:rgba(255,255,255,0.4);text-align:center;padding:18px 0;">No metrics found for your TID</div>';
+      return;
+    }
+
+    const mtd = userData.mtd_repairs || 0;
+    const gToday  = new Date();
+    const gYear   = gToday.getFullYear();
+    const gMonth  = gToday.getMonth();
+    const gDay    = gToday.getDate();
+    const totalWD   = gaugeGetWorkingDaysInMonth(gYear, gMonth);
+    const elapsedWD = gaugeGetWorkingDaysElapsed(gYear, gMonth, gDay);
+    const expectedByNow = elapsedWD > 0 ? (GAUGE_GOAL / totalWD) * elapsedWD : 0;
+    const paceRatio = expectedByNow > 0 ? mtd / expectedByNow : (mtd > 0 ? 2 : 1);
+    const theme = gaugeGetThemeColors(paceRatio);
+
+    const deficit = Math.max(0, Math.ceil(expectedByNow) - mtd);
+    const surplus = Math.max(0, mtd - Math.floor(expectedByNow));
+    let statusMsg = '';
+    if (theme.behind) {
+      statusMsg = deficit > 0 ? `${deficit} case${deficit !== 1 ? 's' : ''} behind pace` : '';
+    } else {
+      statusMsg = surplus > 0 ? `${surplus} case${surplus !== 1 ? 's' : ''} ahead of pace` : 'Right on pace';
+    }
+
+    const pillBg   = theme.behind ? 'rgba(250,204,21,0.18)' : 'rgba(34,197,94,0.18)';
+    const pillColor = theme.behind ? '#fde68a' : '#86efac';
+
+    container.innerHTML = `
+      <canvas id="userGaugeCanvas" style="width:100%;display:block;" height="180"></canvas>
+      <div style="display:flex;align-items:center;gap:8px;justify-content:center;margin-top:6px;">
+        <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;background:${pillBg};color:${pillColor};letter-spacing:0.04em;">${theme.status}</span>
+        <span style="font-size:11px;color:rgba(255,255,255,0.45);">${statusMsg}</span>
+      </div>
+      <div style="font-size:10px;color:rgba(255,255,255,0.3);text-align:center;margin-top:6px;">${gToday.toLocaleString('default',{month:'long'})} ${gDay}, ${gYear}</div>
+    `;
+
+    const canvas = document.getElementById('userGaugeCanvas');
+    const opts = { themeA: theme.a, themeB: theme.b, themeMid: theme.mid };
+    gaugeAnimateTo(canvas, 0, mtd, opts);
+
+    new ResizeObserver(() => {
+      gaugeDrawHalf(canvas, { ...opts, displayValue: mtd });
+    }).observe(canvas);
   }
 </script>
 </body>
