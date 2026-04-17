@@ -161,6 +161,47 @@
     .service-grid, .small-grid, .contacts-grid { grid-template-columns: 1fr 1fr; }
   }
 
+  /* DEALER TECHNICAL ADVISORS PANEL */
+  .ta-panel-header {
+    text-align: center;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 14px;
+    color: #fff;
+  }
+  .ta-signed-out {
+    text-align: center;
+    font-size: 12px;
+    color: rgba(255,255,255,0.35);
+    font-style: italic;
+  }
+  .ta-list { display: flex; flex-direction: column; gap: 10px; }
+  .ta-card {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.10);
+    border-radius: 10px;
+    padding: 10px 12px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .ta-avatar {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: linear-gradient(135deg, #1e57c5, #1647a5);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; color: #fff;
+    flex-shrink: 0; letter-spacing: 0.5px;
+  }
+  .ta-info { flex: 1; min-width: 0; }
+  .ta-name { font-size: 13px; font-weight: 600; color: #fff; margin-bottom: 3px; }
+  .ta-contact-row {
+    font-size: 11px;
+    color: rgba(255,255,255,0.52);
+    margin-top: 2px;
+    word-break: break-all;
+  }
+  .ta-sep { color: rgba(255,255,255,0.2); }
+
   /* LOGIN GATE */
   .login-gate {
     position: fixed;
@@ -552,7 +593,7 @@
             <img src="https://www.pngkey.com/png/full/198-1988825_salesforce-logo.png" alt="Salesforce">
             <div class="tile-label">Salesforce</div>
           </a>
-          <a class="tile" href="https://my.authen2cate.com/a2c/star" target="_blank" rel="noopener">
+          <a class="tile pending" style="pointer-events:none; opacity:0.45;" rel="noopener">
             <div style="font-size:22px;font-weight:800;color:#1a3a8c;letter-spacing:-1px;">Cherwell</div>
             <div class="tile-label">Cherwell</div>
           </a>
@@ -679,6 +720,13 @@
       <button class="btn-fts" onclick="openFTS()">FTS Request Form</button>
     </section>
 
+    <section class="panel side-card" id="gauge-panel">
+      <div class="side-title">My Case Pace</div>
+      <div id="gauge-container">
+        <div style="font-size:12px;color:rgba(255,255,255,0.5);text-align:center;padding:18px 0;">Sign in to view your pace</div>
+      </div>
+    </section>
+
     <section class="panel side-card">
       <div class="side-title">Support Contacts</div>
       <div class="contacts-grid">
@@ -694,10 +742,10 @@
       </div>
     </section>
 
-    <section class="panel side-card" id="gauge-panel">
-      <div class="side-title">My Case Pace</div>
-      <div id="gauge-container">
-        <div style="font-size:12px;color:rgba(255,255,255,0.5);text-align:center;padding:18px 0;">Sign in to view your pace</div>
+    <section class="panel side-card" id="ta-panel">
+      <div class="ta-panel-header">Dealer Technical Advisors</div>
+      <div id="ta-content">
+        <div class="ta-signed-out">Sign in to view your assigned TAs</div>
       </div>
     </section>
   </div>
@@ -993,6 +1041,9 @@
 
       // Initialize gauge with this user's MTD data
       initUserGauge(tid);
+
+      // Render Dealer Technical Advisors
+      renderTAPanel(tid);
     } else {
       errorEl.textContent = 'Invalid TID. Please try again.';
       input.classList.remove('shake');
@@ -1524,6 +1575,203 @@
     new ResizeObserver(() => {
       gaugeDrawHalf(canvas, { ...opts, displayValue: mtd });
     }).observe(canvas);
+  }
+  // ── TA CONTACT INFO (name → phone, email) ───────────────────────────────
+  const TA_CONTACTS = {
+    "Aaron Durkit":       { phone: "",                 email: "aaron.durkit@stellantis.com" },
+    "Adam Hawkins":       { phone: "(913) 291-8115",   email: "adam.hawkins1@stellantis.com" },
+    "Alex Abraham":       { phone: "(586) 460-5779",   email: "pierre.abraham@stellantis.com" },
+    "Alex Van Zomeren":   { phone: "",                 email: "" },
+    "Andrew Foresto":     { phone: "(484) 354-9758",   email: "andrew.foresto@stellantis.com" },
+    "Billy Gipson":       { phone: "(901) 268-9713",   email: "billy.gipson@stellantis.com" },
+    "Blake Terry":        { phone: "",                 email: "william.terry@stellantis.com" },
+    "Bobby Keeser":       { phone: "251-293-2945",     email: "robert.keeser@stellantis.com" },
+    "Brian Bridges":      { phone: "531-350-4128",     email: "brian.bridges@external.stellantis.com" },
+    "Christopher Ordner": { phone: "217-343-8480",     email: "chris.ordner@stellantis.com" },
+    "Christopher Price":  { phone: "412-741-5042",     email: "christopher.price@stellantis.com" },
+    "Cory Mace":          { phone: "586-346-8084",     email: "cory.mace@stellantis.com" },
+    "Daniel Hansen":      { phone: "248-931-6173",     email: "dan.hansen@stellantis.com" },
+    "Daniel Hyde":        { phone: "248-289-2550",     email: "daniel.hyde1@stellantis.com" },
+    "Daniel Sherman":     { phone: "630-441-5631",     email: "daniel.sherman@stellantis.com" },
+    "Daniel Torres":      { phone: "303-242-4782",     email: "daniel.torres1@stellantis.com" },
+    "Darren Rose":        { phone: "",                 email: "darren.rose@stellantis.com" },
+    "Douglas Achenbach":  { phone: "(410) 302-2815",   email: "doug.achenbach@stellantis.com" },
+    "Edward Szymanski":   { phone: "630-258-0158",     email: "edward.szymanski1@stellantis.com" },
+    "Hamit Yasarturk":    { phone: "",                 email: "" },
+    "Ian Schlegel":       { phone: "248-882-5757",     email: "ian.schlegel@stellantis.com" },
+    "Jacob Rudolph":      { phone: "908-200-5278",     email: "jacob.rudolph@external.stellantis.com" },
+    "James Berry":        { phone: "(407) 538-8966",   email: "james.berry@stellantis.com" },
+    "James Michnya":      { phone: "502-759-5765",     email: "james.michnya@stellantis.com" },
+    "James Nason":        { phone: "",                 email: "" },
+    "James Salinas":      { phone: "",                 email: "james.salinas@stellantis.com" },
+    "Jeffrey Driskill":   { phone: "985-377-3611",     email: "jeffrey.driskill@stellantis.com" },
+    "Jeffrey Heiden":     { phone: "248-892-8883",     email: "jeff.heiden@stellantis.com" },
+    "Jeffrey Kern":       { phone: "630-432-3542",     email: "jeffrey.kern@stellantis.com" },
+    "Jeffrey Stone":      { phone: "(240) 581-3289",   email: "jeffrey.stone@stellantis.com" },
+    "John Francis":       { phone: "914-223-9406",     email: "john.francis@stellantis.com" },
+    "John Yanusz":        { phone: "615-960-4853",     email: "john.yanusz@stellantis.com" },
+    "Jon Sundstrom":      { phone: "",                 email: "" },
+    "Jonathan Kaminski":  { phone: "",                 email: "jonathan.kaminski@stellantis.com" },
+    "Jonathon Bulluck":   { phone: "603-213-9518",     email: "jonathan.bulluck@stellantis.com" },
+    "Jose Rodriguez":     { phone: "(949) 402-8546",   email: "jaxiel.rodriguezfigueroa@stellantis.com" },
+    "Joseph Duarte":      { phone: "774-407-1694",     email: "joseph.duarte@stellantis.com" },
+    "Joseph Phillips":    { phone: "(248) 821-6247",   email: "joseph.phillips@stellantis.com" },
+    "Joshua Arbogast":    { phone: "701-971-2142",     email: "joshua.arbogast@stellantis.com" },
+    "Justin Gill":        { phone: "557-223-2496",     email: "justin.gill@stellantis.com" },
+    "Justin O'Dell":      { phone: "",                 email: "" },
+    "Kim Larson":         { phone: "985-222-4083",     email: "kim.larson@stellantis.com" },
+    "Kurt Benda":         { phone: "815-348-2145",     email: "kurt.benda@stellantis.com" },
+    "Kyle Smith":         { phone: "740-814-6249",     email: "kyle.smith1@stellantis.com" },
+    "Lance Grinnell":     { phone: "248-766-8018",     email: "delanious.grinnell@stellantis.com" },
+    "Louis Marler":       { phone: "",                 email: "louis.marler@stellantis.com" },
+    "Lucas Thatcher":     { phone: "303-349-8994",     email: "lucas.thatcher@stellantis.com" },
+    "Mathew Mcleod":      { phone: "802-245-9175",     email: "mathew.mcleod@stellantis.com" },
+    "Matt Witters":       { phone: "405-496-0207",     email: "matt.witters@stellantis.com" },
+    "Michael Bell":       { phone: "(859) 351-9019",   email: "michael.bell@stellantis.com" },
+    "Michael Taylor":     { phone: "",                 email: "michael.taylor6@stellantis.com" },
+    "Nate Baker":         { phone: "616-379-1968",     email: "nathaniel.baker@stellantis.com" },
+    "Richard Palm":       { phone: "(303) 579-4452",   email: "rick.palm@stellantis.com" },
+    "Robert Dunion":      { phone: "(610) 425-2387",   email: "robert.dunion@stellantis.com" },
+    "Roland Dube":        { phone: "(859) 351-9019",   email: "roland.dube@stellantis.com" },
+    "Ryan Foster":        { phone: "248-812-0451",     email: "ryan.foster1@stellantis.com" },
+    "Ryan Paulson":       { phone: "248-877-3380",     email: "ryan.paulson@stellantis.com" },
+    "Sarah Sevier":       { phone: "680-322-4272",     email: "sarah.sevier@stellantis.com" },
+    "Sean Shively":       { phone: "715-823-0172",     email: "sean.shively@stellantis.com" },
+    "Ted Hunt":           { phone: "",                 email: "" },
+    "Timothy Harbaugh":   { phone: "",                 email: "timothy.harbaugh@stellantis.com" },
+    "Trevor Bahr":        { phone: "608-208-2529",     email: "trevor.bahr@stellantis.com" },
+    "Tyler Johnson":      { phone: "",                 email: "robert.johnson2@stellantis.com" },
+    "Tyler Mitchum":      { phone: "716-930-0635",     email: "tyler.mitchum@stellantis.com" },
+    "Tyler Yeomans":      { phone: "913-991-3404",     email: "tyler.yeomans@stellantis.com" },
+    "Victor Desa":        { phone: "+1 401-871-9116",  email: "victor.desa@stellantis.com" },
+    "Vincent Munoz":      { phone: "248-856-8855",     email: "vincent.munoz@stellantis.com" },
+    "Walter Johnson":     { phone: "810-428-8846",     email: "walter.johnson@stellantis.com" }
+  };
+
+  // ── FSC TID → ASSIGNED TA NAMES ─────────────────────────────────────────
+  const FSC_TA_MAP = {
+    "T0090ZU":["Jon Sundstrom","Nate Baker","Richard Palm"],
+    "T0294M4":["James Nason","Jeffrey Stone","Justin O'Dell","Ted Hunt"],
+    "T0294M5":["James Nason","Sarah Sevier","Timothy Harbaugh","Tyler Mitchum"],
+    "T0294M8":["Jon Sundstrom","Nate Baker","Richard Palm"],
+    "T0294M9":["Jacob Rudolph","Vincent Munoz"],
+    "T0294MI":["James Berry","James Nason","Joseph Phillips","Ted Hunt"],
+    "T0294MO":["Alex Van Zomeren","Bobby Keeser","Joseph Phillips","Kim Larson","Ryan Foster"],
+    "T0294MV":["Aaron Durkit","Daniel Hansen","James Nason","James Salinas"],
+    "T0300H0":["Christopher Price"],
+    "T0300HT":["John Francis","Jonathan Kaminski","Vincent Munoz"],
+    "T0300HV":["Jonathan Kaminski"],
+    "T0300HX":["James Nason","Justin Gill","Tyler Johnson"],
+    "T0300HY":["Victor Desa"],
+    "T0300P3":["John Francis","Vincent Munoz","Walter Johnson"],
+    "T0300P5":["Jacob Rudolph","Robert Dunion","Vincent Munoz"],
+    "T0304KR":["Douglas Achenbach","James Nason","Ted Hunt","Timothy Harbaugh"],
+    "T0304KU":["Daniel Hansen","James Nason","James Salinas","Justin Gill"],
+    "T0304KV":["Jeffrey Heiden","Jon Sundstrom","Sean Shively","Trevor Bahr"],
+    "T0304XT":["Christopher Price","Joseph Phillips"],
+    "T0304XV":["Adam Hawkins","Brian Bridges","Hamit Yasarturk","Jon Sundstrom","Tyler Yeomans"],
+    "T0304XW":["Alex Abraham","Cory Mace","Daniel Hyde","Jon Sundstrom","Nate Baker"],
+    "T0306FH":["Douglas Achenbach","James Nason","Ryan Paulson","Ted Hunt","Timothy Harbaugh"],
+    "T0306FJ":["Andrew Foresto","Jacob Rudolph","Robert Dunion","Ryan Foster","Ted Hunt"],
+    "T0306FK":["Billy Gipson","James Michnya","James Nason","John Yanusz","Jon Sundstrom"],
+    "T0306L5":["Edward Szymanski","Jeffrey Heiden","Jon Sundstrom","Kurt Benda","Trevor Bahr"],
+    "T0306V9":["James Berry","James Nason","Louis Marler","Ted Hunt"],
+    "T0307EF":["James Nason","Kyle Smith","Roland Dube"],
+    "T0307EH":["James Nason","John Francis","Victor Desa"],
+    "T0311PC":["Joseph Phillips"],
+    "T0311PD":["James Nason","Louis Marler","Ryan Foster"],
+    "T0311PU":["Daniel Hyde","Daniel Sherman","Edward Szymanski","Jon Sundstrom","Kurt Benda","Roland Dube"],
+    "T0311PV":["James Nason","Justin Gill","Tyler Johnson"],
+    "T0311PW":["Adam Hawkins","Jon Sundstrom","Joshua Arbogast","Lucas Thatcher","Sean Shively"],
+    "T0311PX":["Andrew Foresto","James Nason","Jon Sundstrom","Robert Dunion","Ted Hunt"],
+    "T0312AE":["James Berry","Joseph Phillips","Ted Hunt"],
+    "T0314R4":["James Nason","Joseph Duarte","Mathew Mcleod"],
+    "T0314R5":["Alex Abraham","Cory Mace","Daniel Hyde","Jon Sundstrom","Nate Baker","Roland Dube"],
+    "T0314R6":["Aaron Durkit","Alex Van Zomeren","Daniel Hansen","James Nason","John Yanusz"],
+    "T0317U0":["Justin Gill"],
+    "T0317U1":["James Nason","Jose Rodriguez"],
+    "T0317UZ":["James Nason","James Salinas","Justin Gill","Louis Marler"],
+    "T0318DR":["Christopher Price","James Berry"],
+    "T0318DS":["Alex Van Zomeren","Bobby Keeser","Darren Rose","Kim Larson","Lance Grinnell"],
+    "T0318DT":["Jon Sundstrom","Richard Palm","Sean Shively","Trevor Bahr"],
+    "T0320I3":["Joseph Duarte","Mathew Mcleod","Victor Desa"],
+    "T0320I5":["Adam Hawkins","Alex Van Zomeren","Daniel Torres","James Nason","Jeffrey Driskill","Jeffrey Kern","Jon Sundstrom","Matt Witters","Tyler Yeomans"],
+    "T0322OO":["Daniel Sherman","James Michnya","James Nason","Jon Sundstrom","Roland Dube"],
+    "T0322OQ":["Aaron Durkit","Alex Van Zomeren","Blake Terry","Bobby Keeser","Daniel Hansen","James Nason","Ryan Foster"],
+    "T0322OR":["James Nason","Louis Marler"],
+    "T0329IF":["James Nason","Roland Dube"],
+    "T0332YY":["Billy Gipson","James Michnya","James Nason","John Yanusz","Justin O'Dell","Tyler Johnson"],
+    "T0335UJ":["James Nason","Sarah Sevier","Tyler Mitchum","Walter Johnson"],
+    "T0338N1":["Alex Van Zomeren","Blake Terry","Lance Grinnell"],
+    "T0346ZQ":["James Nason","Jonathon Bulluck"],
+    "T0346ZR":["James Nason","Timothy Harbaugh","Tyler Mitchum"],
+    "T0351T6":["Andrew Foresto","Jacob Rudolph","Robert Dunion","Vincent Munoz"],
+    "T0378EV":["James Nason","Mathew Mcleod","Walter Johnson"],
+    "T0378EZ":["Hamit Yasarturk","Jeffrey Heiden","Jon Sundstrom","Kurt Benda"],
+    "T0390ZG":["Alex Abraham","Cory Mace","Daniel Hyde"],
+    "T0390ZI":["Daniel Sherman","James Michnya","James Nason","Justin O'Dell","Roland Dube"],
+    "T0400IJ":["James Nason","Roland Dube"],
+    "T0419PV":["James Nason","Jeffrey Stone","Jose Rodriguez","Michael Taylor","Tyler Johnson"],
+    "T0419PW":["Ian Schlegel","James Nason"],
+    "T0423HH":["Alex Abraham","Cory Mace","Daniel Hyde"],
+    "T0440PG":["Christopher Ordner","Daniel Sherman","Ian Schlegel","Jeffrey Kern","Jon Sundstrom"],
+    "T0453V3":["Jacob Rudolph","James Nason","Jeffrey Stone","Jose Rodriguez"],
+    "T0453V4":["Christopher Price"],
+    "T0458AG":["Alex Van Zomeren","Billy Gipson","Jeffrey Driskill","Jon Sundstrom","Lance Grinnell","Matt Witters"],
+    "T0458AH":["Alex Van Zomeren","Bobby Keeser","Darren Rose","Kim Larson","Lance Grinnell"],
+    "T0458AK":["Alex Abraham","Ian Schlegel","James Nason","Jon Sundstrom","Roland Dube"],
+    "T04710N":["James Nason","Jonathon Bulluck","Mathew Mcleod"],
+    "T0471OD":["Jonathan Kaminski"],
+    "T0471OI":["Christopher Price","Joseph Phillips","Ted Hunt"],
+    "T0471OJ":["Jacob Rudolph","Vincent Munoz"],
+    "T0471OK":["Andrew Foresto","Jacob Rudolph","James Nason","Ted Hunt"],
+    "T0471OO":["James Nason","Kyle Smith","Ryan Paulson"],
+    "T0471OP":["Ian Schlegel","Kyle Smith","Michael Bell","Ryan Paulson"],
+    "T2237TR":["Cory Mace","Daniel Hyde"]
+  };
+
+  function formatPhone(raw) {
+    // Strip everything except digits and leading +
+    const digits = raw.replace(/[^\d]/g, '');
+    if (digits.length === 10) {
+      return `${digits.slice(0,3)}.${digits.slice(3,6)}.${digits.slice(6)}`;
+    } else if (digits.length === 11 && digits[0] === '1') {
+      return `${digits.slice(1,4)}.${digits.slice(4,7)}.${digits.slice(7)}`;
+    }
+    return raw; // fallback if unusual format
+  }
+
+  function renderTAPanel(tid) {
+    const content = document.getElementById('ta-content');
+    const tas = FSC_TA_MAP[tid] || [];
+
+    if (tas.length === 0) {
+      content.innerHTML = '<div class="ta-signed-out">No assigned TAs found for this TID</div>';
+      return;
+    }
+
+    const cards = tas.map(name => {
+      const initials = name.split(' ').filter(Boolean).slice(0,2).map(w => w[0].toUpperCase()).join('');
+      const c = TA_CONTACTS[name] || { phone: '', email: '' };
+
+      let contactLines = '';
+      if (c.phone) {
+        contactLines += `<div class="ta-contact-row">${formatPhone(c.phone)}</div>`;
+      }
+      if (c.email) {
+        contactLines += `<div class="ta-contact-row">${c.email}</div>`;
+      }
+
+      return `<div class="ta-card">
+        <div class="ta-avatar">${initials}</div>
+        <div class="ta-info">
+          <div class="ta-name">${name}</div>
+          ${contactLines}
+        </div>
+      </div>`;
+    }).join('');
+
+    content.innerHTML = `<div class="ta-list">${cards}</div>`;
   }
 </script>
 </body>
