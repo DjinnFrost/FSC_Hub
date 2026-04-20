@@ -568,8 +568,12 @@
   }
 
   .dir-overlay {
-    position: fixed;
-    inset: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    min-height: 100%;
+    height: max(100%, 100vh);
     background: rgba(5, 15, 45, 0.62);
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
@@ -578,9 +582,13 @@
     pointer-events: none;
     transition: opacity 0.25s ease;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
-    padding: 16px;
+    padding-top: clamp(60px, 12vh, 120px);
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-bottom: 40px;
+    box-sizing: border-box;
   }
   .dir-overlay.open {
     opacity: 1;
