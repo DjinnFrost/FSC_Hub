@@ -817,6 +817,22 @@
     display: inline-block;
     letter-spacing: 0.5px;
   }
+
+  .ta-card-unassigned {
+    border-color: rgba(250,180,50,0.2) !important;
+    background: rgba(250,180,50,0.05) !important;
+  }
+  .ta-avatar-unassigned {
+    background: linear-gradient(135deg, #7a5c10, #b38820) !important;
+    font-size: 14px !important;
+  }
+  .ta-name-unassigned {
+    text-decoration-color: rgba(250,200,80,0.5) !important;
+  }
+  .ta-name-unassigned:hover {
+    color: #fcd770 !important;
+    text-decoration-color: #fcd770 !important;
+  }
 </style>
 </head>
 <body>
@@ -2092,7 +2108,23 @@
       </div>`;
     }).join('');
 
-    content.innerHTML = `<div class="ta-scroll"><div class="ta-list">${cards}</div></div>`;
+    // Check if any dealers under this FSC TID have no TA assigned
+    const fscData = FSC_DEALER_MAP[tid];
+    let unassignedCard = '';
+    if (fscData) {
+      const unassignedCount = fscData.dealers.filter(d => !d.ta_name.trim()).length;
+      if (unassignedCount > 0) {
+        unassignedCard = `<div class="ta-card ta-card-unassigned">
+          <div class="ta-avatar ta-avatar-unassigned">—</div>
+          <div class="ta-info">
+            <button class="ta-name-btn ta-name-unassigned" onclick="openDirModal('__UNASSIGNED__', '${tid}')" title="View dealers with no TA">No TA Assigned</button>
+            <div class="ta-contact-row">${unassignedCount} dealer${unassignedCount !== 1 ? 's' : ''} without a TA</div>
+          </div>
+        </div>`;
+      }
+    }
+
+    content.innerHTML = `<div class="ta-scroll"><div class="ta-list">${cards}${unassignedCard}</div></div>`;
   }
 
   // ── DEALER DIRECTORY DATA ────────────────────────────────────────────────
@@ -2105,16 +2137,29 @@
   function openDirModal(taName, fscTid) {
     const data = FSC_DEALER_MAP[fscTid];
     if (!data) return;
-    const dealers = data.dealers.filter(d =>
-      d.ta_name.trim().toUpperCase() === taName.trim().toUpperCase()
-    );
+
+    let dealers, headerName, headerMeta;
+
+    if (taName === '__UNASSIGNED__') {
+      dealers = data.dealers.filter(d => !d.ta_name.trim());
+      headerName = 'No TA Assigned';
+      headerMeta = 'No TA currently assigned';
+    } else {
+      dealers = data.dealers.filter(d =>
+        d.ta_name.trim().toUpperCase() === taName.trim().toUpperCase()
+      );
+      headerName = taName;
+      const c = TA_CONTACTS[taName] || {};
+      headerMeta = c.email ? c.email : (c.phone ? formatPhone(c.phone) : 'Dealer Directory');
+    }
+
     _dirCurrentTA = taName;
     _dirCurrentDealers = dealers;
 
-    document.getElementById('dir-ta-name').textContent = taName;
-    const c = TA_CONTACTS[taName] || {};
-    const meta = c.email ? c.email : (c.phone ? formatPhone(c.phone) : 'Dealer Directory');
-    document.getElementById('dir-ta-meta').textContent = meta;
+    document.getElementById('dir-ta-name').textContent = headerName;
+    document.getElementById('dir-ta-meta').textContent = headerMeta;
+    const badge = document.getElementById('dir-ta-badge');
+    if (badge) badge.style.display = taName === '__UNASSIGNED__' ? 'none' : '';
     renderDirDealers(dealers);
 
     document.getElementById('dir-overlay').classList.add('open');
