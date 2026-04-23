@@ -787,7 +787,7 @@
     border-radius: 10px;
     box-shadow: 0 12px 32px rgba(0,0,0,0.45);
     padding: 14px 18px;
-    min-width: 210px;
+    min-width: 270px;
     z-index: 50;
     opacity: 0;
     pointer-events: none;
@@ -833,6 +833,163 @@
     color: #fcd770 !important;
     text-decoration-color: #fcd770 !important;
   }
+
+  /* BC CONTACTS PANEL inside dealer modal */
+  .dir-bc-section {
+    margin-bottom: 14px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(110,193,255,0.15);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .dir-bc-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    cursor: pointer;
+    user-select: none;
+    background: rgba(110,193,255,0.07);
+    transition: background 0.15s;
+  }
+  .dir-bc-header:hover { background: rgba(110,193,255,0.13); }
+  .dir-bc-header-left { display: flex; align-items: center; gap: 8px; }
+  .dir-bc-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: rgba(110,193,255,0.9);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+  }
+  .dir-bc-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: #fff;
+  }
+  .dir-bc-chevron {
+    font-size: 11px;
+    color: rgba(255,255,255,0.4);
+    transition: transform 0.2s;
+  }
+  .dir-bc-chevron.open { transform: rotate(180deg); }
+  .dir-bc-body {
+    display: none;
+    padding: 10px 14px 12px;
+    border-top: 1px solid rgba(255,255,255,0.07);
+  }
+  .dir-bc-body.open { display: block; }
+  .dir-bc-contact-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 4px 12px;
+    padding: 7px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    align-items: start;
+  }
+  .dir-bc-contact-row:last-child { border-bottom: none; }
+  .dir-bc-contact-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: #fff;
+  }
+  .dir-bc-contact-role {
+    font-size: 10.5px;
+    color: rgba(255,255,255,0.42);
+    margin-top: 1px;
+  }
+  .dir-bc-contact-right { text-align: right; flex-shrink: 0; }
+  .dir-bc-contact-phone {
+    font-size: 10.5px;
+    color: rgba(255,255,255,0.45);
+    white-space: nowrap;
+  }
+  .dir-bc-contact-email {
+    font-size: 10px;
+    color: rgba(110,193,255,0.55);
+    white-space: nowrap;
+  }
+
+  .user-dd-divider {
+    height: 1px;
+    background: rgba(255,255,255,0.12);
+    margin: 12px 0 10px;
+  }
+  .user-dd-section-label {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: rgba(110,193,255,0.6);
+    margin-bottom: 6px;
+  }
+  .user-dd-quick-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #fff;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    margin-bottom: 8px;
+  }
+  .user-dd-contact-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 2px;
+  }
+  .user-dd-contact-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 10px;
+  }
+  .user-dd-contact-name {
+    font-size: 11px;
+    color: rgba(255,255,255,0.65);
+    white-space: nowrap;
+  }
+  .user-dd-contact-num {
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.9);
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+  .user-dd-pw-reset {
+    display: block;
+    font-size: 10.5px;
+    color: rgba(255,255,255,0.3);
+    text-decoration: none;
+    text-align: center;
+    padding: 4px 0 2px;
+    letter-spacing: 0.3px;
+    transition: color 0.15s;
+    margin-top: 6px;
+  }
+  .user-dd-pw-reset:hover {
+    color: rgba(110,193,255,0.65);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .user-dd-logout {
+    width: 100%;
+    border: 1px solid rgba(255,100,100,0.3);
+    border-radius: 7px;
+    background: rgba(255,80,80,0.08);
+    color: rgba(255,140,140,0.9);
+    font-size: 12px;
+    font-weight: 600;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+    text-align: center;
+    letter-spacing: 0.3px;
+  }
+  .user-dd-logout:hover {
+    background: rgba(255,80,80,0.18);
+    border-color: rgba(255,100,100,0.55);
+    color: #ff9999;
+  }
 </style>
 </head>
 <body>
@@ -876,6 +1033,17 @@
       <div class="user-dropdown" id="user-dropdown">
         <div class="user-dd-name" id="user-dd-name">—</div>
         <div class="user-dd-tid" id="user-dd-tid">TID: —</div>
+        <div class="user-dd-divider"></div>
+        <div class="user-dd-section-label">MarketSource</div>
+        <div class="user-dd-quick-title">Quick Contact Guide</div>
+        <div class="user-dd-contact-list">
+          <div class="user-dd-contact-item"><span class="user-dd-contact-name">Help Desk</span><span class="user-dd-contact-num">800.416.6505</span></div>
+          <div class="user-dd-contact-item"><span class="user-dd-contact-name">Payroll / Employee Support</span><span class="user-dd-contact-num">877.883.4575</span></div>
+          <div class="user-dd-contact-item"><span class="user-dd-contact-name">Benefits</span><span class="user-dd-contact-num">866.886.9798</span></div>
+        </div>
+        <a class="user-dd-pw-reset" href="https://password.allegisgroup.com/" target="_blank" rel="noopener">MarketSource Password Reset</a>
+        <div class="user-dd-divider"></div>
+        <button class="user-dd-logout" onclick="logoutUser()">Sign Out</button>
       </div>
     </div>
   </div>
@@ -1068,14 +1236,14 @@
       <div class="dir-modal-header-left">
         <div class="dir-ta-title">
           <span id="dir-ta-name">—</span>
-          <span class="dir-ta-badge">TA</span>
+          <span class="dir-ta-badge" id="dir-ta-badge">TA</span>
         </div>
         <div class="dir-ta-meta" id="dir-ta-meta">Dealer Directory</div>
       </div>
       <button class="dir-close" onclick="closeDirModal()">✕</button>
     </div>
 
-    <div class="dir-modal-body" id="dir-modal-body"></div>
+    <div class="dir-modal-body" id="dir-modal-body"><div id="dir-dealers-body"></div></div>
   </div>
 </div>
 
@@ -2160,6 +2328,7 @@
     document.getElementById('dir-ta-meta').textContent = headerMeta;
     const badge = document.getElementById('dir-ta-badge');
     if (badge) badge.style.display = taName === '__UNASSIGNED__' ? 'none' : '';
+    renderBCPanel(fscTid);
     renderDirDealers(dealers);
 
     document.getElementById('dir-overlay').classList.add('open');
@@ -2175,7 +2344,7 @@
 
 
   function renderDirDealers(dealers, highlight) {
-    const body = document.getElementById('dir-modal-body');
+    const body = document.getElementById('dir-dealers-body');
     if (dealers.length === 0) {
       body.innerHTML = '<div class="dir-no-results">No dealers match your search.</div>';
       return;
@@ -2243,6 +2412,78 @@
       document.getElementById('welcome-btn').setAttribute('aria-expanded', 'false');
     }
   });
+
+
+  // ── BUSINESS CENTER DATA ─────────────────────────────────────────────────
+  const FSC_BC_MAP = {"T0306FJ":"NORTHEAST","T0090ZU":"VIRTUAL","T0390ZI":"VIRTUAL","T0378EZ":"VIRTUAL","T0318DS":"SOUTHWEST","T0304KR":"NORTHEAST","T0307EF":"GREAT LAKES","T0307EH":"NORTHEAST","T0311PX":"VIRTUAL","T0304XV":"VIRTUAL","T0306FH":"NORTHEAST","T2237TR":"GREAT LAKES","T0300HY":"NORTHEAST","T0314R4":"NORTHEAST","T0300P5":"NORTHEAST","T0294M9":"NORTHEAST","T0300HV":"NORTHEAST","T0300HT":"NORTHEAST","T0471OK":"NORTHEAST","T0294M4":"VIRTUAL","T0317U1":"SOUTHEAST","T0300HX":"SOUTHEAST","T0419PV":"SOUTHEAST","T0453V3":"SOUTHEAST","T0400IJ":"GREAT LAKES","T0304XW":"GREAT LAKES","T0329IF":"VIRTUAL","T0458AK":"VIRTUAL","T0471OO":"VIRTUAL","T0335UJ":"NORTHEAST","T0306L5":"MIDWEST","T0440PG":"MIDWEST","T0318DT":"MIDWEST","T0314R6":"SOUTHEAST","T0311PC":"SOUTHEAST","T0311PV":"SOUTHEAST","T0311PW":"MIDWEST","T0314R5":"GREAT LAKES","T0346ZQ":"NORTHEAST","T0317UZ":"SOUTHEAST","T0322OO":"GREAT LAKES","T04710N":"NORTHEAST","T0458AH":"SOUTHWEST","T0294MV":"SOUTHEAST","T0458AG":"GREAT LAKES","T0322OR":"SOUTHEAST","T0471OP":"GREAT LAKES","T0390ZG":"GREAT LAKES","T0322OQ":"VIRTUAL","T0471OI":"SOUTHEAST","T0320I3":"NORTHEAST","T0300P3":"NORTHEAST","T0320I5":"MIDWEST","T0453V4":"SOUTHEAST","T0306FK":"GREAT LAKES","T0471OJ":"NORTHEAST","T0351T6":"NORTHEAST","T0378EV":"NORTHEAST","T0332YY":"GREAT LAKES","T0311PD":"SOUTHEAST","T0294MO":"SOUTHEAST","T0419PW":"GREAT LAKES","T0294M5":"NORTHEAST","T0312AE":"SOUTHEAST","T0346ZR":"NORTHEAST","T0471OD":"NORTHEAST","T0317U0":"SOUTHEAST","T0338N1":"VIRTUAL","T0304KU":"SOUTHEAST","T0423HH":"GREAT LAKES","T0304KV":"VIRTUAL","T0318DR":"SOUTHEAST","T0294MI":"SOUTHEAST","T0311PU":"MIDWEST","T0306V9":"SOUTHEAST","T0300H0":"SOUTHEAST","T0294M8":"GREAT LAKES","T0304XT":"SOUTHEAST"};
+  const BC_CONTACTS = {"WEST":[{"name":"Gaby Roman","role":"Director - Service and Parts","email":"gabriela.roman@stellantis.com","phone":"469-585-5698"},{"name":"Ann White","role":"Field Operations Manager: Phoenix, So Cal","email":"ann.white@stellantis.com","phone":"407-619-3202"},{"name":"Ryan Lamb","role":"Field Operations Manager: Pacific NW, Utah","email":"ryan.lamb@stellantis.com","phone":"480-309-0609"},{"name":"Jerrod Bohannon","role":"Field Operations Manager: Denver","email":"jerrod.bohannon@stellantis.com","phone":"719-216-6810"},{"name":"Tuan Nguyen","role":"Customer Relations Manager| CA & Hawaii","email":"tuan.nguyen@stellantis.com","phone":"949-220-6242"},{"name":"Kody Schirner","role":"Customer Relations Manager| AZ,OR,WA,ID,NV,UT,MT,WY& CO","email":"kody.schirner@stellantis.com","phone":"480-250-9646"},{"name":"Eric Jensen","role":"Warranty Administration Manager","email":"eric.jensen1@stellantis.com","phone":"303-889-9247"},{"name":"Bob Navarro","role":"Wholesale Manager","email":"robert.navarro@stellantis.com","phone":"480-721-0554"},{"name":"Jeff Mirek","role":"Retail Manager","email":"jeff.mirek@stellantis.com","phone":"845-548-2427"},{"name":"Sal Fabela","role":"Express Lane Manager","email":"salvador.fabela@stellantis.com","phone":"480-522-6343"},{"name":"Jacob Clough","role":"Lead TA","email":"jacob.clough@stellantis.com","phone":"480-645-2123"}],"MIDWEST":[{"name":"Matthew Vaughn","role":"Director - Service and Parts","email":"matthew.vaughn@stellantis.com","phone":"224-624-8126"},{"name":"Dan Lausas","role":"Field Operations Manager","email":"daniel.lausas1@stellantis.com","phone":"630-432-5062"},{"name":"Cassandra Lueras","role":"Field Operations Manager","email":"cassandra.lueras@stellantis.com","phone":"303-990-4900"},{"name":"Jordan Wheatley","role":"Field Operations Manager","email":"jordan.wheatley@stellantis.com","phone":"303-263-1652"},{"name":"Jennifer McIntire","role":"Warranty Administration Manager","email":"jennifer.mcintire@stellantis.com","phone":"630-842-3961"},{"name":"Matt Maertens","role":"Customer Relations Manager","email":"matthew.maertens@stellantis.com","phone":"630-742-2324"},{"name":"Dan Roth","role":"Wholesale Manager","email":"dan.roth@stellantis.com","phone":"630-432-5410"},{"name":"Andrew Schamaun","role":"Retail Manager","email":"andrew.schamaun@stellantis.com","phone":"224-602-8350"},{"name":"Matt Karth","role":"Express Lane Manager","email":"matt.karth@stellantis.com","phone":"79-702-4804"},{"name":"Anthony Fauceglia","role":"Lead TA","email":"anthony.fauceglia@stellantis.com","phone":"248-760-9272"}],"GREAT LAKES":[{"name":"Kathi Gambill","role":"Director - Service and Parts","email":"kathryn.gambill-medlin@stellantis.com","phone":"248-202-3681"},{"name":"Brandie Wagner","role":"Field Operations Manager","email":"brandie.wagner@stellantis.com","phone":"330-204-8992"},{"name":"Jeff Clark","role":"Field Operations Manager","email":"jeffrey.clark@stellantis.com","phone":"949-233-0754"},{"name":"Nancy Peltz","role":"Warranty Administration Manager","email":"nancy.peltz@stellantis.com","phone":"248-464-2517"},{"name":"Jason Betley","role":"Customer Relations Manager","email":"jason.betley@stellantis.com","phone":"313-378-6403"},{"name":"Dylan Hawes","role":"Wholesale Manager","email":"dylan.hawes@stellantis.com","phone":""},{"name":"Mike Ring","role":"Retail Manager","email":"michael.ring75@stellantis.com","phone":"469-503-8798"},{"name":"Charles Baldwin","role":"Express Lane Manager","email":"charles.baldwin1@stellantis.com","phone":""},{"name":"Donte Scott","role":"Data Analytics Manager","email":"","phone":""},{"name":"Dave Taylor","role":"Lead TA","email":"frank.taylor@stellantis.com","phone":"248-339-6910"}],"NORTHEAST":[{"name":"Michael Fisher","role":"Director - Service and Parts","email":"michael.fisher1@stellantis.com","phone":"248-701-1738"},{"name":"Lauren Lewis","role":"Field Operations Manager - NYC, NJ, DE, E. PA","email":"lauren.nolte1@stellantis.com","phone":"667-701-2895"},{"name":"Matt Gross","role":"Field Operations Manager - W PA, NY","email":"matthew.gross@stellantis.com","phone":"845-551-0281"},{"name":"Jason Love","role":"Field Operations Manager - New England","email":"jason.love@stellantis.com","phone":"630-207-1588"},{"name":"Rick Simpson","role":"Warranty Manager","email":"rick.simpson@stellantis.com","phone":"410-567-1836"},{"name":"Matt Di Dio","role":"Customer Relations Manager","email":"matthew.di-dio@stellantis.com","phone":"978-314-8957"},{"name":"Bruno Mijat","role":"Wholesale Manager","email":"bruno.mijat@stellantis.com","phone":""},{"name":"Corey Baltz","role":"Retail Manager","email":"corey.baltz@stellantis.com","phone":"410-215-2310"},{"name":"Jasmine Morgan","role":"Express Lane Manager","email":"jasmine.morgan@stellantis.com","phone":""},{"name":"John Francis","role":"Lead TA","email":"john.francis@stellantis.com","phone":"914-223-9406"}],"SOUTHEAST":[{"name":"Jake Petersen","role":"Director - Service and Parts","email":"jake.petersen@stellantis.com","phone":"248-517-9886"},{"name":"John Moore","role":"Field Operations Manager","email":"john.moore@stellantis.com","phone":"407-353-4570"},{"name":"Jay Goodwin","role":"Field Operations Manager","email":"james.goodwin@stellantis.com","phone":"407-748-5758"},{"name":"Steve Grimwood","role":"Field Operations Manager","email":"steven.grimwood@stellantis.com","phone":"443-745-8490"},{"name":"Thomas Valk","role":"Warranty Administration Manager","email":"thomas.valk@stellantis.com","phone":"321-332-5177"},{"name":"Angelena Brindley","role":"Customer Relations Manager","email":"angelena.brindley@stellantis.com","phone":"864-315-8662"},{"name":"Bryan Chapman","role":"Wholesale Manager","email":"bryan.chapman@stellantis.com","phone":"407-405-3755"},{"name":"Jeff Osakowicz","role":"Retail Manager","email":"jeff.osakowicz@stellantis.com","phone":"410-382-9066"},{"name":"John Ewing","role":"Express Lane Manager","email":"john.ewing@stellantis.com","phone":"470-971-9447"},{"name":"Jim Berry","role":"Lead TA","email":"james.berry@stellantis.com","phone":"407-538-8966"}],"SOUTHWEST":[{"name":"Kevin Sears","role":"Director - Service and Parts","email":"kevin.sears@stellantis.com","phone":"480-247-0947"},{"name":"Kevin Stoskopf","role":"Field Operations Manager","email":"kevin.stoskopf@stellantis.com","phone":"214-406-6653"},{"name":"Michael Chandler","role":"Field Operations Manager","email":"michael.chandler@stellantis.com","phone":"407-620-1461"},{"name":"Albino Estrella","role":"Field Operations Manager","email":"albino.estrella@stellantis.com","phone":"248-421-7845"},{"name":"Dom Rodriguez","role":"Warranty Administration Manager","email":"dominic.rodriguez@stellantis.com","phone":"469-203-0800"},{"name":"Charles Owens","role":"Customer Relations Manager","email":"charles.owens@stellantis.com","phone":"972-273-9221"},{"name":"Braden Johnson","role":"Retail Manager","email":"braden.johnson@stellantis.com","phone":"303-710-1551"},{"name":"Jeff Driskill","role":"Lead TA","email":"jeffrey.driskill@stellantis.com","phone":"985-377-3611"}],"VIRTUAL":[{"name":"Jeff Eschenbach","role":"Sales Operations Manager","email":"jeffrey.eschenbach@stellantis.com","phone":"(313) 378-9169"},{"name":"Eric Swanson","role":"Director - Service and Parts","email":"eric.swanson@stellantis.com","phone":"248-202-9469"},{"name":"Frank Donnelly","role":"Helm Automotive Fixed Ops VP","email":"fdonnelly@helm.com","phone":"(303) 746-3992"},{"name":"Scot Schroder","role":"VBC Director","email":"scot.schroder1@external.stellantis.com","phone":"(404) 405-7575"},{"name":"Chris Gracyzk","role":"DOM -  West","email":"cgraczyk@helm.com","phone":"(248) 933-1169"},{"name":"Brian Tetterton","role":"DOM - Midwest","email":"brian.tetterton@external.stellantis.com","phone":"(321) 626-3545"},{"name":"Rob Challender","role":"Lead TA","email":"rob.challender@external.stellantis.com","phone":"(989) 627-9025"},{"name":"Jon Sundstrom","role":"CR Tech Specialist - Midwest","email":"jon.sundstrom@external.stellantis.com","phone":"(906) 553-5460"},{"name":"James Nason","role":"CR Tech Specialist - Northeast - South","email":"james.nason@external.stellantis.com","phone":"(321) 408-0591"},{"name":"Alan McAvoy","role":"CR-Tech Specialist - Central - West","email":"al.mcavoy@external.stellantis.com","phone":"(720) 827-6027"},{"name":"Jeff Mirek","role":"Marketing Manager","email":"jeff.mirek@stellantis.com","phone":"845-548-2427"},{"name":"Heath Crenwelge","role":"Marketing Manager","email":"heath.crenwelge@stellantis.com","phone":"972-740-6567"}]};
+
+  function renderBCPanel(fscTid) {
+    const body = document.getElementById('dir-modal-body');
+    const existing = document.getElementById('dir-bc-panel');
+    if (existing) existing.remove();
+
+    const bcName = FSC_BC_MAP[fscTid];
+    if (!bcName) return;
+    const contacts = BC_CONTACTS[bcName];
+    if (!contacts || contacts.length === 0) return;
+
+    const contactRows = contacts.map(c => {
+      const phone = c.phone ? `<div class="dir-bc-contact-phone">${formatPhone(c.phone)}</div>` : '';
+      const email = c.email ? `<div class="dir-bc-contact-email">${c.email}</div>` : '';
+      return `<div class="dir-bc-contact-row">
+        <div>
+          <div class="dir-bc-contact-name">${c.name}</div>
+          <div class="dir-bc-contact-role">${c.role}</div>
+        </div>
+        <div class="dir-bc-contact-right">${phone}${email}</div>
+      </div>`;
+    }).join('');
+
+    const bcLabel = bcName.charAt(0) + bcName.slice(1).toLowerCase() + ' BC';
+    const panel = document.createElement('div');
+    panel.id = 'dir-bc-panel';
+    panel.className = 'dir-bc-section';
+    panel.innerHTML = `
+      <div class="dir-bc-header" onclick="toggleBCPanel()">
+        <div class="dir-bc-header-left">
+          <span class="dir-bc-title">Business Center</span>
+          <span class="dir-bc-name">${bcLabel}</span>
+        </div>
+        <span class="dir-bc-chevron" id="dir-bc-chevron">▼</span>
+      </div>
+      <div class="dir-bc-body" id="dir-bc-body">${contactRows}</div>
+    `;
+    body.prepend(panel);
+  }
+
+  function toggleBCPanel() {
+    const body = document.getElementById('dir-bc-body');
+    const chev = document.getElementById('dir-bc-chevron');
+    if (!body) return;
+    body.classList.toggle('open');
+    chev.classList.toggle('open');
+  }
+
+  // ── LOGOUT ───────────────────────────────────────────────────────────────
+  function logoutUser() {
+    document.getElementById('user-dropdown').classList.remove('open');
+    const btn = document.getElementById('welcome-btn');
+    if (btn) btn.textContent = 'Welcome, — \u25be';
+    document.getElementById('user-dd-name').textContent = '—';
+    document.getElementById('user-dd-tid').textContent = 'TID: —';
+    document.getElementById('ta-content').innerHTML = '<div class="ta-signed-out">Sign in to view your assigned TAs</div>';
+    document.getElementById('gauge-container').innerHTML = '<div style="font-size:12px;color:rgba(255,255,255,0.5);text-align:center;padding:18px 0;">Sign in to view your pace</div>';
+    currentTID = null;
+    const gate = document.getElementById('login-gate');
+    gate.style.display = 'flex';
+    gate.style.opacity = '0';
+    gate.classList.remove('fade-out');
+    setTimeout(() => { gate.style.opacity = '1'; }, 10);
+    document.getElementById('tid-input').value = '';
+    document.getElementById('login-error').textContent = '';
+    setTimeout(() => document.getElementById('tid-input').focus(), 200);
+  }
 
 
 </script>
