@@ -51,7 +51,9 @@
     background: rgba(7,20,58,0.38);
     backdrop-filter: blur(10px);
     position: sticky; top: 0; z-index: 10;
+    overflow: visible;
   }
+  html, body { overflow-x: hidden; }
   .nav-left, .nav-right { display: flex; align-items: center; gap: 14px; flex: 1; }
   .nav-right { justify-content: flex-end; }
   .nav-center { display: flex; align-items: center; justify-content: center; }
@@ -780,8 +782,8 @@
   .user-dropdown {
     position: absolute;
     top: calc(100% + 10px);
-    left: 50%;
-    transform: translateX(-50%) translateY(-6px);
+    right: 0;
+    transform: translateY(-6px);
     background: linear-gradient(160deg, #0e2460 0%, #132e74 60%, #0a1e50 100%);
     border: 1px solid rgba(255,255,255,0.18);
     border-radius: 10px;
@@ -797,7 +799,7 @@
   .user-dropdown.open {
     opacity: 1;
     pointer-events: all;
-    transform: translateX(-50%) translateY(0);
+    transform: translateY(0);
   }
   .user-dd-name {
     font-size: 14px;
