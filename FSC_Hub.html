@@ -819,6 +819,55 @@
     display: inline-block;
     letter-spacing: 0.5px;
   }
+  .user-dd-lead-row {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+  .user-dd-lead-label {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: rgba(255,255,255,0.35);
+    margin-bottom: 4px;
+  }
+  .user-dd-lead-name {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #fff;
+  }
+  .user-dd-lead-tid {
+    font-size: 10px;
+    color: rgba(110,193,255,0.55);
+    margin-top: 1px;
+  }
+  .user-dd-lead-contacts {
+    margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .user-dd-lead-source {
+    font-size: 8.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 2px;
+  }
+  .user-dd-lead-source.ms { color: rgba(255,160,60,0.7); }
+  .user-dd-lead-source.st { color: rgba(110,193,255,0.6); }
+  .user-dd-lead-contact-line {
+    font-size: 10px;
+    color: rgba(255,255,255,0.55);
+    word-break: break-all;
+    line-height: 1.4;
+  }
+  .user-dd-lead-block {
+    padding: 5px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .user-dd-lead-block:last-child { border-bottom: none; }
 
   .ta-card-unassigned {
     border-color: rgba(250,180,50,0.2) !important;
@@ -1035,6 +1084,12 @@
       <div class="user-dropdown" id="user-dropdown">
         <div class="user-dd-name" id="user-dd-name">—</div>
         <div class="user-dd-tid" id="user-dd-tid">TID: —</div>
+        <div class="user-dd-lead-row" id="user-dd-lead-row" style="display:none;">
+          <div class="user-dd-lead-label">Team Lead</div>
+          <div class="user-dd-lead-name" id="user-dd-lead-name">—</div>
+          <div class="user-dd-lead-tid" id="user-dd-lead-tid"></div>
+          <div class="user-dd-lead-contacts" id="user-dd-lead-contacts"></div>
+        </div>
         <div class="user-dd-divider"></div>
         <div class="user-dd-section-label">MarketSource</div>
         <div class="user-dd-quick-title">Quick Contact Guide</div>
@@ -1535,6 +1590,37 @@
       const ddTid  = document.getElementById('user-dd-tid');
       if (ddName) ddName.textContent = fullName;
       if (ddTid)  ddTid.textContent  = 'TID: ' + tid;
+      // Populate team lead
+      const leadData = FSC_LEAD_MAP[tid];
+      const leadRow      = document.getElementById('user-dd-lead-row');
+      const leadName     = document.getElementById('user-dd-lead-name');
+      const leadTid      = document.getElementById('user-dd-lead-tid');
+      const leadContacts = document.getElementById('user-dd-lead-contacts');
+      if (leadData && leadRow && leadName && leadTid) {
+        leadName.textContent = leadData.lead_name;
+        leadTid.textContent  = leadData.lead_tid;
+        leadRow.style.display = '';
+        // Populate contact info
+        const tlc = TL_CONTACTS[leadData.lead_name] || null;
+        if (leadContacts && tlc) {
+          const fmtPhone = p => p.replace(/[^\d]/g,'').replace(/(\d{3})(\d{3})(\d{4})/,'$1.$2.$3');
+          leadContacts.innerHTML = `
+            <div class="user-dd-lead-block">
+              <div class="user-dd-lead-source ms">MarketSource</div>
+              <div class="user-dd-lead-contact-line">${fmtPhone(tlc.ms_phone)}</div>
+              <div class="user-dd-lead-contact-line">${tlc.ms_email}</div>
+            </div>
+            <div class="user-dd-lead-block">
+              <div class="user-dd-lead-source st">Stellantis</div>
+              <div class="user-dd-lead-contact-line">${fmtPhone(tlc.st_phone)}</div>
+              <div class="user-dd-lead-contact-line">${tlc.st_email}</div>
+            </div>`;
+        } else if (leadContacts) {
+          leadContacts.innerHTML = '';
+        }
+      } else if (leadRow) {
+        leadRow.style.display = 'none';
+      }
 
       // Fade out and remove the gate
       const gate = document.getElementById('login-gate');
@@ -2475,6 +2561,8 @@
     if (btn) btn.textContent = 'Welcome, — \u25be';
     document.getElementById('user-dd-name').textContent = '—';
     document.getElementById('user-dd-tid').textContent = 'TID: —';
+    const lr = document.getElementById('user-dd-lead-row');
+    if (lr) lr.style.display = 'none';
     document.getElementById('ta-content').innerHTML = '<div class="ta-signed-out">Sign in to view your assigned TAs</div>';
     document.getElementById('gauge-container').innerHTML = '<div style="font-size:12px;color:rgba(255,255,255,0.5);text-align:center;padding:18px 0;">Sign in to view your pace</div>';
     currentTID = null;
@@ -2487,6 +2575,14 @@
     document.getElementById('login-error').textContent = '';
     setTimeout(() => document.getElementById('tid-input').focus(), 200);
   }
+
+
+  // ── FSC TEAM LEAD DATA ────────────────────────────────────────────────────
+  const FSC_LEAD_MAP = {"T0306FJ":{"lead_name":"Carlos Pena","lead_tid":"T0300P6"},"T0090ZU":{"lead_name":"Jamal Douglas","lead_tid":"T0327UU"},"T0390ZI":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0378EZ":{"lead_name":"Paul Brown","lead_tid":"T0294M6"},"T0318DS":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T0304KR":{"lead_name":"Carlos Pena","lead_tid":"T0300P6"},"T0307EF":{"lead_name":"Paul Brown","lead_tid":"T0294M6"},"T0307EH":{"lead_name":"Carlos Pena","lead_tid":"T0300P6"},"T0311PX":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T0304XV":{"lead_name":"Paul Brown","lead_tid":"T0294M6"},"T0306FH":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T2237TR":{"lead_name":"Jamal Douglas","lead_tid":"T0327UU"},"T0300HY":{"lead_name":"Carlos Pena","lead_tid":"T0300P6"},"T0314R4":{"lead_name":"Jonathan Castillo","lead_tid":"T0300P2"},"T0300P5":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T0294M9":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T0300HV":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T0300HT":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T0471OK":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T0294M4":{"lead_name":"Carlos Pena","lead_tid":"T0300P6"},"T0317U1":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T0300HX":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0419PV":{"lead_name":"Carlos Pena","lead_tid":"T0300P6"},"T0453V3":{"lead_name":"Carlos Pena","lead_tid":"T0300P6"},"T0400IJ":{"lead_name":"Paul Brown","lead_tid":"T0294M6"},"T0304XW":{"lead_name":"Jamal Douglas","lead_tid":"T0327UU"},"T0329IF":{"lead_name":"Paul Brown","lead_tid":"T0294M6"},"T0458AK":{"lead_name":"Paul Brown","lead_tid":"T0294M6"},"T0471OO":{"lead_name":"Paul Brown","lead_tid":"T0294M6"},"T0335UJ":{"lead_name":"Carlos Pena","lead_tid":"T0300P6"},"T0306L5":{"lead_name":"Paul Brown","lead_tid":"T0294M6"},"T0440PG":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T0318DT":{"lead_name":"Jamal Douglas","lead_tid":"T0327UU"},"T0314R6":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0311PC":{"lead_name":"Carlos Cordero","lead_tid":"T0294MH"},"T0311PV":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0311PW":{"lead_name":"Jamal Douglas","lead_tid":"T0327UU"},"T0314R5":{"lead_name":"Jamal Douglas","lead_tid":"T0327UU"},"T0346ZQ":{"lead_name":"Jonathan Castillo","lead_tid":"T0300P2"},"T0317UZ":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0322OO":{"lead_name":"Paul Brown","lead_tid":"T0294M6"},"T04710N":{"lead_name":"Jonathan Castillo","lead_tid":"T0300P2"},"T0458AH":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T0294MV":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0458AG":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T0322OR":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0471OP":{"lead_name":"Paul Brown","lead_tid":"T0294M6"},"T0390ZG":{"lead_name":"Jamal Douglas","lead_tid":"T0327UU"},"T0322OQ":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0471OI":{"lead_name":"Carlos Cordero","lead_tid":"T0294MH"},"T0320I3":{"lead_name":"Jonathan Castillo","lead_tid":"T0300P2"},"T0300P3":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T0320I5":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T0453V4":{"lead_name":"Carlos Cordero","lead_tid":"T0294MH"},"T0306FK":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0471OJ":{"lead_name":"Jonathan Castillo","lead_tid":"T0300P2"},"T0351T6":{"lead_name":"Jonathan Castillo","lead_tid":"T0300P2"},"T0378EV":{"lead_name":"Jonathan Castillo","lead_tid":"T0300P2"},"T0332YY":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0311PD":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0294MO":{"lead_name":"Carlos Cordero","lead_tid":"T0294MH"},"T0419PW":{"lead_name":"Paul Brown","lead_tid":"T0294M6"},"T0294M5":{"lead_name":"Jonathan Castillo","lead_tid":"T0300P2"},"T0312AE":{"lead_name":"Carlos Cordero","lead_tid":"T0294MH"},"T0346ZR":{"lead_name":"Jonathan Castillo","lead_tid":"T0300P2"},"T0471OD":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T0317U0":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0338N1":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0304KU":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0423HH":{"lead_name":"Jamal Douglas","lead_tid":"T0327UU"},"T0304KV":{"lead_name":"Jamal Douglas","lead_tid":"T0327UU"},"T0318DR":{"lead_name":"Carlos Cordero","lead_tid":"T0294MH"},"T0294MI":{"lead_name":"Carlos Cordero","lead_tid":"T0294MH"},"T0311PU":{"lead_name":"Paul Brown","lead_tid":"T0294M6"},"T0306V9":{"lead_name":"Carlos Cordero","lead_tid":"T0294MH"},"T0300H0":{"lead_name":"Carlos Cordero","lead_tid":"T0294MH"},"T0294M8":{"lead_name":"Jamal Douglas","lead_tid":"T0327UU"},"T0304XT":{"lead_name":"Carlos Cordero","lead_tid":"T0294MH"}};
+
+
+  // ── TEAM LEAD CONTACT DATA ────────────────────────────────────────────────
+  const TL_CONTACTS = {"Carlos Pena":{"ms_phone":"571-300-3665","ms_email":"capena@marketsource.com","st_phone":"(248) 736-5863","st_email":"carlos.pena3@external.stellantis.com"},"Carlos Cordero":{"ms_phone":"305-297-0153","ms_email":"ccorderocast@marketsource.com","st_phone":"(248) 622-1039","st_email":"carlos.cordero1@external.stellantis.com"},"Jamal Douglas":{"ms_phone":"734-883-5623","ms_email":"jamadouglas@marketsource.com","st_phone":"(656) 241-3409","st_email":"jamal.douglas@external.stellantis.com"},"Jesus Velez":{"ms_phone":"347-416-2888","ms_email":"jevelez@marketsource.com","st_phone":"(248) 421-0974","st_email":"jesus.velez1@external.stellantis.com"},"Jonathan Castillo":{"ms_phone":"862-754-0677","ms_email":"jonacastillo@marketsource.com","st_phone":"(248) 933-9076","st_email":"jonathan.juniorcastillo@external.stellantis.com"},"Paul Brown":{"ms_phone":"815-603-2166","ms_email":"paubrown@marketsource.com","st_phone":"(248) 622-9102","st_email":"paul.brown1@external.stellantis.com"},"Kevin Sack":{"ms_phone":"678-910-6272","ms_email":"ksack@marketsource.com","st_phone":"(947) 226-0479","st_email":"kevin.sack@external.stellantis.com"}};
 
 
 </script>
