@@ -150,6 +150,21 @@
   .contacts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 18px; }
   .contact-item { font-size: 12px; line-height: 1.45; color: rgba(255,255,255,0.94); }
   .contact-item strong { display: block; color: #fff; }
+  .resource-link {
+    font-size: 12px;
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+    grid-column: 1 / -1;
+    text-decoration: underline;
+    text-decoration-color: rgba(110,193,255,0.45);
+    text-underline-offset: 2px;
+    transition: color 0.15s, text-decoration-color 0.15s;
+  }
+  .resource-link:hover {
+    color: #6ec1ff;
+    text-decoration-color: #6ec1ff;
+  }
 
   @media (max-width: 1100px) {
     .main { grid-template-columns: 1fr; }
@@ -1366,9 +1381,9 @@
     <section class="panel side-card">
       <div class="side-title">Resources</div>
       <div class="contacts-grid">
-        <div class="contact-item" style="cursor:pointer;grid-column:1/-1;color:#fff;font-weight:600;" onclick="openICSModal()">Outlook Calendar Sync</div>
-        <div class="contact-item" style="cursor:pointer;grid-column:1/-1;color:#fff;font-weight:600;" onclick="openLemonLawModal()">Lemon Law by State</div>
-        <div class="contact-item" style="cursor:pointer;grid-column:1/-1;color:#fff;font-weight:600;" onclick="openCDAModal()">CDA Overview &amp; Setup Guide</div>
+        <div class="resource-link" onclick="openICSModal()">Outlook Calendar Sync</div>
+        <div class="resource-link" onclick="openLemonLawModal()">Lemon Law by State</div>
+        <div class="resource-link" onclick="openCDAModal()">CDA Overview &amp; Setup Guide</div>
       </div>
     </section>
   </div>
