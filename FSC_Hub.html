@@ -139,7 +139,7 @@
   .no-meetings { font-size: 12px; color: #8898b8; font-style: italic; }
 
   .side-card { padding: 16px 18px; }
-  .side-title { font-size: 14px; font-weight: 700; margin-bottom: 14px; }
+  .side-title { font-size: 14px; font-weight: 700; margin-bottom: 14px; text-align: center; }
   .side-list { display: flex; flex-direction: column; gap: 12px; }
   .side-item { display: flex; gap: 9px; align-items: flex-start; font-size: 13px; line-height: 1.45; color: rgba(255,255,255,0.92); }
   .dot { width: 10px; height: 10px; border-radius: 50%; background: #2f83ff; margin-top: 4px; flex: 0 0 auto; }
@@ -1284,6 +1284,75 @@
         <div class="contact-item"><strong>Parts Inquiry</strong>800.846.6727</div>
       </div>
     </section>
+
+    <section class="panel side-card">
+      <div class="side-title">Resources</div>
+      <div class="contacts-grid">
+        <div class="contact-item" style="cursor:pointer;grid-column:1/-1;color:#fff;font-weight:600;" onclick="openICSModal()">&#128197; Outlook Calendar Sync</div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<!-- ICS SUBMISSION MODAL -->
+<div id="ics-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9000;align-items:flex-start;justify-content:center;overflow-y:auto;padding:40px 16px;" onclick="closeICSModal(event)">
+  <div id="ics-modal" onclick="event.stopPropagation()" style="background:#fff;border-radius:10px;width:min(760px,95vw);box-shadow:0 8px 48px rgba(0,0,0,0.28);margin:auto;overflow:hidden;">
+    <div style="background-color:#1F4E79;padding:28px 40px;text-align:center;position:relative;">
+      <h1 style="color:#fff;font-family:Arial,sans-serif;font-size:1.4rem;font-weight:bold;margin:0;">&#128197; Job Aid — How to Share Your Outlook Calendar ICS Link</h1>
+      <button onclick="closeICSModal()" style="position:absolute;top:16px;right:20px;background:rgba(255,255,255,0.15);border:none;color:#fff;border-radius:6px;padding:6px 12px;cursor:pointer;font-size:14px;">&#10005;</button>
+    </div>
+    <div style="border-left:6px solid #2E75B6;background-color:#E8F4FD;padding:18px 24px;margin:24px 40px 0 40px;">
+      <p style="font-family:Arial,sans-serif;font-size:0.95rem;color:#1A1A1A;margin:0 0 10px 0;"><strong style="color:#1F4E79;">Purpose:</strong> Follow the steps to publish your Outlook calendar, copy your ICS link, and submit it through the <strong>FSC Calendar ICS Link Submission</strong> form below.</p>
+      <p style="font-family:Arial,sans-serif;font-size:0.95rem;color:#1A1A1A;margin:0;"><strong style="color:#C55A11;">&#9888; Important:</strong> You will need to complete these steps <strong>twice</strong> — once for your <strong style="color:#1F4E79;">MarketSource</strong> email and once for your <strong style="color:#1F4E79;">Stellantis</strong> email.</p>
+    </div>
+    <div style="margin:24px 40px 10px 40px;">
+      <span style="font-family:Arial,sans-serif;font-size:0.8rem;font-weight:bold;color:#2E75B6;letter-spacing:1px;text-transform:uppercase;">STEPS</span>
+      <span style="font-family:Arial,sans-serif;font-size:0.8rem;color:#888;font-style:italic;margin-left:12px;">Follow these steps in your browser — do not use the desktop Outlook app</span>
+    </div>
+    <div style="margin:0 40px;">
+      <table style="width:100%;border-collapse:collapse;font-family:Arial,sans-serif;">
+        <tbody>
+          <tr><td style="background-color:#2E75B6;color:#fff;font-size:1.1rem;font-weight:bold;text-align:center;width:52px;padding:14px 10px;border:1px solid #ccc;">1</td><td style="background-color:#fff;padding:14px 18px;border:1px solid #ccc;"><strong style="font-size:0.95rem;color:#1A1A1A;">Open Outlook Web App (OWA)</strong><br><span style="font-size:0.85rem;color:#444;font-style:italic;">Go to: outlook.office.com in your browser and sign in with your work credentials.</span></td></tr>
+          <tr><td style="background-color:#2E75B6;color:#fff;font-size:1.1rem;font-weight:bold;text-align:center;padding:14px 10px;border:1px solid #ccc;">2</td><td style="background-color:#E8F4FD;padding:14px 18px;border:1px solid #ccc;"><strong style="font-size:0.95rem;color:#1A1A1A;">Open Settings</strong><br><span style="font-size:0.85rem;color:#444;font-style:italic;">Click the gear icon &#9881; in the top-right corner of the page.</span></td></tr>
+          <tr><td style="background-color:#2E75B6;color:#fff;font-size:1.1rem;font-weight:bold;text-align:center;padding:14px 10px;border:1px solid #ccc;">3</td><td style="background-color:#fff;padding:14px 18px;border:1px solid #ccc;"><strong style="font-size:0.95rem;color:#1A1A1A;">Navigate to Calendar Settings</strong><br><span style="font-size:0.85rem;color:#444;font-style:italic;">In the Settings panel, select Calendar from the left sidebar.</span></td></tr>
+          <tr><td style="background-color:#2E75B6;color:#fff;font-size:1.1rem;font-weight:bold;text-align:center;padding:14px 10px;border:1px solid #ccc;">4</td><td style="background-color:#E8F4FD;padding:14px 18px;border:1px solid #ccc;"><strong style="font-size:0.95rem;color:#1A1A1A;">Open Shared Calendars</strong><br><span style="font-size:0.85rem;color:#444;font-style:italic;">Under the Calendar section, click Shared Calendars.</span></td></tr>
+          <tr><td style="background-color:#2E75B6;color:#fff;font-size:1.1rem;font-weight:bold;text-align:center;padding:14px 10px;border:1px solid #ccc;">5</td><td style="background-color:#fff;padding:14px 18px;border:1px solid #ccc;"><strong style="font-size:0.95rem;color:#1A1A1A;">Publish a Calendar</strong><br><span style="font-size:0.85rem;color:#444;font-style:italic;">Scroll to the "Publish a calendar" section. Use the first dropdown to select your calendar (usually your name/email).</span></td></tr>
+          <tr><td style="background-color:#2E75B6;color:#fff;font-size:1.1rem;font-weight:bold;text-align:center;padding:14px 10px;border:1px solid #ccc;">6</td><td style="background-color:#E8F4FD;padding:14px 18px;border:1px solid #ccc;"><strong style="font-size:0.95rem;color:#1A1A1A;">Set Permissions to 'Can view all details'</strong><br><span style="font-size:0.85rem;color:#444;font-style:italic;">Use the second dropdown and select "Can view all details."</span><br><span style="font-size:0.85rem;color:#C55A11;"><strong>&#9888; Note:</strong> Do NOT select "Can view when I'm busy" — this will hide event names and details.</span></td></tr>
+          <tr><td style="background-color:#2E75B6;color:#fff;font-size:1.1rem;font-weight:bold;text-align:center;padding:14px 10px;border:1px solid #ccc;">7</td><td style="background-color:#fff;padding:14px 18px;border:1px solid #ccc;"><strong style="font-size:0.95rem;color:#1A1A1A;">Click Publish</strong><br><span style="font-size:0.85rem;color:#444;font-style:italic;">Click the Publish button. Two links will appear below.</span></td></tr>
+          <tr><td style="background-color:#2E75B6;color:#fff;font-size:1.1rem;font-weight:bold;text-align:center;padding:14px 10px;border:1px solid #ccc;">8</td><td style="background-color:#E8F4FD;padding:14px 18px;border:1px solid #ccc;"><strong style="font-size:0.95rem;color:#1A1A1A;">Copy the ICS Link</strong><br><span style="font-size:0.85rem;color:#444;font-style:italic;">Copy the link labeled ICS (not the HTML link). It will look like: outlook.office.com/owa/calendar/.../.../calendar.ics</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="margin:20px 40px 0 40px;display:flex;align-items:center;flex-wrap:wrap;gap:4px;">
+      <div style="background-color:#D6E4F0;padding:8px 14px;font-family:Arial,sans-serif;font-size:0.82rem;font-weight:bold;color:#1A1A1A;border:1px solid #ccc;">&#9881; Settings</div>
+      <div style="font-size:1.1rem;color:#2E75B6;font-weight:bold;padding:0 4px;">→</div>
+      <div style="background-color:#D6E4F0;padding:8px 14px;font-family:Arial,sans-serif;font-size:0.82rem;font-weight:bold;color:#1A1A1A;border:1px solid #ccc;">Calendar</div>
+      <div style="font-size:1.1rem;color:#2E75B6;font-weight:bold;padding:0 4px;">→</div>
+      <div style="background-color:#D6E4F0;padding:8px 14px;font-family:Arial,sans-serif;font-size:0.82rem;font-weight:bold;color:#1A1A1A;border:1px solid #ccc;">Shared Calendars</div>
+      <div style="font-size:1.1rem;color:#2E75B6;font-weight:bold;padding:0 4px;">→</div>
+      <div style="background-color:#D6E4F0;padding:8px 14px;font-family:Arial,sans-serif;font-size:0.82rem;font-weight:bold;color:#1A1A1A;border:1px solid #ccc;">Publish a Calendar</div>
+      <div style="font-size:1.1rem;color:#2E75B6;font-weight:bold;padding:0 4px;">→</div>
+      <div style="background-color:#D6E4F0;padding:8px 14px;font-family:Arial,sans-serif;font-size:0.82rem;font-weight:bold;color:#1A1A1A;border:1px solid #ccc;">"Can view all details"</div>
+      <div style="font-size:1.1rem;color:#2E75B6;font-weight:bold;padding:0 4px;">→</div>
+      <div style="background-color:#2E75B6;padding:8px 14px;font-family:Arial,sans-serif;font-size:0.82rem;font-weight:bold;color:#fff;border:1px solid #2E75B6;">Copy ICS Link</div>
+    </div>
+    <div style="border-left:6px solid #70AD47;background-color:#F2F9EC;padding:18px 24px;margin:24px 40px 0 40px;">
+      <p style="font-family:Arial,sans-serif;font-size:0.95rem;color:#375623;font-weight:bold;margin:0 0 8px 0;">&#10003; After copying your ICS links:</p>
+      <p style="font-family:Arial,sans-serif;font-size:0.95rem;color:#1A1A1A;margin:0;">Paste your <strong>Stellantis ICS link</strong> and <strong>MarketSource ICS link</strong> into the form below. Your name and TID are pre-filled. Click <strong>Submit</strong>.</p>
+    </div>
+    <div style="margin:32px 40px;border-top:2px solid #2E75B6;"></div>
+    <div style="margin:0 40px 40px 40px;">
+      <h2 style="font-family:Arial,sans-serif;font-size:1.2rem;font-weight:bold;color:#1F4E79;margin-bottom:24px;text-align:center;">FSC Calendar ICS Link Submission</h2>
+      <div style="max-width:640px;margin:0 auto;">
+        <div style="margin-bottom:16px;"><label style="display:block;font-family:Arial,sans-serif;font-size:0.88rem;font-weight:bold;color:#1F4E79;margin-bottom:6px;">FSC Full Name</label><input id="ics-fsc-name" type="text" readonly style="width:100%;box-sizing:border-box;padding:10px 14px;border:1px solid #ccc;border-radius:4px;font-size:0.95rem;background:#f5f5f5;color:#333;font-family:Arial,sans-serif;"></div>
+        <div style="margin-bottom:16px;"><label style="display:block;font-family:Arial,sans-serif;font-size:0.88rem;font-weight:bold;color:#1F4E79;margin-bottom:6px;">TID</label><input id="ics-tid" type="text" readonly style="width:100%;box-sizing:border-box;padding:10px 14px;border:1px solid #ccc;border-radius:4px;font-size:0.95rem;background:#f5f5f5;color:#333;font-family:Arial,sans-serif;"></div>
+        <div style="margin-bottom:16px;"><label style="display:block;font-family:Arial,sans-serif;font-size:0.88rem;font-weight:bold;color:#1F4E79;margin-bottom:6px;">Stellantis ICS Link <span style="color:#C55A11;">*</span></label><input id="ics-stellantis" type="url" placeholder="https://outlook.office.com/owa/calendar/..." style="width:100%;box-sizing:border-box;padding:10px 14px;border:1px solid #ccc;border-radius:4px;font-size:0.9rem;font-family:Arial,sans-serif;"></div>
+        <div style="margin-bottom:24px;"><label style="display:block;font-family:Arial,sans-serif;font-size:0.88rem;font-weight:bold;color:#1F4E79;margin-bottom:6px;">MarketSource ICS Link <span style="color:#C55A11;">*</span></label><input id="ics-marketsource" type="url" placeholder="https://outlook.office.com/owa/calendar/..." style="width:100%;box-sizing:border-box;padding:10px 14px;border:1px solid #ccc;border-radius:4px;font-size:0.9rem;font-family:Arial,sans-serif;"></div>
+        <div id="ics-error" style="display:none;color:#C55A11;font-family:Arial,sans-serif;font-size:0.9rem;margin-bottom:12px;"></div>
+        <div id="ics-success" style="display:none;border-left:6px solid #70AD47;background-color:#F2F9EC;padding:14px 18px;margin-bottom:16px;font-family:Arial,sans-serif;font-size:0.9rem;color:#375623;">&#10003; Your ICS links have been submitted successfully!</div>
+        <button onclick="submitICS()" style="background-color:#1F4E79;color:#fff;border:none;padding:11px 28px;font-family:Arial,sans-serif;font-size:0.95rem;font-weight:bold;border-radius:4px;cursor:pointer;">Submit</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -2576,6 +2645,43 @@
     setTimeout(() => document.getElementById('tid-input').focus(), 200);
   }
 
+
+  // ── ICS MODAL ─────────────────────────────────────────────────────────────
+  function openICSModal() {
+    var overlay = document.getElementById('ics-overlay');
+    overlay.style.display = 'flex';
+    if (typeof currentTID !== 'undefined' && currentTID) {
+      var entry = FSC_DEALER_MAP[currentTID];
+      document.getElementById('ics-fsc-name').value = (entry && entry.fsc_name) ? entry.fsc_name : '';
+      document.getElementById('ics-tid').value = currentTID;
+    }
+    document.getElementById('ics-stellantis').value = '';
+    document.getElementById('ics-marketsource').value = '';
+    document.getElementById('ics-error').style.display = 'none';
+    document.getElementById('ics-success').style.display = 'none';
+  }
+  function closeICSModal(e) {
+    if (!e || e.target === document.getElementById('ics-overlay')) {
+      document.getElementById('ics-overlay').style.display = 'none';
+    }
+  }
+  function submitICS() {
+    var name = document.getElementById('ics-fsc-name').value.trim();
+    var tid  = document.getElementById('ics-tid').value.trim();
+    var stel = document.getElementById('ics-stellantis').value.trim();
+    var ms   = document.getElementById('ics-marketsource').value.trim();
+    var errEl = document.getElementById('ics-error');
+    errEl.style.display = 'none';
+    if (!stel || !ms) {
+      errEl.textContent = 'Both ICS links are required.';
+      errEl.style.display = 'block';
+      return;
+    }
+    window.parent.postMessage({ type: 'ics_submission', payload: { name: name, tid: tid, stellantis: stel, marketsource: ms } }, '*');
+    document.getElementById('ics-success').style.display = 'block';
+    document.getElementById('ics-stellantis').value = '';
+    document.getElementById('ics-marketsource').value = '';
+  }
 
   // ── FSC TEAM LEAD DATA ────────────────────────────────────────────────────
   const FSC_LEAD_MAP = {"T0306FJ":{"lead_name":"Carlos Pena","lead_tid":"T0300P6"},"T0090ZU":{"lead_name":"Jamal Douglas","lead_tid":"T0327UU"},"T0390ZI":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0378EZ":{"lead_name":"Paul Brown","lead_tid":"T0294M6"},"T0318DS":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T0304KR":{"lead_name":"Carlos Pena","lead_tid":"T0300P6"},"T0307EF":{"lead_name":"Paul Brown","lead_tid":"T0294M6"},"T0307EH":{"lead_name":"Carlos Pena","lead_tid":"T0300P6"},"T0311PX":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T0304XV":{"lead_name":"Paul Brown","lead_tid":"T0294M6"},"T0306FH":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T2237TR":{"lead_name":"Jamal Douglas","lead_tid":"T0327UU"},"T0300HY":{"lead_name":"Carlos Pena","lead_tid":"T0300P6"},"T0314R4":{"lead_name":"Jonathan Castillo","lead_tid":"T0300P2"},"T0300P5":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T0294M9":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T0300HV":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T0300HT":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T0471OK":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T0294M4":{"lead_name":"Carlos Pena","lead_tid":"T0300P6"},"T0317U1":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T0300HX":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0419PV":{"lead_name":"Carlos Pena","lead_tid":"T0300P6"},"T0453V3":{"lead_name":"Carlos Pena","lead_tid":"T0300P6"},"T0400IJ":{"lead_name":"Paul Brown","lead_tid":"T0294M6"},"T0304XW":{"lead_name":"Jamal Douglas","lead_tid":"T0327UU"},"T0329IF":{"lead_name":"Paul Brown","lead_tid":"T0294M6"},"T0458AK":{"lead_name":"Paul Brown","lead_tid":"T0294M6"},"T0471OO":{"lead_name":"Paul Brown","lead_tid":"T0294M6"},"T0335UJ":{"lead_name":"Carlos Pena","lead_tid":"T0300P6"},"T0306L5":{"lead_name":"Paul Brown","lead_tid":"T0294M6"},"T0440PG":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T0318DT":{"lead_name":"Jamal Douglas","lead_tid":"T0327UU"},"T0314R6":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0311PC":{"lead_name":"Carlos Cordero","lead_tid":"T0294MH"},"T0311PV":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0311PW":{"lead_name":"Jamal Douglas","lead_tid":"T0327UU"},"T0314R5":{"lead_name":"Jamal Douglas","lead_tid":"T0327UU"},"T0346ZQ":{"lead_name":"Jonathan Castillo","lead_tid":"T0300P2"},"T0317UZ":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0322OO":{"lead_name":"Paul Brown","lead_tid":"T0294M6"},"T04710N":{"lead_name":"Jonathan Castillo","lead_tid":"T0300P2"},"T0458AH":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T0294MV":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0458AG":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T0322OR":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0471OP":{"lead_name":"Paul Brown","lead_tid":"T0294M6"},"T0390ZG":{"lead_name":"Jamal Douglas","lead_tid":"T0327UU"},"T0322OQ":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0471OI":{"lead_name":"Carlos Cordero","lead_tid":"T0294MH"},"T0320I3":{"lead_name":"Jonathan Castillo","lead_tid":"T0300P2"},"T0300P3":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T0320I5":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T0453V4":{"lead_name":"Carlos Cordero","lead_tid":"T0294MH"},"T0306FK":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0471OJ":{"lead_name":"Jonathan Castillo","lead_tid":"T0300P2"},"T0351T6":{"lead_name":"Jonathan Castillo","lead_tid":"T0300P2"},"T0378EV":{"lead_name":"Jonathan Castillo","lead_tid":"T0300P2"},"T0332YY":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0311PD":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0294MO":{"lead_name":"Carlos Cordero","lead_tid":"T0294MH"},"T0419PW":{"lead_name":"Paul Brown","lead_tid":"T0294M6"},"T0294M5":{"lead_name":"Jonathan Castillo","lead_tid":"T0300P2"},"T0312AE":{"lead_name":"Carlos Cordero","lead_tid":"T0294MH"},"T0346ZR":{"lead_name":"Jonathan Castillo","lead_tid":"T0300P2"},"T0471OD":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T0317U0":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0338N1":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0304KU":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0423HH":{"lead_name":"Jamal Douglas","lead_tid":"T0327UU"},"T0304KV":{"lead_name":"Jamal Douglas","lead_tid":"T0327UU"},"T0318DR":{"lead_name":"Carlos Cordero","lead_tid":"T0294MH"},"T0294MI":{"lead_name":"Carlos Cordero","lead_tid":"T0294MH"},"T0311PU":{"lead_name":"Paul Brown","lead_tid":"T0294M6"},"T0306V9":{"lead_name":"Carlos Cordero","lead_tid":"T0294MH"},"T0300H0":{"lead_name":"Carlos Cordero","lead_tid":"T0294MH"},"T0294M8":{"lead_name":"Jamal Douglas","lead_tid":"T0327UU"},"T0304XT":{"lead_name":"Carlos Cordero","lead_tid":"T0294MH"}};
