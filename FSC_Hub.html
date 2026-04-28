@@ -358,6 +358,73 @@
     pointer-events: all;
   }
 
+  /* LL MODAL — mirrors dir-modal style */
+  .ll-overlay {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    min-height: 100%;
+    height: max(100%, 100vh);
+    background: rgba(5, 15, 45, 0.62);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 9100;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: clamp(60px, 12vh, 120px);
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-bottom: 40px;
+    box-sizing: border-box;
+  }
+  .ll-overlay.open {
+    opacity: 1;
+    pointer-events: all;
+  }
+  .ll-modal {
+    background: linear-gradient(160deg, #0d2260 0%, #122d72 55%, #091c4e 100%);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 16px;
+    box-shadow: 0 28px 70px rgba(0,0,0,0.55);
+    width: 720px;
+    max-width: 96vw;
+    max-height: 88vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transform: scale(0.95) translateY(10px);
+    transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), opacity 0.25s ease;
+    opacity: 0;
+  }
+  .ll-overlay.open .ll-modal {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+  .ll-modal-header {
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.05);
+    flex-shrink: 0;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+  .ll-modal-body {
+    overflow-y: auto;
+    flex: 1;
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .ll-modal-body::-webkit-scrollbar { width: 5px; }
+  .ll-modal-body::-webkit-scrollbar-track { background: rgba(255,255,255,0.04); border-radius: 4px; }
+  .ll-modal-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.16); border-radius: 4px; }
+
   /* FTS DRAWER */
   .fts-drawer {
     position: fixed;
@@ -1376,32 +1443,32 @@
 </div>
 
 <!-- LEMON LAW MODAL -->
-<div id="ll-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9100;align-items:flex-start;justify-content:center;overflow-y:auto;padding:40px 16px;" onclick="closeLemonLawModal(event)">
-  <div id="ll-modal" onclick="event.stopPropagation()" style="background:#fff;border-radius:10px;width:min(520px,95vw);box-shadow:0 8px 48px rgba(0,0,0,0.28);margin:auto;overflow:hidden;transition:width 0.3s ease;">
+<!-- LL OVERLAY -->
+<div class="ll-overlay" id="ll-overlay" onclick="closeLemonLawModal(event)">
+  <div class="ll-modal" id="ll-modal" onclick="event.stopPropagation()">
 
     <!-- HEADER -->
-    <div style="background:#1F4E79;padding:22px 32px;display:flex;align-items:center;justify-content:space-between;position:relative;">
+    <div class="ll-modal-header">
       <div>
-        <h1 style="color:#fff;font-family:Arial,sans-serif;font-size:1.25rem;font-weight:bold;margin:0;">&#9878; Lemon Law by State</h1>
-        <p id="ll-header-sub" style="color:rgba(255,255,255,0.75);font-family:Arial,sans-serif;font-size:0.8rem;margin:4px 0 0;">Select a state to view coverage details</p>
+        <div style="font-size:17px;font-weight:700;color:#fff;font-family:Arial,sans-serif;margin-bottom:3px;">&#9878; Lemon Law by State</div>
+        <div id="ll-header-sub" style="font-size:12px;color:rgba(255,255,255,0.5);font-family:Arial,sans-serif;line-height:1.4;">Select a state to view coverage details, repair thresholds &amp; filing deadlines.</div>
       </div>
-      <button onclick="closeLemonLawModal()" style="background:rgba(255,255,255,0.15);border:none;color:#fff;border-radius:6px;padding:6px 12px;cursor:pointer;font-size:14px;">&#10005;</button>
+      <button class="fts-close" onclick="closeLemonLawModal()" style="flex-shrink:0;margin-left:12px;">&#10005;</button>
     </div>
 
-    <!-- BODY: two panes side by side, right pane hidden until state selected -->
-    <div style="display:flex;min-height:460px;">
+    <!-- BODY -->
+    <div class="ll-modal-body" id="ll-drawer-body">
 
-      <!-- LEFT: STATE LIST -->
-      <div id="ll-state-list-pane" style="width:100%;min-width:200px;background:#1a2b5e;padding:14px 10px;overflow-y:auto;max-height:72vh;transition:width 0.3s ease,min-width 0.3s ease;">
-        <input id="ll-search" type="text" placeholder="&#128269; Search states..." oninput="llFilterStates(this.value)"
-          style="width:100%;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:6px;color:#fff;font-size:12px;padding:7px 10px;margin-bottom:8px;outline:none;font-family:Arial,sans-serif;box-sizing:border-box;">
-        <div id="ll-state-buttons"></div>
+      <!-- SEARCH + STATE LIST -->
+      <div id="ll-state-list-section">
+        <div class="fts-section-label" style="margin-bottom:8px;">Select State</div>
+        <input id="ll-search" type="text" placeholder="Search states..." oninput="llFilterStates(this.value)"
+          class="fts-input" style="margin-bottom:10px;">
+        <div id="ll-state-buttons" style="max-height:370px;overflow-y:auto;padding-right:4px;"></div>
       </div>
 
-      <!-- RIGHT: STATE DETAIL (hidden until selected) -->
-      <div id="ll-detail-pane" style="display:none;flex:1;overflow-y:auto;padding:20px 22px;max-height:72vh;background:#eef3fc;">
-        <div id="ll-detail-content"></div>
-      </div>
+      <!-- STATE DETAIL injected here on click -->
+      <div id="ll-detail-content"></div>
 
     </div>
   </div>
@@ -2756,21 +2823,16 @@
   ];
 
   function openLemonLawModal() {
-    var overlay = document.getElementById('ll-overlay');
-    overlay.style.display = 'flex';
-    llRenderStateButtons('');
-    // Reset to narrow single-pane
-    var modal = document.getElementById('ll-modal');
-    modal.style.width = 'min(520px,95vw)';
-    document.getElementById('ll-detail-pane').style.display = 'none';
-    document.getElementById('ll-state-list-pane').style.width = '100%';
-    document.getElementById('ll-header-sub').textContent = 'Select a state to view coverage details';
+    document.getElementById('ll-overlay').classList.add('open');
+    document.getElementById('ll-detail-content').innerHTML = '';
     document.getElementById('ll-search').value = '';
+    document.getElementById('ll-header-sub').textContent = 'Select a state to view coverage details, repair thresholds & filing deadlines.';
+    llRenderStateButtons('');
   }
 
   function closeLemonLawModal(e) {
     if (!e || e.target === document.getElementById('ll-overlay')) {
-      document.getElementById('ll-overlay').style.display = 'none';
+      document.getElementById('ll-overlay').classList.remove('open');
     }
   }
 
@@ -2781,26 +2843,21 @@
     LL_STATES.forEach(function(s) {
       if (s.name.toLowerCase().indexOf(f) === -1 && s.abbr.toLowerCase().indexOf(f) === -1) return;
       var btn = document.createElement('button');
-      btn.style.cssText = 'display:block;width:100%;text-align:left;background:rgba(255,255,255,0.06);border:1px solid transparent;border-radius:6px;color:rgba(255,255,255,0.85);font-size:12.5px;padding:8px 10px;cursor:pointer;margin-bottom:2px;font-family:Arial,sans-serif;transition:all 0.15s;';
+      btn.style.cssText = 'display:block;width:100%;text-align:left;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:6px;color:rgba(255,255,255,0.85);font-size:12.5px;padding:9px 12px;cursor:pointer;margin-bottom:3px;font-family:Arial,sans-serif;transition:all 0.15s;';
       btn.dataset.abbr = s.abbr;
-      btn.innerHTML = '<span style="display:inline-block;width:30px;font-size:10px;font-weight:700;color:#6ec1ff;opacity:0.85;">' + s.abbr + '</span>' + s.name;
-      btn.onmouseover = function() { this.style.background = 'rgba(27,86,197,0.4)'; this.style.color = '#fff'; };
-      btn.onmouseout = function() {
-        if (this.dataset.active !== '1') { this.style.background = 'rgba(255,255,255,0.06)'; this.style.color = 'rgba(255,255,255,0.85)'; }
-      };
+      btn.innerHTML = '<span style="display:inline-block;width:34px;font-size:10px;font-weight:700;color:#6ec1ff;">' + s.abbr + '</span>' + s.name;
+      btn.onmouseover = function() { if (this.dataset.active !== '1') { this.style.background = 'rgba(27,86,197,0.4)'; this.style.borderColor = 'rgba(110,193,255,0.3)'; } };
+      btn.onmouseout = function() { if (this.dataset.active !== '1') { this.style.background = 'rgba(255,255,255,0.06)'; this.style.borderColor = 'rgba(255,255,255,0.1)'; } };
       btn.onclick = function() {
-        // Deactivate all
         container.querySelectorAll('button').forEach(function(b) {
           b.style.background = 'rgba(255,255,255,0.06)';
-          b.style.borderColor = 'transparent';
+          b.style.borderColor = 'rgba(255,255,255,0.1)';
           b.style.fontWeight = 'normal';
           b.dataset.active = '0';
         });
-        // Activate this
         this.style.background = '#1b56c5';
         this.style.borderColor = '#6ec1ff';
         this.style.fontWeight = '600';
-        this.style.color = '#fff';
         this.dataset.active = '1';
         llShowState(s);
       };
@@ -2813,38 +2870,31 @@
   }
 
   function llShowState(state) {
-    // Widen modal and show detail pane
-    var modal = document.getElementById('ll-modal');
-    modal.style.width = 'min(900px,97vw)';
-    var listPane = document.getElementById('ll-state-list-pane');
-    listPane.style.width = '220px';
-    listPane.style.minWidth = '220px';
-    var detailPane = document.getElementById('ll-detail-pane');
-    detailPane.style.display = 'block';
-    document.getElementById('ll-header-sub').textContent = state.name + ' — ' + state.abbr;
+    document.getElementById('ll-header-sub').textContent = state.name + ' selected — scroll down for details.';
 
     var finalYes = state.finalRepair.charAt(0) === 'Y';
     var noticeNo = state.notice === 'No';
 
-    var html = '';
+    var html = '<div style="border-top:1px solid rgba(255,255,255,0.12);margin-top:6px;padding-top:18px;">';
 
     // State title bar
-    html += '<div style="background:linear-gradient(135deg,#1a2b5e 0%,#1b3a8a 100%);border-radius:8px;padding:14px 18px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;">'
-      + '<div><div style="color:#fff;font-size:16px;font-weight:700;font-family:Arial,sans-serif;">' + state.name + '</div>'
-      + '<div style="color:rgba(255,255,255,0.65);font-size:10px;margin-top:3px;font-family:Arial,sans-serif;">' + state.statute + '</div></div>'
-      + '<div style="width:48px;height:48px;border-radius:8px;background:rgba(110,193,255,0.18);border:2px solid rgba(110,193,255,0.4);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#6ec1ff;font-family:Arial,sans-serif;">' + state.abbr + '</div>'
+    html += '<div style="background:rgba(255,255,255,0.08);border:1px solid rgba(110,193,255,0.25);border-radius:8px;padding:14px 16px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;">'
+      + '<div><div style="color:#fff;font-size:15px;font-weight:700;font-family:Arial,sans-serif;">' + state.name + '</div>'
+      + '<div style="color:rgba(255,255,255,0.5);font-size:10px;margin-top:3px;font-family:Arial,sans-serif;line-height:1.4;">' + state.statute + '</div></div>'
+      + '<div style="width:44px;height:44px;border-radius:8px;background:rgba(110,193,255,0.15);border:1.5px solid rgba(110,193,255,0.4);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#6ec1ff;font-family:Arial,sans-serif;flex-shrink:0;">' + state.abbr + '</div>'
       + '</div>';
 
     // Quick stat cards
-    html += '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;">';
-    html += llStatCard('&#9200; Coverage Period', state.period.length > 45 ? state.period.substring(0,45)+'...' : state.period, '#1b56c5');
-    html += llStatCard('&#128295; Final Repair Req.', state.finalRepair, finalYes ? '#1a8a4a' : '#b91c1c');
-    html += llStatCard('&#128236; Notice Required', noticeNo ? 'No' : 'Yes — written required', noticeNo ? '#1b56c5' : '#b45309');
+    html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">';
+    html += llStatCard('&#9200; Coverage Period', state.period.length > 50 ? state.period.substring(0,50)+'...' : state.period, '#6ec1ff');
+    html += llStatCard('&#128295; Final Repair', state.finalRepair, finalYes ? '#5ee87a' : '#ff6b6b');
+    html += llStatCard('&#128236; Notice Required', noticeNo ? 'No' : 'Yes — written required', noticeNo ? '#6ec1ff' : '#fbbf24');
+    html += llStatCard('&#9878; Filing Deadline', state.filing.length > 50 ? state.filing.substring(0,50)+'...' : state.filing, '#6ec1ff');
     html += '</div>';
 
     if (state.notes) {
-      html += '<div style="background:#fffbeb;border:1px solid #fde68a;border-radius:7px;padding:10px 14px;font-size:11.5px;color:#92400e;margin-bottom:12px;font-family:Arial,sans-serif;line-height:1.5;">'
-        + '&#9888; <strong>Note:</strong> ' + state.notes + '</div>';
+      html += '<div style="background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.3);border-radius:7px;padding:10px 14px;font-size:11.5px;color:rgba(255,255,255,0.85);margin-bottom:10px;font-family:Arial,sans-serif;line-height:1.5;">'
+        + '&#9888; <strong style="color:#fbbf24;">Note:</strong> ' + state.notes + '</div>';
     }
 
     // Detail sections
@@ -2856,22 +2906,30 @@
     html += llSection('&#127959;', 'Do Repairs Have to Happen Within LL Period?', state.repairsInPeriod);
     html += llSection('&#9878;', 'Time Period for Filing Claims', state.filing);
 
+    html += '</div>';
+
     document.getElementById('ll-detail-content').innerHTML = html;
-    detailPane.scrollTop = 0;
+
+    // Scroll the drawer body down to the detail
+    setTimeout(function() {
+      var body = document.getElementById('ll-drawer-body');
+      var detail = document.getElementById('ll-detail-content');
+      body.scrollTo({ top: detail.offsetTop - 20, behavior: 'smooth' });
+    }, 50);
   }
 
   function llStatCard(label, value, accentColor) {
-    return '<div style="background:#fff;border:1px solid rgba(27,86,197,0.18);border-radius:8px;padding:10px 12px;border-left:3px solid ' + accentColor + ';">'
-      + '<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#4d6291;margin-bottom:4px;font-family:Arial,sans-serif;">' + label + '</div>'
-      + '<div style="font-size:12px;font-weight:700;color:#1a2b5e;line-height:1.3;font-family:Arial,sans-serif;">' + value + '</div>'
+    return '<div style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:10px 12px;border-left:3px solid ' + accentColor + ';">'
+      + '<div style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:rgba(255,255,255,0.5);margin-bottom:4px;font-family:Arial,sans-serif;">' + label + '</div>'
+      + '<div style="font-size:11.5px;font-weight:600;color:#fff;line-height:1.35;font-family:Arial,sans-serif;">' + value + '</div>'
       + '</div>';
   }
 
   function llSection(icon, title, body) {
-    return '<div style="background:#fff;border:1px solid rgba(27,86,197,0.18);border-radius:8px;overflow:hidden;margin-bottom:8px;">'
-      + '<div style="background:#f0f5ff;padding:8px 14px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#1a2b5e;border-bottom:1px solid rgba(27,86,197,0.18);font-family:Arial,sans-serif;">'
+    return '<div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:8px;overflow:hidden;margin-bottom:8px;">'
+      + '<div style="background:rgba(255,255,255,0.06);padding:7px 12px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#6ec1ff;border-bottom:1px solid rgba(255,255,255,0.08);font-family:Arial,sans-serif;">'
       + icon + ' &nbsp;' + title + '</div>'
-      + '<div style="padding:10px 14px;font-size:12.5px;color:#1a2b5e;line-height:1.65;font-family:Arial,sans-serif;">' + body + '</div>'
+      + '<div style="padding:10px 12px;font-size:12px;color:rgba(255,255,255,0.85);line-height:1.65;font-family:Arial,sans-serif;">' + body + '</div>'
       + '</div>';
   }
   function submitICS() {
