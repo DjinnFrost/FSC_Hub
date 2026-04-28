@@ -360,10 +360,10 @@
 
   /* LL MODAL — mirrors dir-modal style */
   .ll-overlay {
-    position: absolute;
+    position: fixed;
     top: 0; left: 0;
     width: 100%;
-    height: 100vh;
+    height: 100%;
     background: rgba(5, 15, 45, 0.62);
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
@@ -375,6 +375,7 @@
     align-items: center;
     justify-content: center;
     padding: 16px;
+    padding-top: 60px;
     box-sizing: border-box;
   }
   .ll-overlay.open {
@@ -420,6 +421,23 @@
   .ll-modal-body::-webkit-scrollbar { width: 5px; }
   .ll-modal-body::-webkit-scrollbar-track { background: rgba(255,255,255,0.04); border-radius: 4px; }
   .ll-modal-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.16); border-radius: 4px; }
+
+  /* CDA TABS */
+  .cda-tab {
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: rgba(255,255,255,0.5);
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 10px 16px;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .cda-tab:hover { color: rgba(255,255,255,0.85); }
+  .cda-tab.active { color: #6ec1ff; border-bottom-color: #6ec1ff; }
 
   /* FTS DRAWER */
   .fts-drawer {
@@ -633,11 +651,11 @@
   }
 
   .dir-overlay {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    height: 100vh;
+    height: 100%;
     background: rgba(5, 15, 45, 0.62);
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
@@ -649,6 +667,7 @@
     align-items: center;
     justify-content: center;
     padding: 16px;
+    padding-top: 60px;
     box-sizing: border-box;
   }
   .dir-overlay.open {
@@ -1347,8 +1366,9 @@
     <section class="panel side-card">
       <div class="side-title">Resources</div>
       <div class="contacts-grid">
-        <div class="contact-item" style="cursor:pointer;grid-column:1/-1;color:#fff;font-weight:600;" onclick="openICSModal()">&#128197; Outlook Calendar Sync</div>
-        <div class="contact-item" style="cursor:pointer;grid-column:1/-1;color:#fff;font-weight:600;" onclick="openLemonLawModal()">&#9878; Lemon Law by State</div>
+        <div class="contact-item" style="cursor:pointer;grid-column:1/-1;color:#fff;font-weight:600;" onclick="openICSModal()">Outlook Calendar Sync</div>
+        <div class="contact-item" style="cursor:pointer;grid-column:1/-1;color:#fff;font-weight:600;" onclick="openLemonLawModal()">Lemon Law by State</div>
+        <div class="contact-item" style="cursor:pointer;grid-column:1/-1;color:#fff;font-weight:600;" onclick="openCDAModal()">CDA Overview &amp; Setup Guide</div>
       </div>
     </section>
   </div>
@@ -1358,7 +1378,7 @@
 <div id="ics-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9000;align-items:flex-start;justify-content:center;overflow-y:auto;padding:40px 16px;" onclick="closeICSModal(event)">
   <div id="ics-modal" onclick="event.stopPropagation()" style="background:#fff;border-radius:10px;width:min(760px,95vw);box-shadow:0 8px 48px rgba(0,0,0,0.28);margin:auto;overflow:hidden;">
     <div style="background-color:#1F4E79;padding:28px 40px;text-align:center;position:relative;">
-      <h1 style="color:#fff;font-family:Arial,sans-serif;font-size:1.4rem;font-weight:bold;margin:0;">&#128197; Job Aid — How to Share Your Outlook Calendar ICS Link</h1>
+      <h1 style="color:#fff;font-family:Arial,sans-serif;font-size:1.4rem;font-weight:bold;margin:0;">Job Aid — How to Share Your Outlook Calendar ICS Link</h1>
       <button onclick="closeICSModal()" style="position:absolute;top:16px;right:20px;background:rgba(255,255,255,0.15);border:none;color:#fff;border-radius:6px;padding:6px 12px;cursor:pointer;font-size:14px;">&#10005;</button>
     </div>
     <div style="border-left:6px solid #2E75B6;background-color:#E8F4FD;padding:18px 24px;margin:24px 40px 0 40px;">
@@ -1442,7 +1462,7 @@
     <!-- HEADER -->
     <div class="ll-modal-header">
       <div>
-        <div style="font-size:17px;font-weight:700;color:#fff;font-family:Arial,sans-serif;margin-bottom:3px;">&#9878; Lemon Law by State</div>
+        <div style="font-size:17px;font-weight:700;color:#fff;font-family:Arial,sans-serif;margin-bottom:3px;">Lemon Law by State</div>
         <div id="ll-header-sub" style="font-size:12px;color:rgba(255,255,255,0.5);font-family:Arial,sans-serif;line-height:1.4;">Select a state to view coverage details, repair thresholds &amp; filing deadlines.</div>
       </div>
       <button class="fts-close" onclick="closeLemonLawModal()" style="flex-shrink:0;margin-left:12px;">&#10005;</button>
@@ -1463,6 +1483,28 @@
       <div id="ll-detail-content"></div>
 
     </div>
+  </div>
+</div>
+
+<!-- CDA OVERLAY -->
+<div class="ll-overlay" id="cda-overlay" onclick="closeCDAModal(event)">
+  <div class="ll-modal" id="cda-modal" onclick="event.stopPropagation()">
+    <div class="ll-modal-header">
+      <div>
+        <div style="font-size:17px;font-weight:700;color:#fff;font-family:Arial,sans-serif;margin-bottom:3px;">CDA Overview &amp; Setup Guide</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.5);font-family:Arial,sans-serif;line-height:1.4;">Chrysler Diagnostic Application — setup, sync, MDP device &amp; reporting</div>
+      </div>
+      <button class="fts-close" onclick="closeCDAModal()" style="flex-shrink:0;margin-left:12px;">&#10005;</button>
+    </div>
+    <div id="cda-tabs" style="display:flex;gap:0;border-bottom:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.04);flex-shrink:0;">
+      <button class="cda-tab active" onclick="cdaShowTab('overview')" id="cda-tab-overview">Overview</button>
+      <button class="cda-tab" onclick="cdaShowTab('install')" id="cda-tab-install">Installation</button>
+      <button class="cda-tab" onclick="cdaShowTab('sync')" id="cda-tab-sync">Sync &amp; Data</button>
+      <button class="cda-tab" onclick="cdaShowTab('mdp')" id="cda-tab-mdp">MDP Device</button>
+      <button class="cda-tab" onclick="cdaShowTab('diag')" id="cda-tab-diag">Diagnostics</button>
+      <button class="cda-tab" onclick="cdaShowTab('issues')" id="cda-tab-issues">Reporting Issues</button>
+    </div>
+    <div class="ll-modal-body" id="cda-body"></div>
   </div>
 </div>
 
@@ -2553,10 +2595,7 @@
   let _dirCurrentDealers = [];
 
   function openDirModal(taName, fscTid) {
-    var scrollY = document.documentElement.scrollTop || document.body.scrollTop;
     var overlay = document.getElementById('dir-overlay');
-    overlay.style.top = scrollY + 'px';
-    overlay.style.height = window.innerHeight + 'px';
     const data = FSC_DEALER_MAP[fscTid];
     if (!data) return;
 
@@ -2819,10 +2858,7 @@
   ];
 
   function openLemonLawModal() {
-    var scrollY = document.documentElement.scrollTop || document.body.scrollTop;
     var overlay = document.getElementById('ll-overlay');
-    overlay.style.top = scrollY + 'px';
-    overlay.style.height = window.innerHeight + 'px';
     overlay.classList.add('open');
     document.getElementById('ll-detail-content').innerHTML = '';
     document.getElementById('ll-search').value = '';
@@ -2932,8 +2968,94 @@
       + '<div style="padding:10px 12px;font-size:12px;color:rgba(255,255,255,0.85);line-height:1.65;font-family:Arial,sans-serif;">' + body + '</div>'
       + '</div>';
   }
+
+  // ── CDA MODAL ─────────────────────────────────────────────────────────────
+  var CDA_TABS = {
+    overview: function() {
+      return cdaSection('PC &amp; Network Requirements', ['Installation requires <strong>full administrative rights</strong>.','Supports <strong>Windows 8 and Windows 10</strong> operating systems.','CDA application must display as <strong>"Online"</strong> in the lower-right corner.','Required network access: <code>*.dcctools.com</code>, <code>*.fca-tools.com</code>, <code>*.dealerconnect.chrysler.com</code> and all sub-domains as trusted sites.'])
+      + cdaSection('Network Proxy Settings', ['Defaults to <strong>Auto-Detect</strong>.','To manually configure: Login Page &rarr; <strong>Proxy Settings</strong> tab &rarr; select "Use Proxy Server" &rarr; enter your network info &rarr; click <strong>Test/Save</strong>.','Consult your network IT to confirm correct proxy information.','Proxy authentication can also be entered manually if required.'])
+      + cdaSection('Supported Hardware', ['CDA supports: <strong>MPII, MDP, and Vector</strong> hardware.','<strong>ValueCAN is NOT supported.</strong>'])
+      + cdaSection('Credentials &amp; Licensing', ['CDA usernames, passwords, and licenses are <strong>unique to each user</strong> — cannot be transferred or shared.','Each user must be approved by a <strong>Stellantis Senior Manager</strong>.','Multiple users can log into the same CDA instance, but <strong>each must have their own license</strong>.','Using CDA on multiple PCs requires <strong>additional licenses</strong> (may need additional senior manager approval).','<strong>Stellantis Login:</strong> TID + LDAP password. Supports SGW/ADA ECU unlock.','<strong>CONTRADO Login:</strong> Username + password. SGW/ADA unlock is <strong>disabled</strong>.','CDA login passwords do <strong>NOT</strong> save or auto-populate.'])
+      + cdaSection('Authenticated Diagnostic Access (ADA Unlock)', ['Requires a <strong>Stellantis TID</strong> — work with your Stellantis Sponsor/Release Engineer to obtain one.','Register at: <strong>https://my.authen2cate.com/a2c/contrado</strong> &rarr; "CDA Authenticated Diagnostics Request".','CONTRADO users: the <strong>Uplift feature</strong> provides access without re-login, but you must still have approved ADA access.','The CDA Engineering Support team will notify you by email when access is granted.']);
+    },
+    install: function() {
+      return cdaInfoBox('CDA must display as <strong>Online</strong> before proceeding with license request. Ensure VPN is active for Uselect.')
+      + cdaSection('Stellantis Users — Installation', ['1. Connect to VPN, then go to <strong>Uselect Portal</strong>: <code>http://eusportal.servers.chrysler.com/</code>','2. Search for <strong>"CDA"</strong> &rarr; select <strong>CDA Production</strong> &rarr; follow prompts.','<em>Alternatively:</em> email <strong>engineeringsupport@dcctools.com</strong> for manual download instructions.'])
+      + cdaSection('CONTRADO Users — Installation', ['1. Go to <strong>https://my.authen2cate.com/a2c/contrado</strong>','2. After login navigate to <strong>CDA 6 &rarr; Download Latest Version</strong>.','3. You will need <strong>full administrative rights</strong> to install.','4. Save the installation file before running it.','5. Follow the <strong>InstallShield wizard</strong> prompts to complete installation.'])
+      + cdaSection('License Request (First Login)', ['1. Launch CDA — confirm it shows <strong>Online</strong>.','2. Log in using the option matching your credentials (Stellantis: TID + LDAP / CONTRADO: username + password).','3. A <strong>"CDA License Not Found"</strong> popup will appear.','4. Copy the <strong>userID and PC Key lines</strong> using Copy to Clipboard. <strong style="color:#ff9f43;">DO NOT send a screenshot.</strong>','5. Paste into an email to: <strong>engineeringsupport@dcctools.com</strong>','6. You will receive a reply once your license has been generated.']);
+    },
+    sync: function() {
+      return cdaInfoBox('Initial sync can take <strong>30 minutes to 2+ hours</strong> depending on network speed. Use a reliable, wired connection.')
+      + cdaSection('Initial CDA Sync', ['1. Use your most reliable network connection.','2. Launch CDA — confirm it displays as <strong>Online</strong>.','3. Log in with Stellantis Login (TID + LDAP password).','4. The <strong>Chrysler Diagnostic Application Sync Monitor</strong> will display and begin downloading data.','5. This process downloads approved data — approx. <strong>90 min to 2 hours</strong>.','6. Once complete, you will be directed to the <strong>Device Connection page</strong>.'])
+      + cdaSection('Checking Sync Status', ['Navigate to <strong>File &rarr; Sync Status</strong>.','Review the <strong>Last Sync Date</strong> to confirm you have the latest databases.'])
+      + cdaSection('Force Manual Sync (if out of date)', ['1. Select <strong>Reset</strong> &rarr; check the confirmation box &rarr; select <strong>Reset</strong> again.','2. CDA will automatically close.','3. Relaunch CDA — confirm it shows <strong>Online</strong>.','4. Log in with Stellantis Login (TID + LDAP).','5. Sync Monitor may display briefly depending on how out of date your data was.','6. Once sync completes, you will be taken to the <strong>Device Connection screen</strong>.']);
+    },
+    mdp: function() {
+      return cdaInfoBox('<strong>Do NOT use the VCI Setup Utility</strong> for MDP devices — that is only for wiTECH 2. Do NOT connect to VPN during device setup steps.')
+      + cdaSection('MDP Device Setup', ['1. Select and <strong>specifically label</strong> the device you will use for CDA.','2. Launch and log into CDA using Stellantis Login. <strong>Disconnect from VPN first.</strong>','3. You will be taken to the <strong>Device Connection page</strong>.','4. Connect your MDP device to your computer via <strong>USB cable</strong>.','5. Under "Add IPv4 Address for Discovery" enter: <strong>172.22.22.22</strong> &rarr; click <strong>Add Device</strong>.','6. Your device will appear in the list below.'])
+      + cdaSection('Updating Device OS &amp; VrFlash', ['<strong>Do NOT disconnect the device during OS update for any reason.</strong>','1. Select your device to highlight it.','2. Select <strong>Vehicle Mode</strong>. If prompted for manual year/body: select <strong>2018 M156</strong> if no vehicle connected.','3. A notification will display that a software update is available.','<strong>Two updates required:</strong> MDP OS 1.0.6 &nbsp;|&nbsp; MDP VrFlash 16.198','4. To update: <strong>Devices &rarr; Software Updates &rarr; current version &rarr; follow instructions</strong>.','OS update: <strong>5–10 minutes</strong>. VrFlash update: <strong>2–3 minutes</strong>.']);
+    },
+    diag: function() {
+      return cdaInfoBox('CDA requires a <strong>reliable internet connection</strong> and must display as <strong>Online</strong> for all basic features.')
+      + cdaSection('Diagnostic Session Basics', ['CDA is an ECU development tool — a shell reliant on synced data and vehicle ECU responses.','Use the <strong>icons on the left-hand side</strong> of the application to access features.'])
+      + cdaStepCards([{icon:'&#128203;',title:'Vehicle Scan Report (VSR)',body:'Full scan of all vehicle ECUs. Run from the left-side icon bar.'},{icon:'&#9888;',title:'DTCs — Vehicle-Wide',body:'View all Diagnostic Trouble Codes across all ECUs.'},{icon:'&#128268;',title:'ECU View',body:'Select a specific ECU for Read/Write data, DTCs, On/Off-board routines, PID Editor, and more.'}])
+      + cdaSection('Keep Sync Current', ['Always confirm sync is up to date before a diagnostic session.','Navigate to <strong>File &rarr; Sync Status</strong> and review the <strong>Last Sync Date</strong>.','If out of date, use the manual force sync steps in the <strong>Sync &amp; Data</strong> tab.']);
+    },
+    issues: function() {
+      return cdaSection('Engineering Support Help Desk (ESHD)', ['Email: <strong>engineeringsupport@dcctools.com</strong>','Phone: <strong>810-287-3806</strong>','Contact for: CDA login issues, access questions, basic usage questions.','<strong>Have ready:</strong> complete error message, CDA version, and your TID user information.'])
+      + cdaSection('Before You Report — Gather This First', ['1. Capture a <strong>full screenshot</strong> of the CDA window showing the error.','2. With CDA open, navigate to <strong>Help &rarr; Support &rarr; ZipUpCDALogs</strong>.','3. Select or create a folder for the logs &rarr; click <strong>Select</strong>. File is always named <strong>clientLogs.zip</strong>.'])
+      + cdaSection('Submitting a JIRA Issue', ['1. Navigate to <strong>https://gsd-stla-jira.atlassian.net</strong>.','2. Log in with your <strong>TID and LDAP credentials</strong>.','3. Create a <strong>CDA Issue</strong> and attach the CDA logs zip and your screenshot.','ESHD may direct you to submit a JIRA issue after initial contact.']);
+    }
+  };
+
+  function cdaSection(title, items) {
+    var listHtml = items.map(function(i) {
+      return '<div style="padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-family:Arial,sans-serif;font-size:12px;color:rgba(255,255,255,0.85);line-height:1.6;">' + i + '</div>';
+    }).join('');
+    return '<div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:8px;overflow:hidden;margin-bottom:10px;">'
+      + '<div style="background:rgba(255,255,255,0.06);padding:8px 14px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#6ec1ff;border-bottom:1px solid rgba(255,255,255,0.08);font-family:Arial,sans-serif;">' + title + '</div>'
+      + '<div style="padding:4px 14px 8px;">' + listHtml + '</div>'
+      + '</div>';
+  }
+
+  function cdaInfoBox(msg) {
+    return '<div style="background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.3);border-radius:7px;padding:10px 14px;font-size:12px;color:rgba(255,255,255,0.85);margin-bottom:12px;font-family:Arial,sans-serif;line-height:1.5;">&#9888; ' + msg + '</div>';
+  }
+
+  function cdaStepCards(cards) {
+    var html = '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px;">';
+    cards.forEach(function(c) {
+      html += '<div style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:12px;border-top:3px solid #6ec1ff;">'
+        + '<div style="font-size:18px;margin-bottom:6px;">' + c.icon + '</div>'
+        + '<div style="font-size:11.5px;font-weight:700;color:#fff;margin-bottom:4px;font-family:Arial,sans-serif;">' + c.title + '</div>'
+        + '<div style="font-size:11px;color:rgba(255,255,255,0.65);line-height:1.5;font-family:Arial,sans-serif;">' + c.body + '</div>'
+        + '</div>';
+    });
+    return html + '</div>';
+  }
+
+  function openCDAModal() {
+    var overlay = document.getElementById('cda-overlay');
+    overlay.classList.add('open');
+    cdaShowTab('overview');
+  }
+
+  function closeCDAModal(e) {
+    if (!e || e.target === document.getElementById('cda-overlay')) {
+      document.getElementById('cda-overlay').classList.remove('open');
+    }
+  }
+
+  function cdaShowTab(tab) {
+    document.querySelectorAll('.cda-tab').forEach(function(b) { b.classList.remove('active'); });
+    var btn = document.getElementById('cda-tab-' + tab);
+    if (btn) btn.classList.add('active');
+    var body = document.getElementById('cda-body');
+    body.scrollTop = 0;
+    body.innerHTML = CDA_TABS[tab] ? CDA_TABS[tab]() : '';
+  }
+
   function submitICS() {
-    var name = document.getElementById('ics-fsc-name').value.trim();
     var tid  = document.getElementById('ics-tid').value.trim();
     var stel = document.getElementById('ics-stellantis').value.trim();
     var ms   = document.getElementById('ics-marketsource').value.trim();
