@@ -1,6 +1,3 @@
-
-Copy
-
 from pathlib import Path
 import base64
 import json
