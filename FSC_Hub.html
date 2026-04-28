@@ -1384,6 +1384,7 @@
         <div class="resource-link" onclick="openICSModal()">Outlook Calendar Sync</div>
         <div class="resource-link" onclick="openLemonLawModal()">Lemon Law by State</div>
         <div class="resource-link" onclick="openCDAModal()">CDA Overview &amp; Setup Guide</div>
+        <div class="resource-link" onclick="openPersonalInfoModal()">Personal Information Updates</div>
       </div>
     </section>
   </div>
@@ -1520,6 +1521,110 @@
       <button class="cda-tab" onclick="cdaShowTab('issues')" id="cda-tab-issues">Reporting Issues</button>
     </div>
     <div class="ll-modal-body" id="cda-body"></div>
+  </div>
+</div>
+
+<!-- PERSONAL INFO OVERLAY -->
+<div class="ll-overlay" id="pi-overlay" onclick="closePersonalInfoModal(event)">
+  <div class="ll-modal" id="pi-modal" onclick="event.stopPropagation()">
+
+    <div class="ll-modal-header">
+      <div>
+        <div style="font-size:17px;font-weight:700;color:#fff;font-family:Arial,sans-serif;margin-bottom:3px;">Personal Information Updates</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.5);font-family:Arial,sans-serif;line-height:1.4;">Keep your payroll, contact, and tax records current with MarketSource.</div>
+      </div>
+      <button class="fts-close" onclick="closePersonalInfoModal()" style="flex-shrink:0;margin-left:12px;">&#10005;</button>
+    </div>
+
+    <div class="ll-modal-body" style="gap:12px;">
+
+      <!-- INTRO -->
+      <div style="background:rgba(110,193,255,0.08);border:1px solid rgba(110,193,255,0.2);border-radius:8px;padding:12px 16px;font-size:12.5px;color:rgba(255,255,255,0.85);font-family:Arial,sans-serif;line-height:1.65;">
+        When life changes happen, it's easy to forget to update personal information in systems we don't interact with every day. If any of the items below have changed since you were hired and you have not updated them with MarketSource, please take a few minutes to do so now. Keeping your information current is important for accurate payroll, communication, and tax records.
+      </div>
+
+      <!-- INSIDER SECTION -->
+      <div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:8px;overflow:hidden;">
+        <div style="background:rgba(94,232,122,0.12);border-bottom:1px solid rgba(94,232,122,0.2);padding:10px 16px;display:flex;align-items:center;gap:8px;">
+          <span style="font-size:15px;">&#9989;</span>
+          <span style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#5ee87a;font-family:Arial,sans-serif;">Personal Information Changes (INSIDER)</span>
+        </div>
+        <div style="padding:14px 16px;">
+          <div style="font-size:12px;color:rgba(255,255,255,0.7);font-family:Arial,sans-serif;margin-bottom:10px;">Use the INSIDER site to submit updates for:</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:14px;">
+            <div style="background:rgba(255,255,255,0.06);border-radius:6px;padding:8px 12px;font-size:12px;color:#fff;font-family:Arial,sans-serif;">&#128100; Name</div>
+            <div style="background:rgba(255,255,255,0.06);border-radius:6px;padding:8px 12px;font-size:12px;color:#fff;font-family:Arial,sans-serif;">&#127968; Home Address</div>
+            <div style="background:rgba(255,255,255,0.06);border-radius:6px;padding:8px 12px;font-size:12px;color:#fff;font-family:Arial,sans-serif;">&#128222; Phone Number</div>
+            <div style="background:rgba(255,255,255,0.06);border-radius:6px;padding:8px 12px;font-size:12px;color:#fff;font-family:Arial,sans-serif;">&#128231; Personal Email</div>
+            <div style="background:rgba(255,255,255,0.06);border-radius:6px;padding:8px 12px;font-size:12px;color:#fff;font-family:Arial,sans-serif;grid-column:1/-1;">&#128195; Tax Withholding</div>
+          </div>
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#6ec1ff;font-family:Arial,sans-serif;margin-bottom:8px;">How to Submit</div>
+          <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;">
+            <div style="display:flex;gap:10px;align-items:flex-start;font-size:12px;color:rgba(255,255,255,0.85);font-family:Arial,sans-serif;line-height:1.5;">
+              <span style="background:#1b56c5;color:#fff;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px;">1</span>
+              Navigate to the Personal Information Changes page on INSIDER.
+            </div>
+            <div style="display:flex;gap:10px;align-items:flex-start;font-size:12px;color:rgba(255,255,255,0.85);font-family:Arial,sans-serif;line-height:1.5;">
+              <span style="background:#1b56c5;color:#fff;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px;">2</span>
+              <span>Click the link below to open MarketSource INSIDER:</span>
+            </div>
+          </div>
+          <a href="https://insider.allegisgroup.com/" target="_blank" style="display:inline-block;background:#1b56c5;color:#fff;text-decoration:none;padding:9px 20px;border-radius:6px;font-size:12.5px;font-weight:700;font-family:Arial,sans-serif;transition:background 0.15s;" onmouseover="this.style.background='#1a4eb0'" onmouseout="this.style.background='#1b56c5'">Open MarketSource INSIDER &#8599;</a>
+          <div style="display:flex;flex-direction:column;gap:6px;margin-top:12px;">
+            <div style="display:flex;gap:10px;align-items:flex-start;font-size:12px;color:rgba(255,255,255,0.85);font-family:Arial,sans-serif;line-height:1.5;">
+              <span style="background:#1b56c5;color:#fff;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px;">3</span>
+              Select the appropriate change type.
+            </div>
+            <div style="display:flex;gap:10px;align-items:flex-start;font-size:12px;color:rgba(255,255,255,0.85);font-family:Arial,sans-serif;line-height:1.5;">
+              <span style="background:#1b56c5;color:#fff;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px;">4</span>
+              Complete and submit the form as instructed.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DIRECT DEPOSIT SECTION -->
+      <div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:8px;overflow:hidden;">
+        <div style="background:rgba(251,191,36,0.12);border-bottom:1px solid rgba(251,191,36,0.2);padding:10px 16px;display:flex;align-items:center;gap:8px;">
+          <span style="font-size:15px;">&#128176;</span>
+          <span style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#fbbf24;font-family:Arial,sans-serif;">Direct Deposit Changes</span>
+        </div>
+        <div style="padding:14px 16px;">
+          <div style="background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.25);border-radius:6px;padding:8px 12px;font-size:12px;color:rgba(255,255,255,0.85);font-family:Arial,sans-serif;margin-bottom:12px;">
+            &#9888; Direct deposit updates are <strong>not</strong> completed through INSIDER.
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;">
+            <div style="display:flex;gap:10px;align-items:flex-start;font-size:12px;color:rgba(255,255,255,0.85);font-family:Arial,sans-serif;line-height:1.5;">
+              <span style="background:#fbbf24;color:#1a2b5e;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px;">1</span>
+              Complete the <strong>Direct Deposit Authorization Form</strong>.
+            </div>
+            <div style="display:flex;gap:10px;align-items:flex-start;font-size:12px;color:rgba(255,255,255,0.85);font-family:Arial,sans-serif;line-height:1.5;">
+              <span style="background:#fbbf24;color:#1a2b5e;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px;">2</span>
+              <span>Email the completed form to: <a href="mailto:employeeservices@marketsource.com" style="color:#6ec1ff;text-decoration:underline;text-decoration-color:rgba(110,193,255,0.5);">employeeservices@marketsource.com</a></span>
+            </div>
+            <div style="display:flex;gap:10px;align-items:flex-start;font-size:12px;color:rgba(255,255,255,0.85);font-family:Arial,sans-serif;line-height:1.5;">
+              <span style="background:#fbbf24;color:#1a2b5e;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px;">3</span>
+              Allow up to <strong>two pay periods</strong> for the change to take effect.
+            </div>
+          </div>
+          <div style="background:rgba(255,255,255,0.06);border-left:3px solid #fbbf24;border-radius:0 6px 6px 0;padding:10px 14px;font-size:12px;color:rgba(255,255,255,0.85);font-family:Arial,sans-serif;line-height:1.6;">
+            <strong style="color:#fbbf24;">Important:</strong> If you are selecting a savings account, you must include a <strong>bank verification letter</strong> confirming your routing number and account number.
+          </div>
+        </div>
+      </div>
+
+      <!-- QUESTIONS SECTION -->
+      <div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:8px;overflow:hidden;">
+        <div style="background:rgba(110,193,255,0.08);border-bottom:1px solid rgba(110,193,255,0.15);padding:10px 16px;display:flex;align-items:center;gap:8px;">
+          <span style="font-size:15px;">&#10067;</span>
+          <span style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#6ec1ff;font-family:Arial,sans-serif;">Questions or Assistance</span>
+        </div>
+        <div style="padding:12px 16px;font-size:12.5px;color:rgba(255,255,255,0.85);font-family:Arial,sans-serif;line-height:1.65;">
+          If you have questions or need help determining which update to submit, contact <strong>Employee Services</strong> directly at <a href="mailto:employeeservices@marketsource.com" style="color:#6ec1ff;text-decoration:underline;text-decoration-color:rgba(110,193,255,0.5);">employeeservices@marketsource.com</a>.
+        </div>
+      </div>
+
+    </div>
   </div>
 </div>
 
@@ -3068,6 +3173,18 @@
     var body = document.getElementById('cda-body');
     body.scrollTop = 0;
     body.innerHTML = CDA_TABS[tab] ? CDA_TABS[tab]() : '';
+  }
+
+  // ── PERSONAL INFO MODAL ───────────────────────────────────────────────────
+  function openPersonalInfoModal() {
+    var overlay = document.getElementById('pi-overlay');
+    overlay.classList.add('open');
+  }
+
+  function closePersonalInfoModal(e) {
+    if (!e || e.target === document.getElementById('pi-overlay')) {
+      document.getElementById('pi-overlay').classList.remove('open');
+    }
   }
 
   function submitICS() {
