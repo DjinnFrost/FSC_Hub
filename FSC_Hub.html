@@ -360,10 +360,10 @@
 
   /* LL MODAL — mirrors dir-modal style */
   .ll-overlay {
-    position: fixed;
+    position: absolute;
     top: 0; left: 0;
     width: 100%;
-    height: 100%;
+    height: 100vh;
     background: rgba(5, 15, 45, 0.62);
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
@@ -633,11 +633,11 @@
   }
 
   .dir-overlay {
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
-    height: 100%;
+    height: 100vh;
     background: rgba(5, 15, 45, 0.62);
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
@@ -2553,6 +2553,10 @@
   let _dirCurrentDealers = [];
 
   function openDirModal(taName, fscTid) {
+    var scrollY = document.documentElement.scrollTop || document.body.scrollTop;
+    var overlay = document.getElementById('dir-overlay');
+    overlay.style.top = scrollY + 'px';
+    overlay.style.height = window.innerHeight + 'px';
     const data = FSC_DEALER_MAP[fscTid];
     if (!data) return;
 
@@ -2815,7 +2819,11 @@
   ];
 
   function openLemonLawModal() {
-    document.getElementById('ll-overlay').classList.add('open');
+    var scrollY = document.documentElement.scrollTop || document.body.scrollTop;
+    var overlay = document.getElementById('ll-overlay');
+    overlay.style.top = scrollY + 'px';
+    overlay.style.height = window.innerHeight + 'px';
+    overlay.classList.add('open');
     document.getElementById('ll-detail-content').innerHTML = '';
     document.getElementById('ll-search').value = '';
     document.getElementById('ll-header-sub').textContent = 'Select a state to view coverage details, repair thresholds & filing deadlines.';
