@@ -633,12 +633,11 @@
   }
 
   .dir-overlay {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    min-height: 100%;
-    height: max(100%, 100vh);
+    height: 100%;
     background: rgba(5, 15, 45, 0.62);
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
@@ -647,12 +646,9 @@
     pointer-events: none;
     transition: opacity 0.25s ease;
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: center;
-    padding-top: clamp(60px, 12vh, 120px);
-    padding-left: 16px;
-    padding-right: 16px;
-    padding-bottom: 40px;
+    padding: 16px;
     box-sizing: border-box;
   }
   .dir-overlay.open {
