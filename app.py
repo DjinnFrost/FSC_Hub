@@ -1,3 +1,6 @@
+
+Copy
+
 from pathlib import Path
 import base64
 import json
@@ -44,7 +47,8 @@ def append_ics_submission(name, tid, stellantis, marketsource):
         f'"{stellantis}"',
         f'"{marketsource}"',
     ]) + "\n"
-    updated = current.rstrip("\n") + "\n" + new_row
+    lines = [l for l in current.splitlines() if l.strip()]
+    updated = "\n".join(lines) + "\n" + new_row
     encoded = base64.b64encode(updated.encode("utf-8")).decode("utf-8")
     payload = {
         "message": f"ICS submission: {name} ({tid})",
@@ -107,4 +111,3 @@ window.addEventListener('message', function(e) {
 html = html.replace("</body>", BRIDGE_JS + "\n</body>")
  
 components.html(html, height=2200, scrolling=True)
- 
