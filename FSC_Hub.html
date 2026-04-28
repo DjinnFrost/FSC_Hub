@@ -1289,6 +1289,7 @@
       <div class="side-title">Resources</div>
       <div class="contacts-grid">
         <div class="contact-item" style="cursor:pointer;grid-column:1/-1;color:#fff;font-weight:600;" onclick="openICSModal()">&#128197; Outlook Calendar Sync</div>
+        <div class="contact-item" style="cursor:pointer;grid-column:1/-1;color:#fff;font-weight:600;" onclick="openLemonLawModal()">&#9878; Lemon Law by State</div>
       </div>
     </section>
   </div>
@@ -1371,6 +1372,38 @@
     </div>
 
     <div class="dir-modal-body" id="dir-modal-body"><div id="dir-dealers-body"></div></div>
+  </div>
+</div>
+
+<!-- LEMON LAW MODAL -->
+<div id="ll-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9100;align-items:flex-start;justify-content:center;overflow-y:auto;padding:40px 16px;" onclick="closeLemonLawModal(event)">
+  <div id="ll-modal" onclick="event.stopPropagation()" style="background:#fff;border-radius:10px;width:min(520px,95vw);box-shadow:0 8px 48px rgba(0,0,0,0.28);margin:auto;overflow:hidden;transition:width 0.3s ease;">
+
+    <!-- HEADER -->
+    <div style="background:#1F4E79;padding:22px 32px;display:flex;align-items:center;justify-content:space-between;position:relative;">
+      <div>
+        <h1 style="color:#fff;font-family:Arial,sans-serif;font-size:1.25rem;font-weight:bold;margin:0;">&#9878; Lemon Law by State</h1>
+        <p id="ll-header-sub" style="color:rgba(255,255,255,0.75);font-family:Arial,sans-serif;font-size:0.8rem;margin:4px 0 0;">Select a state to view coverage details</p>
+      </div>
+      <button onclick="closeLemonLawModal()" style="background:rgba(255,255,255,0.15);border:none;color:#fff;border-radius:6px;padding:6px 12px;cursor:pointer;font-size:14px;">&#10005;</button>
+    </div>
+
+    <!-- BODY: two panes side by side, right pane hidden until state selected -->
+    <div style="display:flex;min-height:460px;">
+
+      <!-- LEFT: STATE LIST -->
+      <div id="ll-state-list-pane" style="width:100%;min-width:200px;background:#1a2b5e;padding:14px 10px;overflow-y:auto;max-height:72vh;transition:width 0.3s ease,min-width 0.3s ease;">
+        <input id="ll-search" type="text" placeholder="&#128269; Search states..." oninput="llFilterStates(this.value)"
+          style="width:100%;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:6px;color:#fff;font-size:12px;padding:7px 10px;margin-bottom:8px;outline:none;font-family:Arial,sans-serif;box-sizing:border-box;">
+        <div id="ll-state-buttons"></div>
+      </div>
+
+      <!-- RIGHT: STATE DETAIL (hidden until selected) -->
+      <div id="ll-detail-pane" style="display:none;flex:1;overflow-y:auto;padding:20px 22px;max-height:72vh;background:#eef3fc;">
+        <div id="ll-detail-content"></div>
+      </div>
+
+    </div>
   </div>
 </div>
 
@@ -2664,6 +2697,182 @@
     if (!e || e.target === document.getElementById('ics-overlay')) {
       document.getElementById('ics-overlay').style.display = 'none';
     }
+  }
+
+  // ── LEMON LAW MODAL ───────────────────────────────────────────────────────
+  var LL_STATES = [
+    { name:"Federal (Mag-Moss)", abbr:"FED", statute:"15 U.S.C. §§ 2301-2312 — Magnuson-Moss Warranty Act", covered:"Any new vehicle normally used for personal, family, or household purposes. Does NOT cover used vehicles.", repairs:"No presumption — simply a 'reasonable number of repair attempts.'", period:"State law coverage period for implied warranties (1 year up to term of manufacturer warranty).", notice:"No formal notice requirement.", finalRepair:"No", repairsInPeriod:"Repairs must be covered by warranty.", filing:"Differs by state.", notes:"Damages = diminution in value (purchase price minus value with defects). Plaintiff attorneys may recover fees. Common in states with restrictive coverage periods." },
+    { name:"Alabama", abbr:"AL", statute:"Code of Alabama §§ 8-20A-1 through 8-20A-6", covered:"New vehicles, GVW ≤ 10,000 lbs. Excludes motorhomes and leased vehicles.", repairs:"3+ repair attempts + final repair attempt; OR 30 calendar days OOS (including final attempt).", period:"1 year / 12,000 miles. Extended to 2 years / 24,000 miles if notice provided within 1 year and nonconformity continues.", notice:"Written certified mail (return receipt). Manufacturer has 7 days to notify of repair facility.", finalRepair:"Yes — within 14 days of vehicle delivery to repair facility.", repairsInPeriod:"If notice given within LL period and nonconformity continues, manufacturer obligated to repair up to 24 months / 24,000 miles.", filing:"3 years from original delivery." },
+    { name:"Alaska", abbr:"AK", statute:"Alaska Stats. § 45.45.300 et seq.", covered:"New vehicles purchased and registered in Alaska. Excludes used/leased.", repairs:"3 repair attempts and continues; OR 30 business days OOS.", period:"Warranty period OR 1 year, whichever comes first.", notice:"Written certified mail before 60 days after coverage period expires.", finalRepair:"Yes — within 30 days after certified notice.", repairsInPeriod:"Nonconformity must be repaired within coverage period. Outside-period attempts included if not repaired.", filing:"4 years from date alleged defect is discovered (UCC)." },
+    { name:"Arizona", abbr:"AZ", statute:"Ariz. Rev. Stat. §§ 44-1261 through 44-1267", covered:"New OR used vehicles, GVW < 10,000 lbs. Excludes leases.", repairs:"4 repair attempts and continues; OR 30 calendar days OOS.", period:"2 years / 24,000 miles.", notice:"Written notification to manufacturer.", finalRepair:"Yes (time not specified).", repairsInPeriod:"Nonconformity must be repaired within coverage period. Outside attempts included if not repaired.", filing:"6 months following expiration of coverage period." },
+    { name:"Arkansas", abbr:"AR", statute:"Arkansas Code §§ 4-90-401 through 4-90-417", covered:"New and used vehicles licensed, purchased, or leased in Arkansas. Excludes living facilities of motorhomes; excludes vehicles > 14,000 lbs GVW.", repairs:"3 attempts + final repair for same nonconformity; OR 1 attempt for death/serious injury risk + final; OR 30+ calendar days OOS; OR 5+ attempts for nonconformities that together substantially impair use/value.", period:"2 years / 24,000 miles.", notice:"Written certified/registered mail. Manufacturer has 10 days to notify of repair facility.", finalRepair:"Yes — unless manufacturer fails to notify within 10 days.", repairsInPeriod:"Nonconformity must be repaired within coverage period. Outside attempts included if not repaired.", filing:"2 years from date buyer first reports nonconformity." },
+    { name:"California", abbr:"CA", statute:"Song-Beverly Act, Cal. Civil Code §§ 1790-1795.7; Tanner Act § 1793.22", covered:"Vehicles purchased or leased in CA, GVW < 10,000 lbs. Includes CPOV if sold with new warranty. Includes commercial vehicles unless business has 5+ registered vehicles. Includes Armed Forces members stationed in CA.", repairs:"Song-Beverly: 'reasonable opportunity to repair' if > 1 repair attempt or 30 days OOS during any warranty period. Tanner Act (within 18 months/18,000 miles): 2+ attempts for death/serious injury defect; OR 4+ attempts for same nonconformity; OR 30 calendar days OOS.", period:"Action within 1 year after express warranty expires, no later than 6 years after original delivery.", notice:"Required ONLY to seek Civil Penalty (effective 4/1/2025). NOT required for repurchase/replacement without Civil Penalty.", finalRepair:"No", repairsInPeriod:"Nonconformity must be repaired within coverage period. Outside attempts included if not repaired.", filing:"4 years from date vehicle qualified for repurchase." },
+    { name:"Colorado", abbr:"CO", statute:"Colorado Rev. Stat. §§ 42-10-101 through 42-10-107", covered:"New or used vehicles carrying ≤ 10 persons, sold within state. Excludes leases and motorhomes.", repairs:"3 repair attempts and continues; OR 2 attempts for safety issue; OR 24 business days OOS.", period:"24 months / 24,000 miles.", notice:"To manufacturer via certified mail.", finalRepair:"Yes — for presumption to apply.", repairsInPeriod:"Nonconformity must be repaired within coverage period. Outside attempts included if not repaired.", filing:"30 months following original delivery." },
+    { name:"Connecticut", abbr:"CT", statute:"General Statutes of CT §§ 42-179 through 42-186", covered:"New, used, or leased vehicles sold/leased in state, capacity ≤ 10 passengers.", repairs:"4+ repairs but nonconformity continues; OR 30+ cumulative calendar days OOS; OR 2+ attempts for death/serious injury risk and continues.", period:"2 years / 24,000 miles (general); 1 year for serious safety hazard.", notice:"Written notice for presumption to apply.", finalRepair:"No", repairsInPeriod:"Nonconformity must be repaired within coverage period. Outside attempts included if not repaired.", filing:"3 years from discovery of alleged defect." },
+    { name:"Delaware", abbr:"DE", statute:"Delaware Code Ann., Title 6, §§ 5001 through 5009", covered:"New, used, or leased in Delaware; registered in Delaware.", repairs:"4 repair attempts and continues; OR 30 calendar days OOS.", period:"12 months.", notice:"Written notification.", finalRepair:"Yes (time period not specified).", repairsInPeriod:"Nonconformity must be repaired within coverage period. Outside attempts included if not repaired.", filing:"4 years from date of discovery of defect." },
+    { name:"District of Columbia", abbr:"DC", statute:"D.C. Code Ann. § 50-501 et seq.", covered:"New, used, or leased vehicles sold or registered in D.C. Excludes motorhomes and RVs.", repairs:"4+ repairs for non-safety nonconformity; OR 1+ repair for safety-related nonconformity; OR 30 cumulative days OOS.", period:"2 years / 18,000 miles.", notice:"Yes — if dealer receives notice, must forward to manufacturer via certified mail within 7 days.", finalRepair:"None specified.", repairsInPeriod:"Nonconformity must be repaired within coverage period. Outside attempts included if not repaired.", filing:"4 years from original delivery." },
+    { name:"Florida", abbr:"FL", statute:"Florida Statutes §§ 681.10 through 681.118", covered:"New vehicles purchased or leased in state, GVW < 10,000 lbs.", repairs:"3+ repairs for same nonconformity and continues; OR 30+ cumulative days OOS.", period:"24 months.", notice:"Written to manufacturer after 3 attempts or 15 days OOS. Manufacturer has 10 days to notify of repair facility.", finalRepair:"Yes — manufacturer has 10 days to repair after vehicle delivery.", repairsInPeriod:"Nonconformity must be repaired within coverage period. Outside attempts included if not repaired.", filing:"60 days after LL period (arbitration); OR 1 year after LL period or final Board action (court)." },
+    { name:"Georgia", abbr:"GA", statute:"Georgia Code Section 10-1-780 et seq.", covered:"New vehicles leased, purchased, or registered in Georgia, GVW < 12,000 lbs. Excludes used. Excludes purchasers of > 10 new vehicles/year for business.", repairs:"1 repair for serious safety defect and not corrected; OR 3 repairs for same nonconformity and not corrected; OR 30 cumulative days OOS.", period:"2 years / 24,000 miles.", notice:"Overnight or certified mail with return receipt to manufacturer.", finalRepair:"Yes — 28 calendar days from manufacturer receipt of mailed notice.", repairsInPeriod:"If coverage period expires during repair, period extended until repair attempt completed.", filing:"60 days from conclusion of informal dispute resolution; OR 1 year after coverage period — whichever is later." },
+    { name:"Hawaii", abbr:"HI", statute:"Hawaii Rev. Stat. §§ 481I-1 through 481I-4", covered:"New, used, or leased, GVW < 10,000 lbs.", repairs:"1 attempt for death/serious injury risk and continues; OR 3 repair attempts and continues; OR 30 business days OOS.", period:"2 years / 24,000 miles.", notice:"Written report of nonconformity required before presumption applies.", finalRepair:"Yes/No — 'reasonable opportunity to repair'; prior attempts may satisfy this.", repairsInPeriod:"Nonconformity must be repaired within coverage period. Outside attempts included if not repaired.", filing:"Within 1 year following expiration of coverage period." },
+    { name:"Idaho", abbr:"ID", statute:"Idaho Code section 48-901 et seq.", covered:"Sold or leased, new or used in Idaho; licensed in Idaho; GVW < 12,000 lbs.", repairs:"4 repair attempts and continues; OR 30+ business days OOS; OR complete failure of braking/steering and 1 opportunity to repair and continues.", period:"2 years / 24,000 miles.", notice:"Written notice to manufacturer or dealer.", finalRepair:"Yes (no timeframe specified).", repairsInPeriod:"Manufacturer must repair notwithstanding expiration. Presumption extended if consumer first reported during warranty term and repair attempts occur within 3 years of original delivery.", filing:"3 years from original delivery OR 3 months after arbitration. Mandatory non-binding arbitration required before lawsuit." },
+    { name:"Illinois", abbr:"IL", statute:"815 Ill. Comp. Stat. Sec. 380/1-8", covered:"New or leased vehicles carrying < 10 people; vehicles < 8,000 lbs GVW; or designed for > 10 people. Excludes used vehicles.", repairs:"4 repair attempts and continues; OR 30+ cumulative calendar days OOS.", period:"1 year / 12,000 miles.", notice:"Prior direct written notice of alleged defect to manufacturer for presumptions to apply.", finalRepair:"Yes.", repairsInPeriod:"Yes — must be within period.", filing:"18 months from original delivery." },
+    { name:"Indiana", abbr:"IN", statute:"Indiana Code Sec. 24-5-13", covered:"New, used, or leased; registered to buyer in Indiana; GVW < 10,000 lbs.", repairs:"4 repair attempts and continues; OR 30 business days OOS (excluding Sundays and legal holidays).", period:"18 months / 18,000 miles.", notice:"Written notice to manufacturer.", finalRepair:"No", repairsInPeriod:"At least 1 repair attempt during LL period. Repairs can be made after expiration.", filing:"2 years following consumer's first report of nonconformity to manufacturer." },
+    { name:"Iowa", abbr:"IA", statute:"Iowa Code §§ 322G.1 through 322G.15", covered:"Purchased new, used, or leased in Iowa; or in another state if consumer is Iowa resident when asserting rights.", repairs:"3 repairs; OR 1 repair for death/serious injury risk; OR 30 calendar days OOS — plus a final repair attempt for each.", period:"2 years / 24,000 miles.", notice:"Certified/registered mail or overnight service to manufacturer.", finalRepair:"Yes — manufacturer must notify consumer within 10 days and repair within 10 days after vehicle delivery.", repairsInPeriod:"If reported during coverage period, manufacturer must correct even if repairs made after expiration.", filing:"1 year after the coverage period." },
+    { name:"Kansas", abbr:"KS", statute:"Kansas Stat. Ann. §§ 50-645, 50-646, and 50-659", covered:"New vehicles sold or leased in state, GVW < 12,000 lbs. Excludes used vehicles.", repairs:"4+ repair attempts; OR 30 calendar days OOS; OR 10 attempts for different defects.", period:"12 months.", notice:"'Actual notice' to manufacturer (not required to be written).", finalRepair:"No", repairsInPeriod:"Repairs required even after expiration if notice given during coverage period.", filing:"4 years from date alleged defect is discovered." },
+    { name:"Kentucky", abbr:"KY", statute:"Kentucky Rev. Stat. §§ 367.840 through 367.846", covered:"New vehicles purchased, registered, licensed, or leased new in Kentucky by KY resident. Excludes used vehicles.", repairs:"4 repair attempts and continues; OR 30 calendar days OOS.", period:"1 year / 12,000 miles.", notice:"Written notice to manufacturer after reasonable number of attempts within coverage period.", finalRepair:"No", repairsInPeriod:"Yes — must be within period.", filing:"2 years following original delivery." },
+    { name:"Louisiana", abbr:"LA", statute:"Louisiana Rev. Stat. Title 51, §§ 1941 through 1948", covered:"New, used, or leased passenger and commercial vehicles sold/leased in state. Excludes vehicles ≥ 10,000 lbs GVW (except motorhomes) and commercial-purpose-only vehicles.", repairs:"4+ attempts OR OOS for 45 days.", period:"12 months.", notice:"No notice requirement.", finalRepair:"No", repairsInPeriod:"Repairs required even after expiration if notice given during coverage period.", filing:"3 years following purchase OR 1 year following end of warranty — whichever is longer." },
+    { name:"Maine", abbr:"ME", statute:"10 Maine Rev. Stat. Ann. §§ 1161 through 1169", covered:"Vehicles sold or leased, new or used in Maine. Excludes commercial vehicles ≥ 8,500 lbs GVW.", repairs:"3+ repair attempts and continues; OR 1+ attempt for braking/steering failure; OR 15+ cumulative business days OOS.", period:"3 years / 18,000 miles.", notice:"Written notice to manufacturer or dealer before presumption applies.", finalRepair:"Yes — manufacturer must cure within 7 business days of receiving written notice.", repairsInPeriod:"Repairs required even after expiration if notice given during coverage period.", filing:"Earlier of: 3 years from original delivery, or term of express warranties." },
+    { name:"Maryland", abbr:"MD", statute:"Annotated Code of Maryland, Commercial Law §§ 14-1501 through 14-1504", covered:"New, used, or leased passenger vehicles; trucks ≤ 3/4 ton rated capacity. Excludes fleet purchases/leases of 5+.", repairs:"4+ repairs and continues; OR 30+ cumulative days OOS; OR braking/steering failure repaired at least once and still noncompliant.", period:"2 years / 18,000 miles (purchased); 15 months / 15,000 miles (leased).", notice:"Written certified mail with return receipt during coverage period.", finalRepair:"Yes — manufacturer must correct within 30 days of receipt of written notice.", repairsInPeriod:"Yes. Final repair attempt may be completed after expiration.", filing:"3 years from original delivery (purchased); 1 year (leased)." },
+    { name:"Massachusetts", abbr:"MA", statute:"Massachusetts Gen. Laws Chapter 90, Section 7N½", covered:"New, used, or leased vehicles. Excludes vehicles used primarily for business.", repairs:"3+ repairs for same nonconformity and continues/recurred; OR 15+ cumulative business days OOS.", period:"1 year / 15,000 miles.", notice:"No notice requirement.", finalRepair:"Yes — not to exceed 7 business days from when manufacturer knows presumption threshold met.", repairsInPeriod:"Yes. Final repair attempt may commence after coverage period.", filing:"18 months from original delivery." },
+    { name:"Michigan", abbr:"MI", statute:"Michigan Compiled Laws §§ 257.1401 through 257.1410", covered:"New or used passenger vehicles purchased or leased in state by resident. Includes pickups, SUVs, vans. Includes businesses; excludes businesses buying 10+ vehicles/year.", repairs:"Repairs: 4 attempts for same concern, first within 1 year/36,000 miles, next 3 within 2 years of first. OOS: 30 days within 1 year/36,000 miles.", period:"First complaint within 1 year of delivery. Next 3 within 2 years of first complaint.", notice:"Written notice (return receipt) after 3rd repair attempt or 25+ days OOS.", finalRepair:"Yes — 5 business days to complete after vehicle delivery.", repairsInPeriod:"Repairs required even after warranty expiration if continuation of original repair attempt.", filing:"4 years from discovery of defect." },
+    { name:"Minnesota", abbr:"MN", statute:"Minn. Stat. Ann § 325F.665", covered:"New or used vehicles sold or leased in MN, carrying ≤ 15 persons. Includes ambulances. Excludes commercial use ≥ 60% of time.", repairs:"4+ repairs and continues; OR 30+ cumulative business days OOS; OR braking/steering complete failure, 1+ repair, and continues.", period:"2 years.", notice:"Prior written notification to manufacturer required (dealer must forward by certified mail).", finalRepair:"Yes.", repairsInPeriod:"No — consumer may still recover if nonconformity first reported during warranty term and reasonable repair attempts occur within 3 years of original delivery.", filing:"3 years from original delivery. 6 months after final decision of mandatory informal dispute resolution." },
+    { name:"Mississippi", abbr:"MS", statute:"Mississippi Code Ann. §§ 63-17-151 through 63-17-161", covered:"New or used; sold in Mississippi.", repairs:"3 repair attempts and continues; OR 15 working days OOS.", period:"12 months.", notice:"Written notification to manufacturer.", finalRepair:"Yes — manufacturer must notify of repair facility immediately and has 10 working days to repair.", repairsInPeriod:"LL period may be extended if problem reported but not repaired by expiration.", filing:"1 year following warranty term; OR 18 months following original delivery; OR 90 days after informal dispute settlement." },
+    { name:"Missouri", abbr:"MO", statute:"Missouri Rev. Stat. Section 407.560 et seq.", covered:"New purchased vehicles. Excludes used vehicles and leases unless lease-purchase.", repairs:"4 repair attempts and continues; OR 30 working days OOS.", period:"12 months.", notice:"Written notice to manufacturer.", finalRepair:"Yes — manufacturer must repair within 10 calendar days after delivery to repair facility.", repairsInPeriod:"Coverage period may be extended if nonconformity reported but not repaired by expiration.", filing:"18 months from original delivery; OR 90 days following final action of informal dispute settlement." },
+    { name:"Montana", abbr:"MT", statute:"Montana Code Ann. §§ 61-4-501 through 61-4-533", covered:"New, used, or leased; GVW ≤ 15,000 lbs.", repairs:"4 repair attempts and continues; OR 30 business days OOS.", period:"2 years / 18,000 miles.", notice:"Written notice to manufacturer during warranty period.", finalRepair:"Yes — manufacturer must be given opportunity to repair (no days specified).", repairsInPeriod:"Repairs must be made regardless of warranty expiration after notification of nonconformity.", filing:"1 year after the earlier of: 2 years after original delivery, or first 18,000 miles." },
+    { name:"Nebraska", abbr:"NE", statute:"Nebraska Rev. Stat. §§ 60-2701 through 60-2709", covered:"New or leased vehicles sold or leased in state. Excludes used vehicles.", repairs:"4 repair attempts and continues; OR 40 days OOS.", period:"12 months.", notice:"Written certified notice required before presumption applies.", finalRepair:"Yes (no timeline specified).", repairsInPeriod:"If nonconformity reported during LL period, repairs must be made even after warranty/1-year period expires.", filing:"1 year following express warranty expiration OR 2 years from original delivery — whichever comes first." },
+    { name:"Nevada", abbr:"NV", statute:"Nevada Rev. Stat. §§ 597.600 through 597.688", covered:"New or used vehicles. Excludes leases.", repairs:"4 repair attempts during coverage period and continues; OR 30 calendar days OOS.", period:"12 months.", notice:"Written notice to manufacturer within 1 year after original delivery.", finalRepair:"No", repairsInPeriod:"Nonconformity must be repaired within coverage period. Outside attempts included if not repaired.", filing:"18 months from original delivery." },
+    { name:"New Hampshire", abbr:"NH", statute:"New Hampshire Rev. Stat. §§ 357-D:1 through 357-D:12", covered:"New, leased, or used vehicles, GVW ≤ 11,000 lbs; purchased or leased (≥ 2 years) in NH.", repairs:"3 repair attempts for same nonconformity (written repair order required, same dealer unless good cause); OR 30 business days OOS. Vehicle not deemed OOS if available for major part of day.", period:"Term of express warranty (no specific LL rights period).", notice:"Written notice on manufacturer's form after 3rd attempt or 30 cumulative business days OOS. Consumer must elect state arbitration or manufacturer dispute mechanism. Arbitration within 40 days of notice.", finalRepair:"Yes — within 40 days of written notice, prior to arbitration.", repairsInPeriod:"Nonconformity must be repaired within coverage period. Outside attempts included if not repaired.", filing:"1 year from date of final repair attempt." },
+    { name:"New Jersey", abbr:"NJ", statute:"N.J. Stat. Ann. §§ 56:12-29 through 56:12-49.1", covered:"New or used; leased, purchased, or registered in state.", repairs:"3 repair attempts for substantially the same nonconformity; OR 1 repair/examination for death/serious injury risk; OR 20 calendar days OOS.", period:"2 years / 24,000 miles.", notice:"Written notice required for presumption to apply.", finalRepair:"Yes — manufacturer has 1 opportunity to repair within 10 calendar days of notice.", repairsInPeriod:"Yes — must be within period.", filing:"4 years from date alleged defect is discovered." },
+    { name:"New Mexico", abbr:"NM", statute:"New Mexico Stat. Ann. §§ 57-16A-1 through 57-16A-9", covered:"New or used vehicles sold and registered in state. Excludes leases.", repairs:"4+ times and continues; OR 30 business days OOS.", period:"12 months.", notice:"Prior written notification required for presumption to apply.", finalRepair:"Yes — manufacturer has opportunity to cure (no timeline specified).", repairsInPeriod:"Yes.", filing:"18 months following original delivery." },
+    { name:"New York", abbr:"NY", statute:"N.Y. General Business Law § 198-a", covered:"New or used vehicles purchased or leased in New York.", repairs:"4 repair attempts and continues; OR 30 calendar days OOS.", period:"2 years / 18,000 miles.", notice:"No", finalRepair:"No", repairsInPeriod:"Nonconformity must be repaired within coverage period. Outside attempts included if not repaired.", filing:"4 years from delivery." },
+    { name:"North Carolina", abbr:"NC", statute:"North Carolina Gen. Stat. §§ 20-351 through 20-351.10", covered:"New vehicles sold or leased in state, GVW ≤ 10,000 lbs. Excludes used vehicles.", repairs:"4+ repairs for same nonconformity and continues; OR 20+ cumulative business days OOS during any 1-year warranty period.", period:"2 years / 24,000 miles.", notice:"Written notice to manufacturer for presumption to apply. Reasonable period but not more than 15 days to cure.", finalRepair:"Yes — within 15 calendar days of receipt.", repairsInPeriod:"Nonconformity must be repaired within coverage period. Outside attempts included if not repaired.", filing:"3 years from date alleged defect is discovered." },
+    { name:"North Dakota", abbr:"ND", statute:"North Dakota Cent. Code §§ 51-07-16 through 51-07-22", covered:"New or used vehicles, GVW < 10,000 lbs; sold or leased in state.", repairs:"3 repair attempts and continues; OR 30 business days OOS.", period:"12 months.", notice:"Direct written notice to manufacturer for presumption to apply.", finalRepair:"Yes — manufacturer has opportunity to cure (no timeline).", repairsInPeriod:"Nonconformity must be repaired within coverage period. Outside attempts included if not repaired.", filing:"6 months after earlier of: express warranty expiration, or 18 months after original delivery." },
+    { name:"Ohio", abbr:"OH", statute:"Ohio Rev. Code Ann. §§ 1345.71 through 1345.78", covered:"New, leased, or used non-commercial vehicle (commercial = pickup used exclusively for business).", repairs:"3 repairs for same nonconformity; OR 30 days OOS; OR 8 repairs for any nonconformity; OR 1 repair for death/serious injury risk.", period:"12 months / 18,000 miles.", notice:"No", finalRepair:"No", repairsInPeriod:"Nonconformity must be repaired within coverage period. Outside attempts included if not repaired.", filing:"5 years from original delivery. Time does not run during informal dispute settlement." },
+    { name:"Oklahoma", abbr:"OK", statute:"Oklahoma Stat. Ann. Title 15, § 901", covered:"New, used, or leased motor vehicle required to be registered in state. Excludes vehicles > 10,000 lbs GVW.", repairs:"4 repair attempts and continues; OR 30 calendar days OOS.", period:"12 months.", notice:"Written notice to manufacturer, its agent, or authorized dealer for presumption to apply.", finalRepair:"Yes — manufacturer has opportunity to cure (no timeline).", repairsInPeriod:"Nonconformity must be repaired within coverage period. Outside attempts included if not repaired.", filing:"4 years from date defect is discovered." },
+    { name:"Oregon", abbr:"OR", statute:"Oregon Rev. Stat. §§ 646A.400 to 646A.418", covered:"New, used, or leased vehicles; purchased, leased, or registered in Oregon.", repairs:"3 repair attempts and continues; OR 30 calendar days OOS; OR 1 attempt for death/serious injury risk and continues.", period:"2 years / 24,000 miles.", notice:"Written notice to manufacturer (including arbitration request) for presumption to apply.", finalRepair:"Yes — manufacturer has opportunity to cure (timeframe not specified).", repairsInPeriod:"At least 1 repair must take place during LL period. Statute provides repair after expiration is included.", filing:"1 year following expiration of coverage period." },
+    { name:"Pennsylvania", abbr:"PA", statute:"73 Pa. Cons. Stat. §§ 1951 through 1963", covered:"New vehicles purchased or leased and registered in Pennsylvania. Excludes used vehicles.", repairs:"3+ repairs and continues; OR 30 cumulative calendar days OOS.", period:"1 year / 12,000 miles.", notice:"No duty on consumer. On 2nd delivery for same nonconformity, dealer must notify manufacturer via certified mail within 7 days.", finalRepair:"No", repairsInPeriod:"Nonconformity must be repaired within coverage period. Outside attempts included if not repaired.", filing:"4 years from date alleged defect is discovered." },
+    { name:"Rhode Island", abbr:"RI", statute:"Rhode Island Gen. Laws §§ 31-5.2-1 through 31-5.2-13", covered:"New, used, or leased, GVW < 10,000 lbs.", repairs:"4 repair attempts and continues or recurs; OR 30+ cumulative calendar days OOS.", period:"1 year / 15,000 miles.", notice:"No", finalRepair:"Yes — manufacturer has up to 7 calendar days from when it knows presumption terms are met.", repairsInPeriod:"For OOS presumption, manufacturer must be afforded additional cure opportunity even after term expires.", filing:"Earlier of: 3 years from original delivery or 2 years after 15,000 miles. Time does not run during informal dispute settlement." },
+    { name:"South Carolina", abbr:"SC", statute:"South Carolina Code Ann. §§ 56-28-10 through 56-28-110", covered:"New or leased vehicles ≤ 10 persons; trucks empty weight ≤ 9,000 lbs and GVW ≤ 11,000 lbs. Excludes used vehicles.", repairs:"3 repair attempts and continues; OR 30 calendar days OOS.", period:"1 year / 12,000 miles.", notice:"Written notification via registered, certified, or express mail.", finalRepair:"Yes — manufacturer must contact consumer within 10 business days; repair within 10 business days after vehicle delivery.", repairsInPeriod:"Nonconformity must be repaired within coverage period. Outside attempts included if not repaired.", filing:"Within 3 years from original delivery." },
+    { name:"South Dakota", abbr:"SD", statute:"South Dakota Cod. Laws §§ 32-6D-1 through 32-6D-9", covered:"New or previously untitled vehicles, GVW < 15,000 lbs. Excludes leases.", repairs:"4 repair attempts (1 during LL period) + final; OR 30 calendar days OOS with ≥1 attempt during LL period (including final).", period:"1 year / 12,000 miles for first notice/repair attempt.", notice:"Written certified mail before civil action describing vehicle, nonconformity, and all prior repair attempts.", finalRepair:"Yes — manufacturer notifies consumer within 7 days; must cure within 14 days after vehicle delivery.", repairsInPeriod:"No — but not to exceed 2 years / 24,000 miles.", filing:"3 years from original delivery." },
+    { name:"Tennessee", abbr:"TN", statute:"Tennessee Code Ann. 55-24-101 through 55-24-112", covered:"New vehicles purchased or leased in state, GVW < 10,000 lbs. Excludes used, but includes family transfers.", repairs:"3 repair attempts and continues; OR 30 calendar days OOS.", period:"12 months.", notice:"Written notice to manufacturer.", finalRepair:"Yes — manufacturer has 10 days to cure after notice.", repairsInPeriod:"Nonconformity must be repaired within coverage period. Outside attempts included if not repaired.", filing:"6 months following expiration of express warranty term. Time does not run during informal dispute settlement." },
+    { name:"Texas", abbr:"TX", statute:"Tex. Occ. Code Ann. §§ 2301.001, 2301.601 through 2301.613", covered:"New, used, or leased vehicle sold and registered in Texas; or owned by active U.S. Armed Forces member stationed in TX.", repairs:"4+ repairs and continues; OR 2+ repairs for serious safety hazard and continues; OR 30+ cumulative days OOS (loaner days not counted) and nonconformity still exists.", period:"24 months / 24,000 miles.", notice:"Written notice of alleged nonconformity to manufacturer by consumer, representative, or TX DMV.", finalRepair:"Yes — opportunity to cure before refund/replacement ordered (no timeline).", repairsInPeriod:"Nonconformity must be repaired within coverage period. Outside attempts included if not repaired.", filing:"6 months following expiration of coverage period." },
+    { name:"Utah", abbr:"UT", statute:"Utah Code Ann. §§ 13-20-1 through 13-20-7", covered:"New vehicles sold, purchased, or transferred; GVW < 12,000 lbs.", repairs:"4 repair attempts and continues; OR 30+ business days OOS.", period:"12 months.", notice:"No", finalRepair:"No", repairsInPeriod:"Nonconformity must be repaired within coverage period. Outside attempts included if not repaired.", filing:"4 years from date defect is discovered." },
+    { name:"Vermont", abbr:"VT", statute:"Vermont Stat. Ann. Title 9 §§ 4170 through 4181", covered:"New or used vehicles purchased, leased, or registered in VT, GVW < 12,000 lbs. Excludes vehicles bought/leased by government entities or businesses with 3+ registered vehicles.", repairs:"3 repair attempts for same nonconformity (at least first attempt within coverage period) and continues; OR 30+ cumulative calendar days OOS.", period:"12 months.", notice:"Written notice to manufacturer on manufacturer's prescribed form after reasonable repair attempts or 30+ days OOS.", finalRepair:"Yes — within 45 days of written notice and at least 5 days prior to arbitration hearing.", repairsInPeriod:"No for repairs (first attempt must be within warranty term). OOS days must occur during warranty term.", filing:"Within 1 year following expiration of express warranty term." },
+    { name:"Virginia", abbr:"VA", statute:"Code of Virginia §§ 59.1-207.9 through 59.1-207.16:1", covered:"New, used, or leased: passenger cars ≤ 10 persons; pickup/panel trucks for property transport ≤ 7,500 lbs GVW registered for personal use, or > 7,500 but ≤ 10,000 lbs GVW.", repairs:"3+ repairs for same nonconformity and continues; OR 1+ repair for serious safety defect (life-threatening, impedes control, fire/explosion risk) and continues; OR 30 cumulative calendar days OOS.", period:"18 months.", notice:"Consumer must notify manufacturer. Deemed notified if: written complaint mailed; manufacturer responded in writing; or factory representative inspected/met with consumer/dealer.", finalRepair:"Yes — if presumption conditions exist but manufacturer not notified, additional opportunity up to 15 days.", repairsInPeriod:"Coverage period extended if manufacturer notified but nonconformity not repaired by expiration.", filing:"18 months from original delivery; OR 1 year from manufacturer's final action in informal dispute settlement (if started in LL period)." },
+    { name:"Washington", abbr:"WA", statute:"Rev. Code of Washington §§ 19.118.005 through 19.118.904", covered:"New or used vehicles purchased, leased, or registered in state; or owned by Armed Forces member. Excludes business fleets of 10+; excludes trucks GVW ≥ 19,000 lbs.", repairs:"2+ repairs for same serious safety defect (≥1 during warranty); OR 4+ repairs for same nonconformity (≥1 during warranty); OR 30 cumulative calendar days OOS (≥15 during warranty); OR within 12 months, 2+ different serious safety defects each repaired ≥1 time during warranty.", period:"2 years / 24,000 miles.", notice:"Written request to manufacturer.", finalRepair:"No", repairsInPeriod:"Nonconformity must be repaired within coverage period. Outside attempts included if not repaired.", filing:"30 months from original delivery. Mandatory state arbitration required before lawsuit." },
+    { name:"West Virginia", abbr:"WV", statute:"West Virginia Code §§ 46A-6A-1 through 46A-6A-9", covered:"New or used vehicle purchased in WV or registered/titled in WV; pickups and vans ≤ 10,000 lbs GVW. Excludes leases.", repairs:"3+ repairs for same nonconformity and continues; OR 1+ repair for death/serious injury risk and continues; OR 30+ cumulative calendar days OOS.", period:"12 months.", notice:"Prior written notification for presumption to apply.", finalRepair:"Yes (timeline not specified).", repairsInPeriod:"Nonconformity must be repaired within coverage period. Outside attempts included if not repaired.", filing:"1 year following express warranty expiration. Time does not run during informal dispute resolution." },
+    { name:"Wisconsin", abbr:"WI", statute:"Wisconsin Statutes § 218.0171", covered:"New vehicles purchased or leased and registered in Wisconsin.", repairs:"4 repair attempts and continues; OR 30+ business days OOS.", period:"12 months.", notice:"Consumer must report nonconformity and make vehicle available for repair. For replacement/refund, consumer must notify manufacturer using WI DOT form and offer to transfer title.", finalRepair:"No", repairsInPeriod:"Nonconformity must be repaired within coverage period. Outside attempts included if not repaired.", filing:"36 months from original delivery." },
+    { name:"Wyoming", abbr:"WY", statute:"Wyoming Stat. § 40-17-101", covered:"New or used vehicles, unladen weight < 10,000 lbs; sold or registered in state.", repairs:"3 repair attempts and continues; OR 30+ business days OOS.", period:"12 months.", notice:"Written notification to manufacturer for presumption to apply.", finalRepair:"Yes — opportunity to cure before presumption applies (no timeline).", repairsInPeriod:"Nonconformity must be repaired within coverage period. Outside attempts included if not repaired.", filing:"4 years from date alleged defect is discovered." }
+  ];
+
+  function openLemonLawModal() {
+    var overlay = document.getElementById('ll-overlay');
+    overlay.style.display = 'flex';
+    llRenderStateButtons('');
+    // Reset to narrow single-pane
+    var modal = document.getElementById('ll-modal');
+    modal.style.width = 'min(520px,95vw)';
+    document.getElementById('ll-detail-pane').style.display = 'none';
+    document.getElementById('ll-state-list-pane').style.width = '100%';
+    document.getElementById('ll-header-sub').textContent = 'Select a state to view coverage details';
+    document.getElementById('ll-search').value = '';
+  }
+
+  function closeLemonLawModal(e) {
+    if (!e || e.target === document.getElementById('ll-overlay')) {
+      document.getElementById('ll-overlay').style.display = 'none';
+    }
+  }
+
+  function llRenderStateButtons(filter) {
+    var container = document.getElementById('ll-state-buttons');
+    container.innerHTML = '';
+    var f = filter.toLowerCase();
+    LL_STATES.forEach(function(s) {
+      if (s.name.toLowerCase().indexOf(f) === -1 && s.abbr.toLowerCase().indexOf(f) === -1) return;
+      var btn = document.createElement('button');
+      btn.style.cssText = 'display:block;width:100%;text-align:left;background:rgba(255,255,255,0.06);border:1px solid transparent;border-radius:6px;color:rgba(255,255,255,0.85);font-size:12.5px;padding:8px 10px;cursor:pointer;margin-bottom:2px;font-family:Arial,sans-serif;transition:all 0.15s;';
+      btn.dataset.abbr = s.abbr;
+      btn.innerHTML = '<span style="display:inline-block;width:30px;font-size:10px;font-weight:700;color:#6ec1ff;opacity:0.85;">' + s.abbr + '</span>' + s.name;
+      btn.onmouseover = function() { this.style.background = 'rgba(27,86,197,0.4)'; this.style.color = '#fff'; };
+      btn.onmouseout = function() {
+        if (this.dataset.active !== '1') { this.style.background = 'rgba(255,255,255,0.06)'; this.style.color = 'rgba(255,255,255,0.85)'; }
+      };
+      btn.onclick = function() {
+        // Deactivate all
+        container.querySelectorAll('button').forEach(function(b) {
+          b.style.background = 'rgba(255,255,255,0.06)';
+          b.style.borderColor = 'transparent';
+          b.style.fontWeight = 'normal';
+          b.dataset.active = '0';
+        });
+        // Activate this
+        this.style.background = '#1b56c5';
+        this.style.borderColor = '#6ec1ff';
+        this.style.fontWeight = '600';
+        this.style.color = '#fff';
+        this.dataset.active = '1';
+        llShowState(s);
+      };
+      container.appendChild(btn);
+    });
+  }
+
+  function llFilterStates(val) {
+    llRenderStateButtons(val);
+  }
+
+  function llShowState(state) {
+    // Widen modal and show detail pane
+    var modal = document.getElementById('ll-modal');
+    modal.style.width = 'min(900px,97vw)';
+    var listPane = document.getElementById('ll-state-list-pane');
+    listPane.style.width = '220px';
+    listPane.style.minWidth = '220px';
+    var detailPane = document.getElementById('ll-detail-pane');
+    detailPane.style.display = 'block';
+    document.getElementById('ll-header-sub').textContent = state.name + ' — ' + state.abbr;
+
+    var finalYes = state.finalRepair.charAt(0) === 'Y';
+    var noticeNo = state.notice === 'No';
+
+    var html = '';
+
+    // State title bar
+    html += '<div style="background:linear-gradient(135deg,#1a2b5e 0%,#1b3a8a 100%);border-radius:8px;padding:14px 18px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;">'
+      + '<div><div style="color:#fff;font-size:16px;font-weight:700;font-family:Arial,sans-serif;">' + state.name + '</div>'
+      + '<div style="color:rgba(255,255,255,0.65);font-size:10px;margin-top:3px;font-family:Arial,sans-serif;">' + state.statute + '</div></div>'
+      + '<div style="width:48px;height:48px;border-radius:8px;background:rgba(110,193,255,0.18);border:2px solid rgba(110,193,255,0.4);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#6ec1ff;font-family:Arial,sans-serif;">' + state.abbr + '</div>'
+      + '</div>';
+
+    // Quick stat cards
+    html += '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;">';
+    html += llStatCard('&#9200; Coverage Period', state.period.length > 45 ? state.period.substring(0,45)+'...' : state.period, '#1b56c5');
+    html += llStatCard('&#128295; Final Repair Req.', state.finalRepair, finalYes ? '#1a8a4a' : '#b91c1c');
+    html += llStatCard('&#128236; Notice Required', noticeNo ? 'No' : 'Yes — written required', noticeNo ? '#1b56c5' : '#b45309');
+    html += '</div>';
+
+    if (state.notes) {
+      html += '<div style="background:#fffbeb;border:1px solid #fde68a;border-radius:7px;padding:10px 14px;font-size:11.5px;color:#92400e;margin-bottom:12px;font-family:Arial,sans-serif;line-height:1.5;">'
+        + '&#9888; <strong>Note:</strong> ' + state.notes + '</div>';
+    }
+
+    // Detail sections
+    html += llSection('&#128663;', 'Covered Vehicles', state.covered);
+    html += llSection('&#128260;', 'Repair Attempts / Days Out of Service', state.repairs);
+    html += llSection('&#128197;', 'Coverage Period', state.period);
+    html += llSection('&#128236;', 'Notice by Consumer', state.notice);
+    html += llSection('&#128295;', 'Final Repair Attempt', state.finalRepair);
+    html += llSection('&#127959;', 'Do Repairs Have to Happen Within LL Period?', state.repairsInPeriod);
+    html += llSection('&#9878;', 'Time Period for Filing Claims', state.filing);
+
+    document.getElementById('ll-detail-content').innerHTML = html;
+    detailPane.scrollTop = 0;
+  }
+
+  function llStatCard(label, value, accentColor) {
+    return '<div style="background:#fff;border:1px solid rgba(27,86,197,0.18);border-radius:8px;padding:10px 12px;border-left:3px solid ' + accentColor + ';">'
+      + '<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#4d6291;margin-bottom:4px;font-family:Arial,sans-serif;">' + label + '</div>'
+      + '<div style="font-size:12px;font-weight:700;color:#1a2b5e;line-height:1.3;font-family:Arial,sans-serif;">' + value + '</div>'
+      + '</div>';
+  }
+
+  function llSection(icon, title, body) {
+    return '<div style="background:#fff;border:1px solid rgba(27,86,197,0.18);border-radius:8px;overflow:hidden;margin-bottom:8px;">'
+      + '<div style="background:#f0f5ff;padding:8px 14px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#1a2b5e;border-bottom:1px solid rgba(27,86,197,0.18);font-family:Arial,sans-serif;">'
+      + icon + ' &nbsp;' + title + '</div>'
+      + '<div style="padding:10px 14px;font-size:12.5px;color:#1a2b5e;line-height:1.65;font-family:Arial,sans-serif;">' + body + '</div>'
+      + '</div>';
   }
   function submitICS() {
     var name = document.getElementById('ics-fsc-name').value.trim();
