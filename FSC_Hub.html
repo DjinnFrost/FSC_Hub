@@ -453,6 +453,34 @@
   }
   .cda-tab:hover { color: rgba(255,255,255,0.85); }
   .cda-tab.active { color: #6ec1ff; border-bottom-color: #6ec1ff; }
+  #sf-tabs .cda-tab { border-right: 1px solid rgba(255,255,255,0.08); border-bottom: 2px solid transparent; }
+  #sf-tabs .cda-tab.active { border-bottom-color: #6ec1ff; }
+  #sf-tabs {
+    padding: 14px 16px 0 16px !important;
+    gap: 8px !important;
+    border-bottom: none !important;
+    background: transparent !important;
+    row-gap: 8px !important;
+  }
+  #sf-tabs .cda-tab {
+    border: 1.5px solid rgba(255,255,255,0.45) !important;
+    border-bottom: 1.5px solid rgba(255,255,255,0.45) !important;
+    border-radius: 8px !important;
+    padding: 9px 18px !important;
+    color: rgba(255,255,255,0.82) !important;
+    background: transparent !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    margin-bottom: 10px !important;
+    line-height: 1 !important;
+  }
+  #sf-tabs .cda-tab:hover { background: rgba(255,255,255,0.1) !important; color: #fff !important; }
+  #sf-tabs .cda-tab.active {
+    background: #fff !important;
+    color: #1a2a4a !important;
+    border-color: #fff !important;
+    font-weight: 700 !important;
+  }
 
   /* FTS DRAWER */
   .fts-drawer {
@@ -1384,7 +1412,7 @@
         <div class="resource-link" onclick="openICSModal()">Outlook Calendar Sync</div>
         <div class="resource-link" onclick="openLemonLawModal()">Lemon Law by State</div>
         <div class="resource-link" onclick="openCDAModal()">CDA Overview &amp; Setup Guide</div>
-        <div class="resource-link" onclick="openPersonalInfoModal()">Personal Information Updates</div>
+        <div class="resource-link" onclick="openSFModal()">Get Started with Salesforce</div>
       </div>
     </section>
   </div>
@@ -1521,110 +1549,6 @@
       <button class="cda-tab" onclick="cdaShowTab('issues')" id="cda-tab-issues">Reporting Issues</button>
     </div>
     <div class="ll-modal-body" id="cda-body"></div>
-  </div>
-</div>
-
-<!-- PERSONAL INFO OVERLAY -->
-<div class="ll-overlay" id="pi-overlay" onclick="closePersonalInfoModal(event)">
-  <div class="ll-modal" id="pi-modal" onclick="event.stopPropagation()">
-
-    <div class="ll-modal-header">
-      <div>
-        <div style="font-size:17px;font-weight:700;color:#fff;font-family:Arial,sans-serif;margin-bottom:3px;">Personal Information Updates</div>
-        <div style="font-size:12px;color:rgba(255,255,255,0.5);font-family:Arial,sans-serif;line-height:1.4;">Keep your payroll, contact, and tax records current with MarketSource.</div>
-      </div>
-      <button class="fts-close" onclick="closePersonalInfoModal()" style="flex-shrink:0;margin-left:12px;">&#10005;</button>
-    </div>
-
-    <div class="ll-modal-body" style="gap:12px;">
-
-      <!-- INTRO -->
-      <div style="background:rgba(110,193,255,0.08);border:1px solid rgba(110,193,255,0.2);border-radius:8px;padding:12px 16px;font-size:12.5px;color:rgba(255,255,255,0.85);font-family:Arial,sans-serif;line-height:1.65;">
-        When life changes happen, it's easy to forget to update personal information in systems we don't interact with every day. If any of the items below have changed since you were hired and you have not updated them with MarketSource, please take a few minutes to do so now. Keeping your information current is important for accurate payroll, communication, and tax records.
-      </div>
-
-      <!-- INSIDER SECTION -->
-      <div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:8px;overflow:hidden;">
-        <div style="background:rgba(94,232,122,0.12);border-bottom:1px solid rgba(94,232,122,0.2);padding:10px 16px;display:flex;align-items:center;gap:8px;">
-          <span style="font-size:15px;">&#9989;</span>
-          <span style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#5ee87a;font-family:Arial,sans-serif;">Personal Information Changes (INSIDER)</span>
-        </div>
-        <div style="padding:14px 16px;">
-          <div style="font-size:12px;color:rgba(255,255,255,0.7);font-family:Arial,sans-serif;margin-bottom:10px;">Use the INSIDER site to submit updates for:</div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:14px;">
-            <div style="background:rgba(255,255,255,0.06);border-radius:6px;padding:8px 12px;font-size:12px;color:#fff;font-family:Arial,sans-serif;">&#128100; Name</div>
-            <div style="background:rgba(255,255,255,0.06);border-radius:6px;padding:8px 12px;font-size:12px;color:#fff;font-family:Arial,sans-serif;">&#127968; Home Address</div>
-            <div style="background:rgba(255,255,255,0.06);border-radius:6px;padding:8px 12px;font-size:12px;color:#fff;font-family:Arial,sans-serif;">&#128222; Phone Number</div>
-            <div style="background:rgba(255,255,255,0.06);border-radius:6px;padding:8px 12px;font-size:12px;color:#fff;font-family:Arial,sans-serif;">&#128231; Personal Email</div>
-            <div style="background:rgba(255,255,255,0.06);border-radius:6px;padding:8px 12px;font-size:12px;color:#fff;font-family:Arial,sans-serif;grid-column:1/-1;">&#128195; Tax Withholding</div>
-          </div>
-          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#6ec1ff;font-family:Arial,sans-serif;margin-bottom:8px;">How to Submit</div>
-          <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;">
-            <div style="display:flex;gap:10px;align-items:flex-start;font-size:12px;color:rgba(255,255,255,0.85);font-family:Arial,sans-serif;line-height:1.5;">
-              <span style="background:#1b56c5;color:#fff;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px;">1</span>
-              Navigate to the Personal Information Changes page on INSIDER.
-            </div>
-            <div style="display:flex;gap:10px;align-items:flex-start;font-size:12px;color:rgba(255,255,255,0.85);font-family:Arial,sans-serif;line-height:1.5;">
-              <span style="background:#1b56c5;color:#fff;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px;">2</span>
-              <span>Click the link below to open MarketSource INSIDER:</span>
-            </div>
-          </div>
-          <a href="https://insider.allegisgroup.com/" target="_blank" style="display:inline-block;background:#1b56c5;color:#fff;text-decoration:none;padding:9px 20px;border-radius:6px;font-size:12.5px;font-weight:700;font-family:Arial,sans-serif;transition:background 0.15s;" onmouseover="this.style.background='#1a4eb0'" onmouseout="this.style.background='#1b56c5'">Open MarketSource INSIDER &#8599;</a>
-          <div style="display:flex;flex-direction:column;gap:6px;margin-top:12px;">
-            <div style="display:flex;gap:10px;align-items:flex-start;font-size:12px;color:rgba(255,255,255,0.85);font-family:Arial,sans-serif;line-height:1.5;">
-              <span style="background:#1b56c5;color:#fff;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px;">3</span>
-              Select the appropriate change type.
-            </div>
-            <div style="display:flex;gap:10px;align-items:flex-start;font-size:12px;color:rgba(255,255,255,0.85);font-family:Arial,sans-serif;line-height:1.5;">
-              <span style="background:#1b56c5;color:#fff;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px;">4</span>
-              Complete and submit the form as instructed.
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- DIRECT DEPOSIT SECTION -->
-      <div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:8px;overflow:hidden;">
-        <div style="background:rgba(251,191,36,0.12);border-bottom:1px solid rgba(251,191,36,0.2);padding:10px 16px;display:flex;align-items:center;gap:8px;">
-          <span style="font-size:15px;">&#128176;</span>
-          <span style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#fbbf24;font-family:Arial,sans-serif;">Direct Deposit Changes</span>
-        </div>
-        <div style="padding:14px 16px;">
-          <div style="background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.25);border-radius:6px;padding:8px 12px;font-size:12px;color:rgba(255,255,255,0.85);font-family:Arial,sans-serif;margin-bottom:12px;">
-            &#9888; Direct deposit updates are <strong>not</strong> completed through INSIDER.
-          </div>
-          <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;">
-            <div style="display:flex;gap:10px;align-items:flex-start;font-size:12px;color:rgba(255,255,255,0.85);font-family:Arial,sans-serif;line-height:1.5;">
-              <span style="background:#fbbf24;color:#1a2b5e;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px;">1</span>
-              Complete the <strong>Direct Deposit Authorization Form</strong>.
-            </div>
-            <div style="display:flex;gap:10px;align-items:flex-start;font-size:12px;color:rgba(255,255,255,0.85);font-family:Arial,sans-serif;line-height:1.5;">
-              <span style="background:#fbbf24;color:#1a2b5e;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px;">2</span>
-              <span>Email the completed form to: <a href="mailto:employeeservices@marketsource.com" style="color:#6ec1ff;text-decoration:underline;text-decoration-color:rgba(110,193,255,0.5);">employeeservices@marketsource.com</a></span>
-            </div>
-            <div style="display:flex;gap:10px;align-items:flex-start;font-size:12px;color:rgba(255,255,255,0.85);font-family:Arial,sans-serif;line-height:1.5;">
-              <span style="background:#fbbf24;color:#1a2b5e;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px;">3</span>
-              Allow up to <strong>two pay periods</strong> for the change to take effect.
-            </div>
-          </div>
-          <div style="background:rgba(255,255,255,0.06);border-left:3px solid #fbbf24;border-radius:0 6px 6px 0;padding:10px 14px;font-size:12px;color:rgba(255,255,255,0.85);font-family:Arial,sans-serif;line-height:1.6;">
-            <strong style="color:#fbbf24;">Important:</strong> If you are selecting a savings account, you must include a <strong>bank verification letter</strong> confirming your routing number and account number.
-          </div>
-        </div>
-      </div>
-
-      <!-- QUESTIONS SECTION -->
-      <div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:8px;overflow:hidden;">
-        <div style="background:rgba(110,193,255,0.08);border-bottom:1px solid rgba(110,193,255,0.15);padding:10px 16px;display:flex;align-items:center;gap:8px;">
-          <span style="font-size:15px;">&#10067;</span>
-          <span style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#6ec1ff;font-family:Arial,sans-serif;">Questions or Assistance</span>
-        </div>
-        <div style="padding:12px 16px;font-size:12.5px;color:rgba(255,255,255,0.85);font-family:Arial,sans-serif;line-height:1.65;">
-          If you have questions or need help determining which update to submit, contact <strong>Employee Services</strong> directly at <a href="mailto:employeeservices@marketsource.com" style="color:#6ec1ff;text-decoration:underline;text-decoration-color:rgba(110,193,255,0.5);">employeeservices@marketsource.com</a>.
-        </div>
-      </div>
-
-    </div>
   </div>
 </div>
 
@@ -3175,18 +3099,6 @@
     body.innerHTML = CDA_TABS[tab] ? CDA_TABS[tab]() : '';
   }
 
-  // ── PERSONAL INFO MODAL ───────────────────────────────────────────────────
-  function openPersonalInfoModal() {
-    var overlay = document.getElementById('pi-overlay');
-    overlay.classList.add('open');
-  }
-
-  function closePersonalInfoModal(e) {
-    if (!e || e.target === document.getElementById('pi-overlay')) {
-      document.getElementById('pi-overlay').classList.remove('open');
-    }
-  }
-
   function submitICS() {
     var tid  = document.getElementById('ics-tid').value.trim();
     var stel = document.getElementById('ics-stellantis').value.trim();
@@ -3213,5 +3125,335 @@
 
 
 </script>
+<!-- SALESFORCE GET STARTED OVERLAY -->
+<div class="ll-overlay" id="sf-overlay" onclick="closeSFModal(event)">
+  <div class="ll-modal" id="sf-modal" onclick="event.stopPropagation()" style="background:transparent;box-shadow:none;border:none;padding:0;max-width:740px;width:95vw;">
+
+<style>
+.cl-wrap{background:linear-gradient(160deg,#0d2260,#122d72,#091c4e);border:1px solid rgba(255,255,255,0.18);border-radius:12px;font-family:Arial,sans-serif;overflow:hidden;max-width:720px;margin:0 auto;}
+.cl-header{background:rgba(255,255,255,0.06);border-bottom:1px solid rgba(255,255,255,0.12);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;}
+.cl-title{font-size:17px;font-weight:700;color:#fff;margin-bottom:3px;}
+.cl-sub{font-size:12px;color:rgba(255,255,255,0.5);line-height:1.4;}
+.cl-tabs{display:flex;gap:5px;padding:12px 20px 0;border-bottom:1px solid rgba(255,255,255,0.1);flex-wrap:wrap;}
+.cl-tab{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:6px 6px 0 0;color:rgba(255,255,255,0.6);font-size:11px;font-family:Arial,sans-serif;padding:7px 11px;cursor:pointer;border-bottom:none;transition:all .15s;}
+.cl-tab:hover{background:rgba(255,255,255,0.1);color:#fff;}
+.cl-tab.active{background:rgba(110,193,255,0.15);border-color:#6ec1ff;color:#6ec1ff;}
+.cl-tab.master{border-color:rgba(94,232,122,0.4);color:rgba(94,232,122,0.8);}
+.cl-tab.master.active{background:rgba(94,232,122,0.1);border-color:#5ee87a;color:#5ee87a;}
+.cl-body{padding:16px 20px;display:flex;flex-direction:column;gap:10px;height:920px;overflow-y:auto;box-sizing:border-box;}
+.cl-body::-webkit-scrollbar{width:5px;}
+.cl-body::-webkit-scrollbar-track{background:rgba(255,255,255,0.04);border-radius:4px;}
+.cl-body::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.16);border-radius:4px;}
+.cl-section{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:14px 16px;}
+.cl-section.green-border{border-color:rgba(94,232,122,0.3);}
+.cl-st{font-size:11px;font-weight:700;color:#6ec1ff;text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;}
+.cl-section ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px;}
+.cl-section ul li{font-size:13px;color:rgba(255,255,255,0.85);line-height:1.6;padding-left:14px;position:relative;}
+.cl-section ul li::before{content:"–";position:absolute;left:0;color:rgba(255,255,255,0.3);}
+.cl-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.cl-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:12px;text-align:center;}
+.cl-card.highlight{border-color:rgba(94,232,122,0.35);background:rgba(94,232,122,0.05);}
+.cl-card-icon{font-size:20px;margin-bottom:6px;}
+.cl-card-title{font-size:12px;font-weight:700;color:#fff;margin-bottom:4px;}
+.cl-card-title.green{color:#5ee87a;}
+.cl-card-body{font-size:11px;color:rgba(255,255,255,0.6);line-height:1.5;}
+.cl-warn{background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.3);border-radius:8px;padding:12px 14px;display:flex;gap:10px;align-items:flex-start;}
+.cl-warn-icon{color:#fbbf24;font-size:15px;flex-shrink:0;margin-top:1px;}
+.cl-warn-text{font-size:12px;color:rgba(255,255,255,0.85);line-height:1.6;}
+.cl-info{background:rgba(94,232,122,0.08);border:1px solid rgba(94,232,122,0.25);border-radius:8px;padding:12px 14px;display:flex;gap:10px;align-items:flex-start;}
+.cl-info-icon{color:#5ee87a;font-size:15px;flex-shrink:0;margin-top:1px;}
+.cl-info-text{font-size:12px;color:rgba(255,255,255,0.85);line-height:1.6;}
+.cl-fields{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.cl-field{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:7px 10px;font-size:12px;color:rgba(255,255,255,0.8);display:flex;gap:8px;align-items:center;}
+.cl-field-num{color:#6ec1ff;font-weight:700;font-size:11px;min-width:16px;}
+.cl-filter-row{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:8px 12px;display:flex;gap:10px;align-items:flex-start;}
+.cl-fnum{background:rgba(110,193,255,0.15);border:1px solid rgba(110,193,255,0.3);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#6ec1ff;flex-shrink:0;margin-top:1px;}
+.cl-fnum.green{background:rgba(94,232,122,0.12);border-color:rgba(94,232,122,0.3);color:#5ee87a;}
+.cl-flocked{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;color:rgba(255,255,255,0.4);flex-shrink:0;margin-top:1px;}
+.cl-fc{flex:1;}
+.cl-ff{font-size:12px;font-weight:700;color:#fff;}
+.cl-fv{font-size:11px;color:rgba(255,255,255,0.55);margin-top:1px;}
+.cl-logic{background:rgba(110,193,255,0.08);border:1px solid rgba(110,193,255,0.25);border-radius:6px;padding:8px 12px;font-size:13px;color:#6ec1ff;font-family:monospace;}
+.cl-logic.green{background:rgba(94,232,122,0.08);border-color:rgba(94,232,122,0.25);color:#5ee87a;}
+.cl-ll{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:rgba(255,255,255,0.4);margin-bottom:4px;font-family:Arial,sans-serif;}
+.cl-success{background:rgba(94,232,122,0.08);border:1px solid rgba(94,232,122,0.25);border-radius:8px;padding:12px 14px;}
+.cl-success-title{font-size:12px;font-weight:700;color:#5ee87a;margin-bottom:6px;}
+.cl-name{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);border-radius:6px;padding:8px 12px;font-size:13px;color:#fff;font-family:monospace;margin-top:6px;}
+.cl-name.green{border-color:rgba(94,232,122,0.3);color:#5ee87a;}
+.cl-hint{margin-top:4px;padding:4px 12px;font-size:11px;color:rgba(255,255,255,0.4);font-family:monospace;}
+.cl-step-row{display:flex;gap:12px;align-items:flex-start;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:12px 14px;}
+.cl-step-num{width:24px;height:24px;border-radius:50%;background:rgba(110,193,255,0.15);border:1px solid rgba(110,193,255,0.3);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#6ec1ff;flex-shrink:0;}
+.cl-step-title{font-size:13px;font-weight:700;color:#fff;margin-bottom:3px;}
+.cl-step-body{font-size:12px;color:rgba(255,255,255,0.7);line-height:1.6;}
+.cl-nudge{background:rgba(110,193,255,0.06);border:1px solid rgba(110,193,255,0.2);border-radius:8px;padding:12px 14px;display:flex;gap:10px;align-items:flex-start;}
+.cl-nudge-icon{color:#6ec1ff;font-size:15px;flex-shrink:0;margin-top:1px;}
+.cl-nudge-text{font-size:12px;color:rgba(255,255,255,0.85);line-height:1.6;}
+.cl-launch{background:rgba(110,193,255,0.06);border:1px solid rgba(110,193,255,0.25);border-radius:8px;padding:16px;}
+.cl-launch-top{display:flex;align-items:flex-start;gap:14px;margin-bottom:14px;}
+.cl-launch-icon{width:36px;height:36px;border-radius:8px;background:rgba(110,193,255,0.15);border:1px solid rgba(110,193,255,0.3);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.cl-launch-title{font-size:13px;font-weight:700;color:#fff;margin-bottom:4px;}
+.cl-launch-steps{display:flex;flex-direction:column;gap:6px;margin-bottom:16px;}
+.cl-launch-step{display:flex;gap:10px;align-items:flex-start;font-size:12px;color:rgba(255,255,255,0.8);line-height:1.5;}
+.cl-launch-step-num{width:18px;height:18px;border-radius:50%;background:rgba(110,193,255,0.15);border:1px solid rgba(110,193,255,0.3);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#6ec1ff;flex-shrink:0;margin-top:1px;}
+.cl-btn-wrap{display:flex;justify-content:center;}
+.cl-btn{display:inline-flex;align-items:center;gap:8px;background:#6ec1ff;border:none;border-radius:6px;padding:10px 28px;font-size:13px;font-weight:700;color:#0a1a4e;cursor:pointer;text-decoration:none;transition:opacity .15s;}
+.cl-btn:hover{opacity:.88;}
+</style>
+
+<div class="cl-wrap">
+  <div class="cl-header">
+    <div>
+      <div class="cl-title">BBP Dealer List View Setup</div>
+      <div class="cl-sub">Clone, configure fields, and apply dealer filters in Salesforce</div>
+    </div>
+    <div onclick="closeSFModal()" style="width:28px;height:28px;border:1px solid rgba(255,255,255,0.2);border-radius:4px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.5);font-size:13px;cursor:pointer;">&#10005;</div>
+  </div>
+  <div class="cl-tabs">
+    <button class="cl-tab active" onclick="clShow('overview',this)">Overview</button>
+    <button class="cl-tab" onclick="clShow('step1',this)">1 · Clone &amp; Fields</button>
+    <button class="cl-tab" onclick="clShow('step2',this)">2 · Base Filters</button>
+    <button class="cl-tab" onclick="clShow('step3',this)">3 · All Cases</button>
+    <button class="cl-tab" onclick="clShow('step4',this)">4 · Open Cases</button>
+    <button class="cl-tab" onclick="clShow('step5',this)">5 · Completed</button>
+    <button class="cl-tab" onclick="clShow('step6',this)">6 · More Dealers</button>
+    <button class="cl-tab master" onclick="clShow('master',this)">7 · Master View</button>
+  </div>
+  <div class="cl-body" id="cl-body"></div>
+</div>
+
+  </div>
+</div>
+
+<script>
+var TABS={
+overview:function(){
+  return '<div class="cl-launch">'
+    +'<div class="cl-launch-top">'
+    +'<div class="cl-launch-icon">&#9729;</div>'
+    +'<div><div class="cl-launch-title">Before you start — log in to Salesforce</div>'
+    +'<div style="font-size:12px;color:rgba(255,255,255,0.6);line-height:1.5;">Use your Stellantis credentials to access the BBP list view.</div>'
+    +'</div></div>'
+    +'<div class="cl-launch-steps">'
+    +'<div class="cl-launch-step"><div class="cl-launch-step-num">1</div><div>Enter your Stellantis credentials when prompted — your username is <strong style="color:#fff;">TID@external.stellantis.com</strong></div></div>'
+    +'<div class="cl-launch-step"><div class="cl-launch-step-num">2</div><div>Complete the <strong style="color:#fff;">Microsoft 2FA verification</strong> when asked</div></div>'
+    +'<div class="cl-launch-step"><div class="cl-launch-step-num">3</div><div>Once logged in, you will land on the Buyback Preventions list view — follow this guide from Tab 1</div></div>'
+    +'</div>'
+    +'<div class="cl-btn-wrap"><a class="cl-btn" href="https://fcagroup.lightning.force.com/lightning/o/Service_Triage__c/list?filterName=All" target="_blank">Open Salesforce &#8599;</a></div>'
+    +'</div>'
+    +'<div class="cl-section"><div class="cl-st">What this job aid covers</div><ul>'
+    +'<li>This guide covers the full process of setting up Salesforce Buyback Prevention list views for <strong style="color:#fff;">all of your assigned dealers</strong>. You will repeat the per-dealer setup for every dealer you are responsible for.</li>'
+    +'<li>Each dealer requires <strong style="color:#fff;">three individual views</strong>. In addition, one <strong style="color:#fff;">master self-check view</strong> is created across all dealers combined.</li>'
+    +'</ul></div>'
+    +'<div class="cl-section"><div class="cl-st">Per-dealer views (repeat for every dealer)</div>'
+    +'<div class="cl-cards">'
+    +'<div class="cl-card"><div class="cl-card-icon">&#128203;</div><div class="cl-card-title">All Cases</div><div class="cl-card-body">Every BBP record for the dealer regardless of status.</div></div>'
+    +'<div class="cl-card"><div class="cl-card-icon">&#128260;</div><div class="cl-card-title">Open Cases</div><div class="cl-card-body">Records where Case Status equals Open.</div></div>'
+    +'<div class="cl-card"><div class="cl-card-icon">&#10003;</div><div class="cl-card-title">Completed &amp; Verified</div><div class="cl-card-body">Records where Repair Completed &amp; Verified equals True.</div></div>'
+    +'</div></div>'
+    +'<div class="cl-section green-border"><div class="cl-st" style="color:#5ee87a;">Master self-check view (once, covers all dealers)</div>'
+    +'<div class="cl-card highlight" style="text-align:left;display:flex;gap:14px;align-items:flex-start;padding:12px;">'
+    +'<div style="font-size:20px;flex-shrink:0;">&#128269;</div>'
+    +'<div><div class="cl-card-title green" style="font-size:13px;margin-bottom:4px;">All Cases Completed and Verified</div>'
+    +'<div class="cl-card-body" style="font-size:12px;">A single view with <strong style="color:#fff;">all your dealer codes</strong> listed together and Repair Completed &amp; Verified = True. Cross-check your total verified count against reports without opening each dealer view individually.</div>'
+    +'</div></div></div>'
+    +'<div class="cl-section"><div class="cl-st">Process summary</div><ul>'
+    +'<li><strong style="color:#6ec1ff;">Tabs 1–5</strong> — Full setup for your first dealer. Clone, configure 11 fields, set filters, build all three views.</li>'
+    +'<li><strong style="color:#6ec1ff;">Tab 6</strong> — Shortcut for every dealer after the first. Clone, rename, change the dealer code — done.</li>'
+    +'<li><strong style="color:#5ee87a;">Tab 7</strong> — Build the master self-check view once after all dealer views are complete.</li>'
+    +'</ul></div>'
+    +'<div class="cl-warn"><div class="cl-warn-icon">&#9888;</div><div class="cl-warn-text">Filters 1–3 (Last Import Date, Last Edited by FSC, Created By) are <strong style="color:#fff;">locked filters</strong> that appear automatically on every cloned view. Do not delete or modify them.</div></div>';
+},
+step1:function(){
+  return '<div class="cl-section"><div class="cl-st">Step 1 — Clone the default view</div><ul>'
+    +'<li>Navigate to <strong style="color:#fff;">Buyback Preventions</strong> in Salesforce. Confirm you are in the <strong style="color:#fff;">All Buy Back Preventions</strong> list view.</li>'
+    +'<li>Click the <strong style="color:#fff;">gear icon &#9881;</strong> near the top-right of the list. A dropdown menu appears.</li>'
+    +'<li>Click <strong style="color:#fff;">Clone</strong>. The Clone List View dialog opens.</li>'
+    +'<li>Clear the default name and enter the dealer name using this format:</li>'
+    +'</ul>'
+    +'<div class="cl-name">[Dealer Code] / [Dealer Name] All Cases</div>'
+    +'<div class="cl-hint">Example: 45841 / AutoNation All Cases</div>'
+    +'<ul style="margin-top:4px;"><li>Under <em>Who sees this list view?</em> select <strong style="color:#fff;">Only I can see this list view</strong>. Click <strong style="color:#fff;">Save</strong>.</li></ul></div>'
+    +'<div class="cl-section"><div class="cl-st">Step 2 — Open Select Fields to Display</div><ul>'
+    +'<li>Inside the newly cloned view, click the <strong style="color:#fff;">gear icon &#9881;</strong> again and select <strong style="color:#fff;">Select Fields to Display</strong>.</li>'
+    +'<li>A dialog opens with <strong style="color:#fff;">Available Fields</strong> (left) and <strong style="color:#fff;">Visible Fields</strong> (right).</li>'
+    +'<li><strong style="color:#fff;">Add a field:</strong> Click it in Available Fields to highlight it, then click the <strong style="color:#fff;">right arrow &#9654;</strong> to move it into Visible Fields.</li>'
+    +'<li><strong style="color:#fff;">Remove a field:</strong> Click it in Visible Fields, then click the <strong style="color:#fff;">left arrow &#9664;</strong> to move it back.</li>'
+    +'<li><strong style="color:#fff;">Reorder fields:</strong> Click a field in Visible Fields, then use the <strong style="color:#fff;">up &#9650;</strong> and <strong style="color:#fff;">down &#9660;</strong> arrows on the right side to move it to the correct position.</li>'
+    +'</ul></div>'
+    +'<div class="cl-section"><div class="cl-st">Required field order</div>'
+    +'<div class="cl-fields">'
+    +'<div class="cl-field"><span class="cl-field-num">1</span>Buyback Prevention ID</div>'
+    +'<div class="cl-field"><span class="cl-field-num">2</span>Dealer Code</div>'
+    +'<div class="cl-field"><span class="cl-field-num">3</span>VIN</div>'
+    +'<div class="cl-field"><span class="cl-field-num">4</span>Risk Level</div>'
+    +'<div class="cl-field"><span class="cl-field-num">5</span>Risk Score</div>'
+    +'<div class="cl-field"><span class="cl-field-num">6</span>RO Open Date</div>'
+    +'<div class="cl-field"><span class="cl-field-num">7</span>RO Number</div>'
+    +'<div class="cl-field"><span class="cl-field-num">8</span>Date repair completed &amp; verified</div>'
+    +'<div class="cl-field"><span class="cl-field-num">9</span>Case Status</div>'
+    +'<div class="cl-field"><span class="cl-field-num">10</span>Case Close Date</div>'
+    +'<div class="cl-field"><span class="cl-field-num">11</span>Case Notes</div>'
+    +'</div></div>'
+    +'<div class="cl-warn"><div class="cl-warn-icon">&#9888;</div><div class="cl-warn-text">The topmost field in Visible Fields appears as the leftmost column in the list. Verify the order matches exactly before clicking Save.</div></div>';
+},
+step2:function(){
+  return '<div class="cl-section"><div class="cl-st">Step 3 — Open the Filters panel</div><ul>'
+    +'<li>With the cloned view open, click the <strong style="color:#fff;">filter funnel icon</strong> in the toolbar (top-right of the list). The Filters panel slides out on the right.</li>'
+    +'<li>The following filters are <strong style="color:#fff;">locked</strong> — already present, do not modify them:</li>'
+    +'</ul>'
+    +'<div style="display:flex;flex-direction:column;gap:6px;margin-top:8px;">'
+    +'<div class="cl-filter-row"><div class="cl-flocked">&#128274;</div><div class="cl-fc"><div class="cl-ff">Filter by Owner</div><div class="cl-fv">All buyback preventions</div></div></div>'
+    +'<div class="cl-filter-row"><div class="cl-flocked">1</div><div class="cl-fc"><div class="cl-ff">Last Import Date</div><div class="cl-fv">equals TODAY</div></div></div>'
+    +'<div class="cl-filter-row"><div class="cl-flocked">2</div><div class="cl-fc"><div class="cl-ff">Last Edited by FSC</div><div class="cl-fv">not equal to</div></div></div>'
+    +'<div class="cl-filter-row"><div class="cl-flocked">3</div><div class="cl-fc"><div class="cl-ff">Created By</div><div class="cl-fv">not equal to Admin User</div></div></div>'
+    +'</div>'
+    +'<div style="margin-top:8px;"><div class="cl-ll">Filter Logic (pre-set — do not change)</div><div class="cl-logic">1 OR 2 OR 3</div></div></div>'
+    +'<div class="cl-section"><div class="cl-st">Step 4 — Add the Dealer Code filter</div><ul>'
+    +'<li>Click <strong style="color:#fff;">Add Filter</strong> at the bottom of the filter list.</li>'
+    +'<li>Set the field to <strong style="color:#fff;">Dealer Code</strong>, operator to <strong style="color:#fff;">equals</strong>.</li>'
+    +'<li>Type the dealer\'s code in the value field. Example: <strong style="color:#fff;">45841</strong></li>'
+    +'<li>This filter will be numbered <strong style="color:#fff;">4</strong>.</li>'
+    +'</ul></div>'
+    +'<div class="cl-section"><div class="cl-st">Step 5 — Update the Filter Logic</div><ul>'
+    +'<li>Click into the <strong style="color:#fff;">Filter Logic</strong> box and update it to:</li>'
+    +'</ul>'
+    +'<div style="margin-top:8px;"><div class="cl-ll">Updated Filter Logic</div><div class="cl-logic">(1 OR 2 OR 3) AND 4</div></div>'
+    +'<ul style="margin-top:8px;"><li>Click <strong style="color:#fff;">Save</strong> to apply.</li></ul></div>'
+    +'<div class="cl-warn"><div class="cl-warn-icon">&#9888;</div><div class="cl-warn-text">Do not skip updating the Filter Logic. If left as <strong style="color:#fff;">1 OR 2 OR 3</strong> the Dealer Code filter will have no effect and all records will still appear.</div></div>';
+},
+step3:function(){
+  return '<div class="cl-success"><div class="cl-success-title">&#10003; All Cases view complete</div>'
+    +'<div style="font-size:12px;color:rgba(255,255,255,0.75);line-height:1.6;">The <strong style="color:#fff;">[Dealer Code] / [Dealer Name] All Cases</strong> view is fully configured. The next two views are cloned directly from this view — do not go back to the original default view.</div>'
+    +'</div>'
+    +'<div class="cl-section"><div class="cl-st">Quick reference — All Cases config</div>'
+    +'<div style="display:flex;flex-direction:column;gap:6px;">'
+    +'<div class="cl-filter-row"><div style="font-size:11px;color:#6ec1ff;font-weight:700;min-width:64px;">Name</div><div style="font-size:12px;color:rgba(255,255,255,0.85);">[Dealer Code] / [Dealer Name] All Cases</div></div>'
+    +'<div class="cl-filter-row"><div style="font-size:11px;color:#6ec1ff;font-weight:700;min-width:64px;">Fields</div><div style="font-size:12px;color:rgba(255,255,255,0.85);">11 fields in order — Buyback Prevention ID through Case Notes</div></div>'
+    +'<div class="cl-filter-row"><div style="font-size:11px;color:#6ec1ff;font-weight:700;min-width:64px;">Locked</div><div style="font-size:12px;color:rgba(255,255,255,0.85);">Filters 1–3 pre-set (Last Import Date, Last Edited by FSC, Created By)</div></div>'
+    +'<div class="cl-filter-row"><div style="font-size:11px;color:#6ec1ff;font-weight:700;min-width:64px;">Filter 4</div><div style="font-size:12px;color:rgba(255,255,255,0.85);">Dealer Code equals [code]</div></div>'
+    +'<div style="margin-top:2px;"><div class="cl-ll">Filter Logic</div><div class="cl-logic">(1 OR 2 OR 3) AND 4</div></div>'
+    +'</div></div>'
+    +'<div class="cl-nudge"><div class="cl-nudge-icon">&#9654;</div><div class="cl-nudge-text">First dealer fully set up? Head to <strong style="color:#fff;">Tab 4</strong> to build the Open Cases view, then <strong style="color:#fff;">Tab 5</strong> for Completed and Verified. Once all three views for this dealer are done, use <strong style="color:#fff;">Tab 6</strong> for every dealer after that.</div></div>';
+},
+step4:function(){
+  return '<div class="cl-section"><div class="cl-st">Step 1 — Clone the All Cases view</div><ul>'
+    +'<li>From inside the <strong style="color:#fff;">[Dealer Code] / [Dealer Name] All Cases</strong> view, click the <strong style="color:#fff;">gear icon &#9881;</strong> and select <strong style="color:#fff;">Clone</strong>.</li>'
+    +'<li>Name the new view:</li>'
+    +'</ul>'
+    +'<div class="cl-name">[Dealer Code] / [Dealer Name] Open Cases</div>'
+    +'<div class="cl-hint">Example: 45841 / AutoNation Open Cases</div>'
+    +'<ul style="margin-top:4px;"><li>Select <strong style="color:#fff;">Only I can see this list view</strong>. Click <strong style="color:#fff;">Save</strong>.</li></ul></div>'
+    +'<div class="cl-section"><div class="cl-st">Step 2 — Add the Case Status filter</div><ul>'
+    +'<li>Open the <strong style="color:#fff;">filter funnel</strong> panel. Locked filters 1–3 and Filter 4 (Dealer Code) are already in place.</li>'
+    +'<li>Click <strong style="color:#fff;">Add Filter</strong>. Set the field to <strong style="color:#fff;">Case Status</strong>, operator to <strong style="color:#fff;">equals</strong>, value to <strong style="color:#fff;">Open</strong>.</li>'
+    +'<li>This filter will be numbered <strong style="color:#fff;">5</strong>.</li>'
+    +'</ul>'
+    +'<div style="display:flex;flex-direction:column;gap:6px;margin-top:8px;">'
+    +'<div class="cl-filter-row"><div class="cl-fnum">5</div><div class="cl-fc"><div class="cl-ff">Case Status</div><div class="cl-fv">equals Open</div></div></div>'
+    +'</div></div>'
+    +'<div class="cl-section"><div class="cl-st">Step 3 — Update the Filter Logic</div><ul>'
+    +'<li>Click into the <strong style="color:#fff;">Filter Logic</strong> box and update it to:</li>'
+    +'</ul>'
+    +'<div style="margin-top:8px;"><div class="cl-ll">Updated Filter Logic</div><div class="cl-logic">(1 OR 2 OR 3) AND 4 AND 5</div></div>'
+    +'<ul style="margin-top:8px;"><li>Click <strong style="color:#fff;">Save</strong>. The <strong style="color:#fff;">Open Cases</strong> view is complete.</li></ul></div>'
+    +'<div class="cl-warn"><div class="cl-warn-icon">&#9888;</div><div class="cl-warn-text">Fields carry over from the cloned All Cases view automatically. Only the name, new filter, and logic need to be updated.</div></div>';
+},
+step5:function(){
+  return '<div class="cl-section"><div class="cl-st">Step 1 — Clone the All Cases view</div><ul>'
+    +'<li>Go back to the <strong style="color:#fff;">[Dealer Code] / [Dealer Name] All Cases</strong> view — not the Open Cases view.</li>'
+    +'<li>Click the <strong style="color:#fff;">gear icon &#9881;</strong> and select <strong style="color:#fff;">Clone</strong>.</li>'
+    +'<li>Name the new view:</li>'
+    +'</ul>'
+    +'<div class="cl-name">[Dealer Code] / [Dealer Name] Completed and Verified</div>'
+    +'<div class="cl-hint">Example: 45841 / AutoNation Completed and Verified</div>'
+    +'<ul style="margin-top:4px;"><li>Select <strong style="color:#fff;">Only I can see this list view</strong>. Click <strong style="color:#fff;">Save</strong>.</li></ul></div>'
+    +'<div class="cl-section"><div class="cl-st">Step 2 — Add the Completed &amp; Verified filter</div><ul>'
+    +'<li>Open the <strong style="color:#fff;">filter funnel</strong> panel. Locked filters 1–3 and Filter 4 (Dealer Code) are already in place.</li>'
+    +'<li>Click <strong style="color:#fff;">Add Filter</strong>. Set the field to <strong style="color:#fff;">Repair Completed &amp; Verified</strong>, operator to <strong style="color:#fff;">equals</strong>, value to <strong style="color:#fff;">True</strong>.</li>'
+    +'<li>This filter will be numbered <strong style="color:#fff;">5</strong>.</li>'
+    +'</ul>'
+    +'<div style="display:flex;flex-direction:column;gap:6px;margin-top:8px;">'
+    +'<div class="cl-filter-row"><div class="cl-fnum">5</div><div class="cl-fc"><div class="cl-ff">Repair Completed &amp; Verified</div><div class="cl-fv">equals True</div></div></div>'
+    +'</div></div>'
+    +'<div class="cl-section"><div class="cl-st">Step 3 — Update the Filter Logic</div><ul>'
+    +'<li>Click into the <strong style="color:#fff;">Filter Logic</strong> box and update it to:</li>'
+    +'</ul>'
+    +'<div style="margin-top:8px;"><div class="cl-ll">Updated Filter Logic</div><div class="cl-logic">(1 OR 2 OR 3) AND 4 AND 5</div></div>'
+    +'<ul style="margin-top:8px;"><li>Click <strong style="color:#fff;">Save</strong>. The <strong style="color:#fff;">Completed and Verified</strong> view is complete.</li></ul></div>'
+    +'<div class="cl-success"><div class="cl-success-title">&#10003; All three views complete for this dealer</div>'
+    +'<div style="font-size:12px;color:rgba(255,255,255,0.75);line-height:1.8;">&#10003; [Code] / [Name] All Cases<br>&#10003; [Code] / [Name] Open Cases<br>&#10003; [Code] / [Name] Completed and Verified</div>'
+    +'</div>'
+    +'<div class="cl-nudge"><div class="cl-nudge-icon">&#9654;</div><div class="cl-nudge-text">Ready for your next dealer? Skip the full setup — go to <strong style="color:#fff;">Tab 6</strong> for the faster three-step method.</div></div>';
+},
+step6:function(){
+  return '<div class="cl-nudge"><div class="cl-nudge-icon">&#9889;</div><div class="cl-nudge-text">Once your first dealer\'s three views are fully built, use this method for every additional dealer. Fields, locked filters, and filter logic are already in place — only three things change: the clone source, the name, and the dealer code value.</div></div>'
+    +'<div class="cl-section"><div class="cl-st">For each new dealer — repeat these 3 steps per view type</div>'
+    +'<div style="display:flex;flex-direction:column;gap:8px;margin-top:4px;">'
+    +'<div class="cl-step-row"><div class="cl-step-num">1</div><div><div class="cl-step-title">Clone the matching view from the previous dealer</div><div class="cl-step-body">Open the view type you want to create (All Cases, Open Cases, or Completed and Verified) from your most recently set up dealer. Click the <strong style="color:#fff;">gear icon &#9881;</strong> and select <strong style="color:#fff;">Clone</strong>.</div></div></div>'
+    +'<div class="cl-step-row"><div class="cl-step-num">2</div><div><div class="cl-step-title">Rename it to the new dealer</div><div class="cl-step-body">Clear the default name and enter the new dealer\'s details in the same format. Select <strong style="color:#fff;">Only I can see this list view</strong>. Click <strong style="color:#fff;">Save</strong>.</div></div></div>'
+    +'</div>'
+    +'<div style="display:flex;flex-direction:column;gap:4px;margin:8px 0;">'
+    +'<div class="cl-name">[New Dealer Code] / [New Dealer Name] All Cases</div>'
+    +'<div class="cl-name">[New Dealer Code] / [New Dealer Name] Open Cases</div>'
+    +'<div class="cl-name">[New Dealer Code] / [New Dealer Name] Completed and Verified</div>'
+    +'</div>'
+    +'<div style="display:flex;flex-direction:column;gap:8px;">'
+    +'<div class="cl-step-row"><div class="cl-step-num">3</div><div><div class="cl-step-title">Change the Dealer Code filter value and Save</div><div class="cl-step-body">Open the <strong style="color:#fff;">filter funnel</strong> panel. Click the <strong style="color:#fff;">edit icon</strong> on Filter 4 (Dealer Code). Replace the old dealer code with the new one. Click <strong style="color:#fff;">Save</strong>. Done.</div></div></div>'
+    +'</div></div>'
+    +'<div class="cl-section"><div class="cl-st">View-by-view reference</div>'
+    +'<div style="display:flex;flex-direction:column;gap:6px;">'
+    +'<div class="cl-filter-row"><div class="cl-fnum">1</div><div class="cl-fc"><div class="cl-ff">All Cases</div><div class="cl-fv">Clone previous All Cases → rename → change Filter 4 dealer code → Save</div></div></div>'
+    +'<div class="cl-filter-row"><div class="cl-fnum">2</div><div class="cl-fc"><div class="cl-ff">Open Cases</div><div class="cl-fv">Clone previous Open Cases → rename → change Filter 4 dealer code → Save</div></div></div>'
+    +'<div class="cl-filter-row"><div class="cl-fnum">3</div><div class="cl-fc"><div class="cl-ff">Completed and Verified</div><div class="cl-fv">Clone previous Completed and Verified → rename → change Filter 4 dealer code → Save</div></div></div>'
+    +'</div></div>'
+    +'<div class="cl-warn"><div class="cl-warn-icon">&#9888;</div><div class="cl-warn-text">Do not change Filter 5 (Case Status or Repair Completed &amp; Verified) — it carries over correctly from the cloned view. Only Filter 4 (Dealer Code) and the view name change.</div></div>';
+},
+master:function(){
+  return '<div class="cl-info"><div class="cl-info-icon">&#128269;</div><div class="cl-info-text">This is a <strong style="color:#fff;">single view built once</strong> after all dealer views are complete. It combines all your dealer codes filtered to Completed and Verified = True — use it to cross-check your total verified count against reports without opening each dealer view individually.</div></div>'
+    +'<div class="cl-section green-border"><div class="cl-st">Step 1 — Clone any existing Completed and Verified view</div><ul>'
+    +'<li>Open any dealer\'s <strong style="color:#fff;">Completed and Verified</strong> view. Click the <strong style="color:#fff;">gear icon &#9881;</strong> and select <strong style="color:#fff;">Clone</strong>.</li>'
+    +'<li>Name the new view:</li>'
+    +'</ul>'
+    +'<div class="cl-name green">All Cases Completed and Verified</div>'
+    +'<ul style="margin-top:8px;"><li>Select <strong style="color:#fff;">Only I can see this list view</strong>. Click <strong style="color:#fff;">Save</strong>.</li></ul></div>'
+    +'<div class="cl-section green-border"><div class="cl-st">Step 2 — Update Filter 4 to include all dealer codes</div><ul>'
+    +'<li>Open the <strong style="color:#fff;">filter funnel</strong> panel. Locked filters 1–3, Filter 4 (Dealer Code = one dealer), and Filter 5 (Repair Completed &amp; Verified = True) are already in place.</li>'
+    +'<li>Click the <strong style="color:#fff;">edit icon</strong> on Filter 4 (Dealer Code).</li>'
+    +'<li>Replace the single code with all of your assigned dealer codes separated by commas.</li>'
+    +'<li>Example: <strong style="color:#fff;">45841, 26810, 27313, 45019, 60844</strong></li>'
+    +'<li>Filter 5 is already correct — no change needed.</li>'
+    +'</ul>'
+    +'<div style="display:flex;flex-direction:column;gap:6px;margin-top:8px;">'
+    +'<div class="cl-filter-row"><div class="cl-fnum green">4</div><div class="cl-fc"><div class="cl-ff">Dealer Code</div><div class="cl-fv">equals 45841, 26810, 27313, 45019, 60844 (all your codes)</div></div></div>'
+    +'<div class="cl-filter-row"><div class="cl-fnum green">5</div><div class="cl-fc"><div class="cl-ff">Repair Completed &amp; Verified</div><div class="cl-fv">equals True</div></div></div>'
+    +'</div></div>'
+    +'<div class="cl-section green-border"><div class="cl-st">Step 3 — Confirm the Filter Logic</div><ul>'
+    +'<li>The logic should already read <strong style="color:#fff;">(1 OR 2 OR 3) AND 4 AND 5</strong> since this was cloned from a Completed and Verified view.</li>'
+    +'<li>If it does not, click the <strong style="color:#fff;">Filter Logic</strong> box and update it to:</li>'
+    +'</ul>'
+    +'<div style="margin-top:8px;"><div class="cl-ll">Filter Logic</div><div class="cl-logic green">(1 OR 2 OR 3) AND 4 AND 5</div></div>'
+    +'<ul style="margin-top:8px;"><li>Click <strong style="color:#fff;">Save</strong>. The master self-check view is complete.</li></ul></div>'
+    +'<div class="cl-success"><div class="cl-success-title">&#10003; Master self-check view complete</div>'
+    +'<div style="font-size:12px;color:rgba(255,255,255,0.75);line-height:1.6;">The <strong style="color:#fff;">All Cases Completed and Verified</strong> view now shows every verified record across all your dealers. When reports are run, open this view to verify your total count matches what is being reported.</div>'
+    +'</div>';
+}
+};
+function clShow(tab,btn){
+  document.querySelectorAll('.cl-tab').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+  document.getElementById('cl-body').innerHTML=TABS[tab]();
+}
+document.getElementById('cl-body').innerHTML=TABS['overview']();
+
+function openSFModal() {
+  document.getElementById('sf-overlay').classList.add('open');
+}
+function closeSFModal(e) {
+  if (!e || e.target === document.getElementById('sf-overlay')) {
+    document.getElementById('sf-overlay').classList.remove('open');
+  }
+}
+</script>
+
 </body>
 </html>
