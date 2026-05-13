@@ -1414,70 +1414,31 @@
         <div class="resource-link" onclick="openLemonLawModal()">Lemon Law by State</div>
         <div class="resource-link" onclick="openCDAModal()">CDA Overview &amp; Setup Guide</div>
         <div class="resource-link" onclick="openSFModal()">Get Started with Salesforce</div>
+        <div class="resource-link" onclick="openMFAModal()">Microsoft MFA Setup</div>
       </div>
     </section>
   </div>
 </div>
 
 <!-- ICS SUBMISSION MODAL -->
-<div id="ics-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9000;align-items:flex-start;justify-content:center;overflow-y:auto;padding:40px 16px;" onclick="closeICSModal(event)">
-  <div id="ics-modal" onclick="event.stopPropagation()" style="background:#fff;border-radius:10px;width:min(760px,95vw);box-shadow:0 8px 48px rgba(0,0,0,0.28);margin:auto;overflow:hidden;">
-    <div style="background-color:#1F4E79;padding:28px 40px;text-align:center;position:relative;">
-      <h1 style="color:#fff;font-family:Arial,sans-serif;font-size:1.4rem;font-weight:bold;margin:0;">Job Aid — How to Share Your Outlook Calendar ICS Link</h1>
-      <button onclick="closeICSModal()" style="position:absolute;top:16px;right:20px;background:rgba(255,255,255,0.15);border:none;color:#fff;border-radius:6px;padding:6px 12px;cursor:pointer;font-size:14px;">&#10005;</button>
-    </div>
-    <div style="border-left:6px solid #2E75B6;background-color:#E8F4FD;padding:18px 24px;margin:24px 40px 0 40px;">
-      <p style="font-family:Arial,sans-serif;font-size:0.95rem;color:#1A1A1A;margin:0 0 10px 0;"><strong style="color:#1F4E79;">Purpose:</strong> Follow the steps to publish your Outlook calendar, copy your ICS link, and submit it through the <strong>FSC Calendar ICS Link Submission</strong> form below.</p>
-      <p style="font-family:Arial,sans-serif;font-size:0.95rem;color:#1A1A1A;margin:0;"><strong style="color:#C55A11;">&#9888; Important:</strong> You will need to complete these steps <strong>twice</strong> — once for your <strong style="color:#1F4E79;">MarketSource</strong> email and once for your <strong style="color:#1F4E79;">Stellantis</strong> email.</p>
-    </div>
-    <div style="margin:24px 40px 10px 40px;">
-      <span style="font-family:Arial,sans-serif;font-size:0.8rem;font-weight:bold;color:#2E75B6;letter-spacing:1px;text-transform:uppercase;">STEPS</span>
-      <span style="font-family:Arial,sans-serif;font-size:0.8rem;color:#888;font-style:italic;margin-left:12px;">Follow these steps in your browser — do not use the desktop Outlook app</span>
-    </div>
-    <div style="margin:0 40px;">
-      <table style="width:100%;border-collapse:collapse;font-family:Arial,sans-serif;">
-        <tbody>
-          <tr><td style="background-color:#2E75B6;color:#fff;font-size:1.1rem;font-weight:bold;text-align:center;width:52px;padding:14px 10px;border:1px solid #ccc;">1</td><td style="background-color:#fff;padding:14px 18px;border:1px solid #ccc;"><strong style="font-size:0.95rem;color:#1A1A1A;">Open Outlook Web App (OWA)</strong><br><span style="font-size:0.85rem;color:#444;font-style:italic;">Go to: outlook.office.com in your browser and sign in with your work credentials.</span></td></tr>
-          <tr><td style="background-color:#2E75B6;color:#fff;font-size:1.1rem;font-weight:bold;text-align:center;padding:14px 10px;border:1px solid #ccc;">2</td><td style="background-color:#E8F4FD;padding:14px 18px;border:1px solid #ccc;"><strong style="font-size:0.95rem;color:#1A1A1A;">Open Settings</strong><br><span style="font-size:0.85rem;color:#444;font-style:italic;">Click the gear icon &#9881; in the top-right corner of the page.</span></td></tr>
-          <tr><td style="background-color:#2E75B6;color:#fff;font-size:1.1rem;font-weight:bold;text-align:center;padding:14px 10px;border:1px solid #ccc;">3</td><td style="background-color:#fff;padding:14px 18px;border:1px solid #ccc;"><strong style="font-size:0.95rem;color:#1A1A1A;">Navigate to Calendar Settings</strong><br><span style="font-size:0.85rem;color:#444;font-style:italic;">In the Settings panel, select Calendar from the left sidebar.</span></td></tr>
-          <tr><td style="background-color:#2E75B6;color:#fff;font-size:1.1rem;font-weight:bold;text-align:center;padding:14px 10px;border:1px solid #ccc;">4</td><td style="background-color:#E8F4FD;padding:14px 18px;border:1px solid #ccc;"><strong style="font-size:0.95rem;color:#1A1A1A;">Open Shared Calendars</strong><br><span style="font-size:0.85rem;color:#444;font-style:italic;">Under the Calendar section, click Shared Calendars.</span></td></tr>
-          <tr><td style="background-color:#2E75B6;color:#fff;font-size:1.1rem;font-weight:bold;text-align:center;padding:14px 10px;border:1px solid #ccc;">5</td><td style="background-color:#fff;padding:14px 18px;border:1px solid #ccc;"><strong style="font-size:0.95rem;color:#1A1A1A;">Publish a Calendar</strong><br><span style="font-size:0.85rem;color:#444;font-style:italic;">Scroll to the "Publish a calendar" section. Use the first dropdown to select your calendar (usually your name/email).</span></td></tr>
-          <tr><td style="background-color:#2E75B6;color:#fff;font-size:1.1rem;font-weight:bold;text-align:center;padding:14px 10px;border:1px solid #ccc;">6</td><td style="background-color:#E8F4FD;padding:14px 18px;border:1px solid #ccc;"><strong style="font-size:0.95rem;color:#1A1A1A;">Set Permissions to 'Can view all details'</strong><br><span style="font-size:0.85rem;color:#444;font-style:italic;">Use the second dropdown and select "Can view all details."</span><br><span style="font-size:0.85rem;color:#C55A11;"><strong>&#9888; Note:</strong> Do NOT select "Can view when I'm busy" — this will hide event names and details.</span></td></tr>
-          <tr><td style="background-color:#2E75B6;color:#fff;font-size:1.1rem;font-weight:bold;text-align:center;padding:14px 10px;border:1px solid #ccc;">7</td><td style="background-color:#fff;padding:14px 18px;border:1px solid #ccc;"><strong style="font-size:0.95rem;color:#1A1A1A;">Click Publish</strong><br><span style="font-size:0.85rem;color:#444;font-style:italic;">Click the Publish button. Two links will appear below.</span></td></tr>
-          <tr><td style="background-color:#2E75B6;color:#fff;font-size:1.1rem;font-weight:bold;text-align:center;padding:14px 10px;border:1px solid #ccc;">8</td><td style="background-color:#E8F4FD;padding:14px 18px;border:1px solid #ccc;"><strong style="font-size:0.95rem;color:#1A1A1A;">Copy the ICS Link</strong><br><span style="font-size:0.85rem;color:#444;font-style:italic;">Copy the link labeled ICS (not the HTML link). It will look like: outlook.office.com/owa/calendar/.../.../calendar.ics</span></td></tr>
-        </tbody>
-      </table>
-    </div>
-    <div style="margin:20px 40px 0 40px;display:flex;align-items:center;flex-wrap:wrap;gap:4px;">
-      <div style="background-color:#D6E4F0;padding:8px 14px;font-family:Arial,sans-serif;font-size:0.82rem;font-weight:bold;color:#1A1A1A;border:1px solid #ccc;">&#9881; Settings</div>
-      <div style="font-size:1.1rem;color:#2E75B6;font-weight:bold;padding:0 4px;">→</div>
-      <div style="background-color:#D6E4F0;padding:8px 14px;font-family:Arial,sans-serif;font-size:0.82rem;font-weight:bold;color:#1A1A1A;border:1px solid #ccc;">Calendar</div>
-      <div style="font-size:1.1rem;color:#2E75B6;font-weight:bold;padding:0 4px;">→</div>
-      <div style="background-color:#D6E4F0;padding:8px 14px;font-family:Arial,sans-serif;font-size:0.82rem;font-weight:bold;color:#1A1A1A;border:1px solid #ccc;">Shared Calendars</div>
-      <div style="font-size:1.1rem;color:#2E75B6;font-weight:bold;padding:0 4px;">→</div>
-      <div style="background-color:#D6E4F0;padding:8px 14px;font-family:Arial,sans-serif;font-size:0.82rem;font-weight:bold;color:#1A1A1A;border:1px solid #ccc;">Publish a Calendar</div>
-      <div style="font-size:1.1rem;color:#2E75B6;font-weight:bold;padding:0 4px;">→</div>
-      <div style="background-color:#D6E4F0;padding:8px 14px;font-family:Arial,sans-serif;font-size:0.82rem;font-weight:bold;color:#1A1A1A;border:1px solid #ccc;">"Can view all details"</div>
-      <div style="font-size:1.1rem;color:#2E75B6;font-weight:bold;padding:0 4px;">→</div>
-      <div style="background-color:#2E75B6;padding:8px 14px;font-family:Arial,sans-serif;font-size:0.82rem;font-weight:bold;color:#fff;border:1px solid #2E75B6;">Copy ICS Link</div>
-    </div>
-    <div style="border-left:6px solid #70AD47;background-color:#F2F9EC;padding:18px 24px;margin:24px 40px 0 40px;">
-      <p style="font-family:Arial,sans-serif;font-size:0.95rem;color:#375623;font-weight:bold;margin:0 0 8px 0;">&#10003; After copying your ICS links:</p>
-      <p style="font-family:Arial,sans-serif;font-size:0.95rem;color:#1A1A1A;margin:0;">Paste your <strong>Stellantis ICS link</strong> and <strong>MarketSource ICS link</strong> into the form below. Your name and TID are pre-filled. Click <strong>Submit</strong>.</p>
-    </div>
-    <div style="margin:32px 40px;border-top:2px solid #2E75B6;"></div>
-    <div style="margin:0 40px 40px 40px;">
-      <h2 style="font-family:Arial,sans-serif;font-size:1.2rem;font-weight:bold;color:#1F4E79;margin-bottom:24px;text-align:center;">FSC Calendar ICS Link Submission</h2>
-      <div style="max-width:640px;margin:0 auto;">
-        <div style="margin-bottom:16px;"><label style="display:block;font-family:Arial,sans-serif;font-size:0.88rem;font-weight:bold;color:#1F4E79;margin-bottom:6px;">FSC Full Name</label><input id="ics-fsc-name" type="text" readonly style="width:100%;box-sizing:border-box;padding:10px 14px;border:1px solid #ccc;border-radius:4px;font-size:0.95rem;background:#f5f5f5;color:#333;font-family:Arial,sans-serif;"></div>
-        <div style="margin-bottom:16px;"><label style="display:block;font-family:Arial,sans-serif;font-size:0.88rem;font-weight:bold;color:#1F4E79;margin-bottom:6px;">TID</label><input id="ics-tid" type="text" readonly style="width:100%;box-sizing:border-box;padding:10px 14px;border:1px solid #ccc;border-radius:4px;font-size:0.95rem;background:#f5f5f5;color:#333;font-family:Arial,sans-serif;"></div>
-        <div style="margin-bottom:16px;"><label style="display:block;font-family:Arial,sans-serif;font-size:0.88rem;font-weight:bold;color:#1F4E79;margin-bottom:6px;">Stellantis ICS Link <span style="color:#C55A11;">*</span></label><input id="ics-stellantis" type="url" placeholder="https://outlook.office.com/owa/calendar/..." style="width:100%;box-sizing:border-box;padding:10px 14px;border:1px solid #ccc;border-radius:4px;font-size:0.9rem;font-family:Arial,sans-serif;"></div>
-        <div style="margin-bottom:24px;"><label style="display:block;font-family:Arial,sans-serif;font-size:0.88rem;font-weight:bold;color:#1F4E79;margin-bottom:6px;">MarketSource ICS Link <span style="color:#C55A11;">*</span></label><input id="ics-marketsource" type="url" placeholder="https://outlook.office.com/owa/calendar/..." style="width:100%;box-sizing:border-box;padding:10px 14px;border:1px solid #ccc;border-radius:4px;font-size:0.9rem;font-family:Arial,sans-serif;"></div>
-        <div id="ics-error" style="display:none;color:#C55A11;font-family:Arial,sans-serif;font-size:0.9rem;margin-bottom:12px;"></div>
-        <div id="ics-success" style="display:none;border-left:6px solid #70AD47;background-color:#F2F9EC;padding:14px 18px;margin-bottom:16px;font-family:Arial,sans-serif;font-size:0.9rem;color:#375623;">&#10003; Your ICS links have been submitted successfully!</div>
-        <button onclick="submitICS()" style="background-color:#1F4E79;color:#fff;border:none;padding:11px 28px;font-family:Arial,sans-serif;font-size:0.95rem;font-weight:bold;border-radius:4px;cursor:pointer;">Submit</button>
+<div class="ll-overlay" id="ics-overlay" onclick="closeICSModal(event)">
+  <div class="ll-modal" id="ics-modal" onclick="event.stopPropagation()">
+
+    <div class="ll-modal-header">
+      <div>
+        <div style="font-size:17px;font-weight:700;color:#fff;font-family:Arial,sans-serif;margin-bottom:3px;">Outlook Calendar Sync</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.5);font-family:Arial,sans-serif;line-height:1.4;">Publish your Outlook calendar and submit your ICS links to the team</div>
       </div>
+      <button class="fts-close" onclick="closeICSModal()" style="flex-shrink:0;margin-left:12px;">&#10005;</button>
     </div>
+
+    <div style="display:flex;gap:0;border-bottom:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.04);flex-shrink:0;flex-wrap:wrap;">
+      <button class="cda-tab active" id="ics-tab-steps"  onclick="icsShowTab('steps')">Steps</button>
+      <button class="cda-tab"        id="ics-tab-submit" onclick="icsShowTab('submit')">Submit Links</button>
+    </div>
+
+    <div class="ll-modal-body" id="ics-body"></div>
+
   </div>
 </div>
 
@@ -1550,6 +1511,30 @@
       <button class="cda-tab" onclick="cdaShowTab('issues')" id="cda-tab-issues">Reporting Issues</button>
     </div>
     <div class="ll-modal-body" id="cda-body"></div>
+  </div>
+</div>
+
+<!-- MFA SETUP OVERLAY -->
+<div class="ll-overlay" id="mfa-overlay" onclick="closeMFAModal(event)">
+  <div class="ll-modal" id="mfa-modal" onclick="event.stopPropagation()">
+
+    <div class="ll-modal-header">
+      <div>
+        <div style="font-size:17px;font-weight:700;color:#fff;font-family:Arial,sans-serif;margin-bottom:3px;">Microsoft MFA Setup</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.5);font-family:Arial,sans-serif;line-height:1.4;">First-time multifactor authentication setup for Microsoft 365</div>
+      </div>
+      <button class="fts-close" onclick="closeMFAModal()" style="flex-shrink:0;margin-left:12px;">&#10005;</button>
+    </div>
+
+    <div style="display:flex;gap:0;border-bottom:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.04);flex-shrink:0;flex-wrap:wrap;">
+      <button class="cda-tab active" id="mfa-tab-overview"  onclick="mfaShowTab('overview')">Overview</button>
+      <button class="cda-tab"        id="mfa-tab-app"       onclick="mfaShowTab('app')">Authenticator App</button>
+      <button class="cda-tab"        id="mfa-tab-sms"       onclick="mfaShowTab('sms')">SMS Method</button>
+      <button class="cda-tab"        id="mfa-tab-signin"    onclick="mfaShowTab('signin')">Signing In</button>
+    </div>
+
+    <div class="ll-modal-body" id="mfa-body" style="height:700px;"></div>
+
   </div>
 </div>
 
@@ -2830,23 +2815,81 @@
 
 
   // ── ICS MODAL ─────────────────────────────────────────────────────────────
-  function openICSModal() {
-    var overlay = document.getElementById('ics-overlay');
-    overlay.style.display = 'flex';
-    if (typeof currentTID !== 'undefined' && currentTID) {
-      var entry = FSC_DEALER_MAP[currentTID];
-      document.getElementById('ics-fsc-name').value = (entry && entry.fsc_name) ? entry.fsc_name : '';
-      document.getElementById('ics-tid').value = currentTID;
+  var ICS_TABS = {
+    steps: function() {
+      return '<div style="background:rgba(255,100,100,0.08);border:1px solid rgba(255,100,100,0.3);border-radius:8px;padding:14px 16px;margin-bottom:10px;">'
+        +'<div style="font-size:13px;font-weight:700;color:#ff9999;margin-bottom:6px;font-family:Arial,sans-serif;">&#9888; Complete these steps twice</div>'
+        +'<div style="font-size:12px;color:rgba(255,255,255,0.8);line-height:1.7;font-family:Arial,sans-serif;">Once for your <strong style="color:#6ec1ff;">Stellantis account</strong> (<strong>TID@external.stellantis.com</strong>), then again for your <strong style="color:#ffa03c;">MarketSource account</strong>. Steps are identical for both.</div>'
+        +'</div>'
+        +cdaInfoBox('Complete these steps in your <strong>browser</strong> at <a style="color:#6ec1ff;" href="https://outlook.office.com/mail/" target="_blank">outlook.office.com</a> — do <strong>not</strong> use the desktop Outlook app.')
+        +cdaSection('Step 1 — Open Outlook Web App', ['Go to <a style="color:#6ec1ff;" href="https://outlook.office.com/mail/" target="_blank">outlook.office.com</a> in your browser and sign in with your work credentials.'])
+        +cdaSection('Step 2 — Open Settings', ['Click the <strong>gear icon &#9881;</strong> in the top-right corner of the page.'])
+        +cdaSection('Step 3 — Navigate to Calendar Settings', ['In the Settings panel, select <strong>Calendar</strong> from the left sidebar.'])
+        +cdaSection('Step 4 — Open Shared Calendars', ['Under the Calendar section, click <strong>Shared Calendars</strong>.'])
+        +cdaSection('Step 5 — Publish a Calendar', ['Scroll to the <strong>"Publish a calendar"</strong> section. Use the first dropdown to select your calendar — usually your name or email address.'])
+        +cdaSection('Step 6 — Set Permissions', ['Use the second dropdown and select <strong>"Can view all details."</strong>','<span style="color:#ff9999;">&#9888; Do <strong>NOT</strong> select "Can view when I\'m busy"</span> — this hides event names and details and breaks calendar visibility for your team lead.'])
+        +cdaSection('Step 7 — Click Publish', ['Click the <strong>Publish</strong> button. Two links will appear below.'])
+        +cdaSection('Step 8 — Copy the ICS Link', ['Copy the link labeled <strong>ICS</strong> (not the HTML link). It will look like: <span style="font-family:monospace;font-size:11px;color:#6ec1ff;">outlook.office.com/owa/calendar/.../.../calendar.ics</span>'])
+        +'<div style="background:rgba(110,193,255,0.06);border:1px solid rgba(110,193,255,0.2);border-radius:8px;padding:12px 16px;margin-top:8px;">'
+        +'<div style="font-size:11.5px;font-weight:700;color:#6ec1ff;margin-bottom:6px;font-family:Arial,sans-serif;letter-spacing:.3px;">PATH SUMMARY</div>'
+        +'<div style="display:flex;align-items:center;flex-wrap:wrap;gap:6px;">'
+        +'<span style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:5px;padding:5px 10px;font-size:11.5px;font-family:Arial,sans-serif;color:rgba(255,255,255,0.85);">&#9881; Settings</span>'
+        +'<span style="color:#6ec1ff;font-size:13px;">→</span>'
+        +'<span style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:5px;padding:5px 10px;font-size:11.5px;font-family:Arial,sans-serif;color:rgba(255,255,255,0.85);">Calendar</span>'
+        +'<span style="color:#6ec1ff;font-size:13px;">→</span>'
+        +'<span style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:5px;padding:5px 10px;font-size:11.5px;font-family:Arial,sans-serif;color:rgba(255,255,255,0.85);">Shared Calendars</span>'
+        +'<span style="color:#6ec1ff;font-size:13px;">→</span>'
+        +'<span style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:5px;padding:5px 10px;font-size:11.5px;font-family:Arial,sans-serif;color:rgba(255,255,255,0.85);">Publish a Calendar</span>'
+        +'<span style="color:#6ec1ff;font-size:13px;">→</span>'
+        +'<span style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:5px;padding:5px 10px;font-size:11.5px;font-family:Arial,sans-serif;color:rgba(255,255,255,0.85);">"Can view all details"</span>'
+        +'<span style="color:#6ec1ff;font-size:13px;">→</span>'
+        +'<span style="background:rgba(110,193,255,0.2);border:1px solid rgba(110,193,255,0.4);border-radius:5px;padding:5px 10px;font-size:11.5px;font-weight:700;font-family:Arial,sans-serif;color:#6ec1ff;">Copy ICS Link</span>'
+        +'</div></div>'
+        +'<div style="background:rgba(94,232,122,0.08);border:1px solid rgba(94,232,122,0.25);border-radius:8px;padding:14px 16px;margin-top:10px;">'
+        +'<div style="font-size:13px;font-weight:700;color:#5ee87a;margin-bottom:6px;font-family:Arial,sans-serif;">&#10003; After copying both ICS links</div>'
+        +'<div style="font-size:12.5px;color:rgba(255,255,255,0.75);line-height:1.65;font-family:Arial,sans-serif;">Paste both your <strong style="color:#6ec1ff;">Stellantis</strong> and <strong style="color:#ffa03c;">MarketSource</strong> ICS links into the <strong style="color:#fff;">Submit Links</strong> tab above.</div>'
+        +'</div>';
+    },
+    submit: function() {
+      var fscName = '', tid = '';
+      if (typeof currentTID !== 'undefined' && currentTID) {
+        var entry = FSC_DEALER_MAP[currentTID];
+        fscName = (entry && entry.fsc_name) ? entry.fsc_name : '';
+        tid = currentTID;
+      }
+      return '<div style="font-size:13px;font-weight:700;color:#fff;font-family:Arial,sans-serif;margin-bottom:16px;">FSC Calendar ICS Link Submission</div>'
+        +'<div style="margin-bottom:14px;"><label style="display:block;font-size:12px;font-weight:700;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;font-family:Arial,sans-serif;">FSC Full Name</label>'
+        +'<input id="ics-fsc-name" type="text" readonly value="'+fscName+'" style="width:100%;box-sizing:border-box;padding:10px 14px;border:1px solid rgba(255,255,255,0.15);border-radius:6px;font-size:13px;background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.5);font-family:Arial,sans-serif;"></div>'
+        +'<div style="margin-bottom:14px;"><label style="display:block;font-size:12px;font-weight:700;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;font-family:Arial,sans-serif;">TID</label>'
+        +'<input id="ics-tid" type="text" readonly value="'+tid+'" style="width:100%;box-sizing:border-box;padding:10px 14px;border:1px solid rgba(255,255,255,0.15);border-radius:6px;font-size:13px;background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.5);font-family:Arial,sans-serif;"></div>'
+        +'<div style="margin-bottom:14px;"><label style="display:block;font-size:12px;font-weight:700;color:#6ec1ff;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;font-family:Arial,sans-serif;">Stellantis ICS Link <span style="color:#ff9999;">*</span></label>'
+        +'<input id="ics-stellantis" type="url" placeholder="https://outlook.office.com/owa/calendar/..." style="width:100%;box-sizing:border-box;padding:10px 14px;border:1px solid rgba(110,193,255,0.3);border-radius:6px;font-size:13px;background:rgba(255,255,255,0.06);color:#fff;font-family:Arial,sans-serif;"></div>'
+        +'<div style="margin-bottom:20px;"><label style="display:block;font-size:12px;font-weight:700;color:#ffa03c;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;font-family:Arial,sans-serif;">MarketSource ICS Link <span style="color:#ff9999;">*</span></label>'
+        +'<input id="ics-marketsource" type="url" placeholder="https://outlook.office.com/owa/calendar/..." style="width:100%;box-sizing:border-box;padding:10px 14px;border:1px solid rgba(255,160,60,0.3);border-radius:6px;font-size:13px;background:rgba(255,255,255,0.06);color:#fff;font-family:Arial,sans-serif;"></div>'
+        +'<div id="ics-error" style="display:none;background:rgba(255,100,100,0.12);border:1px solid rgba(255,100,100,0.3);border-radius:6px;padding:10px 14px;color:#ff9999;font-family:Arial,sans-serif;font-size:12.5px;margin-bottom:14px;"></div>'
+        +'<div id="ics-success" style="display:none;background:rgba(94,232,122,0.08);border:1px solid rgba(94,232,122,0.25);border-radius:6px;padding:12px 16px;color:#5ee87a;font-family:Arial,sans-serif;font-size:12.5px;margin-bottom:14px;">&#10003; Your ICS links have been submitted successfully!</div>'
+        +'<button onclick="submitICS()" style="background:#6ec1ff;color:#0a1a4e;border:none;padding:11px 28px;font-family:Arial,sans-serif;font-size:13px;font-weight:700;border-radius:6px;cursor:pointer;">Submit</button>';
     }
-    document.getElementById('ics-stellantis').value = '';
-    document.getElementById('ics-marketsource').value = '';
-    document.getElementById('ics-error').style.display = 'none';
-    document.getElementById('ics-success').style.display = 'none';
+  };
+
+  function openICSModal() {
+    document.getElementById('ics-overlay').classList.add('open');
+    icsShowTab('steps');
   }
+
   function closeICSModal(e) {
     if (!e || e.target === document.getElementById('ics-overlay')) {
-      document.getElementById('ics-overlay').style.display = 'none';
+      document.getElementById('ics-overlay').classList.remove('open');
     }
+  }
+
+  function icsShowTab(tab) {
+    document.querySelectorAll('#ics-modal .cda-tab').forEach(function(b) { b.classList.remove('active'); });
+    var btn = document.getElementById('ics-tab-' + tab);
+    if (btn) btn.classList.add('active');
+    var body = document.getElementById('ics-body');
+    body.scrollTop = 0;
+    body.innerHTML = ICS_TABS[tab] ? ICS_TABS[tab]() : '';
   }
 
   // ── LEMON LAW MODAL ───────────────────────────────────────────────────────
@@ -3102,6 +3145,115 @@
     body.scrollTop = 0;
     body.innerHTML = CDA_TABS[tab] ? CDA_TABS[tab]() : '';
   }
+
+  // ── MICROSOFT MFA SETUP MODAL ──────────────────────────────────────────────
+
+  var MFA_TABS = {
+
+    overview: function() {
+      return '<div style="background:rgba(255,100,100,0.08);border:1px solid rgba(255,100,100,0.3);border-radius:8px;padding:14px 16px;font-size:12.5px;color:rgba(255,255,255,0.9);line-height:1.7;margin-bottom:10px;">'
+        +'<div style="font-size:13px;font-weight:700;color:#ff9999;margin-bottom:10px;">&#9888; You will need to complete this setup twice</div>'
+        +'<div style="font-size:12.5px;color:rgba(255,255,255,0.85);line-height:1.7;margin-bottom:12px;">MFA must be set up separately for each of your two Microsoft accounts. Follow all steps in this guide once for each account below.</div>'
+        +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">'
+        +'<div style="background:rgba(110,193,255,0.08);border:1px solid rgba(110,193,255,0.25);border-radius:8px;padding:14px;">'
+        +'<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#6ec1ff;margin-bottom:6px;">Account 1 — Stellantis</div>'
+        +'<div style="font-size:11.5px;color:#fff;font-family:monospace;background:rgba(0,0,0,0.2);border-radius:4px;padding:6px 10px;">TID@external.stellantis.com</div>'
+        +'<div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:6px;line-height:1.5;">Used for: Salesforce, DealerCONNECT, wiTECH, and other Stellantis tools.</div>'
+        +'</div>'
+        +'<div style="background:rgba(255,160,60,0.08);border:1px solid rgba(255,160,60,0.25);border-radius:8px;padding:14px;">'
+        +'<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#ffa03c;margin-bottom:6px;">Account 2 — MarketSource</div>'
+        +'<div style="font-size:11.5px;color:#fff;font-family:monospace;background:rgba(0,0,0,0.2);border-radius:4px;padding:6px 10px;">example@marketsource.com</div>'
+        +'<div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:6px;line-height:1.5;">Used for: Outlook, Teams, Cornerstone, and other MarketSource tools.</div>'
+        +'</div>'
+        +'</div></div>'
+        +'<div style="background:rgba(110,193,255,0.06);border:1px solid rgba(110,193,255,0.25);border-radius:8px;padding:16px;">'
+        +'<div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:16px;">'
+        +'<div style="width:36px;height:36px;border-radius:8px;background:rgba(110,193,255,0.15);border:1px solid rgba(110,193,255,0.3);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">&#128272;</div>'
+        +'<div style="flex:1;"><div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:6px;font-family:Arial,sans-serif;">What is MFA?</div>'
+        +'<div style="font-size:12.5px;color:rgba(255,255,255,0.7);line-height:1.7;font-family:Arial,sans-serif;">Multifactor Authentication (MFA) adds a second layer of security to your Microsoft 365 account. After entering your password, you verify your identity using either the <strong style="color:#fff;">Microsoft Authenticator app</strong> or an <strong style="color:#fff;">SMS text message</strong>.</div>'
+        +'</div></div>'
+        +'<div style="display:flex;justify-content:center;">'
+        +'<a style="display:inline-flex;align-items:center;gap:8px;background:#6ec1ff;border:none;border-radius:6px;padding:10px 28px;font-size:13px;font-weight:700;color:#0a1a4e;cursor:pointer;text-decoration:none;font-family:Arial,sans-serif;" href="https://outlook.office.com/mail/" target="_blank">Open Microsoft 365 &#8599;</a>'
+        +'</div></div>'
+        +cdaSection('About Microsoft Authenticator', ['Microsoft Authenticator is a <strong>free app</strong> that lets you verify your identity directly from your phone — using a fingerprint, face recognition, or a PIN.','You can add both your Stellantis and MarketSource accounts to the same app at the same time.'])
+        +'<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">'
+        +'<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:14px;text-align:center;"><div style="font-size:20px;margin-bottom:8px;">&#128273;</div><div style="font-size:11.5px;font-weight:700;color:#fff;margin-bottom:5px;font-family:Arial,sans-serif;">Password Reset</div><div style="font-size:11px;color:rgba(255,255,255,0.55);line-height:1.5;font-family:Arial,sans-serif;">Verify your identity if you forget your password.</div></div>'
+        +'<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:14px;text-align:center;"><div style="font-size:20px;margin-bottom:8px;">&#128241;</div><div style="font-size:11.5px;font-weight:700;color:#fff;margin-bottom:5px;font-family:Arial,sans-serif;">Two-Step Verification</div><div style="font-size:11px;color:rgba(255,255,255,0.55);line-height:1.5;font-family:Arial,sans-serif;">One-time code on every sign-in for added security.</div></div>'
+        +'<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:14px;text-align:center;"><div style="font-size:20px;margin-bottom:8px;">&#9989;</div><div style="font-size:11.5px;font-weight:700;color:#fff;margin-bottom:5px;font-family:Arial,sans-serif;">Passwordless Sign-In</div><div style="font-size:11px;color:rgba(255,255,255,0.55);line-height:1.5;font-family:Arial,sans-serif;">Tap an approval on your phone — no password needed.</div></div>'
+        +'</div>'
+        +cdaSection('Which method should I use?', ['<strong>Recommended: Microsoft Authenticator App</strong> — faster, more secure, and everything is done directly on your phone. Both accounts can be added to the same app.','<strong>Alternative: SMS Text Message</strong> — requires cell signal every sign-in. Use only if you cannot install the Authenticator app.'])
+        +cdaInfoBox('Have your <strong>mobile phone</strong> ready before you begin. Complete all steps for your Stellantis account first, then repeat for your MarketSource account.');
+    },
+
+    app: function() {
+      return '<div style="background:rgba(255,100,100,0.08);border:1px solid rgba(255,100,100,0.3);border-radius:8px;padding:14px 16px;margin-bottom:10px;">'
+        +'<div style="font-size:13px;font-weight:700;color:#ff9999;margin-bottom:6px;font-family:Arial,sans-serif;">&#9888; Complete these steps twice</div>'
+        +'<div style="font-size:12px;color:rgba(255,255,255,0.8);line-height:1.7;font-family:Arial,sans-serif;">First with <strong style="color:#6ec1ff;">TID@external.stellantis.com</strong>, then again with <strong style="color:#ffa03c;">example@marketsource.com</strong>. Everything is done on your phone — no computer needed.</div>'
+        +'</div>'
+        +cdaSection('Step 1 — Download the app', ['On your phone, open the <strong>App Store</strong> (iPhone) or <strong>Google Play Store</strong> (Android).','Search for <strong>Microsoft Authenticator</strong> and install the free app by <strong>Microsoft Corporation</strong>.','You only need to download the app once — both accounts will be added to the same app.'])
+        +cdaSection('Step 2 — Add your account', ['Open the <strong>Microsoft Authenticator</strong> app and tap the <strong>+ (plus)</strong> icon in the top right.','Select <strong>Work or school account</strong>.','Tap <strong>Sign in</strong> and enter your account credentials — start with your Stellantis account (<strong>TID@external.stellantis.com</strong>).','Follow the on-screen prompts. The app will automatically register MFA for that account once you sign in successfully.'])
+        +cdaSection('Step 3 — Verify setup', ['Once signed in, your account will appear in the app with a verification code or push notification option.','The next time you sign in to Microsoft 365, you will be prompted to approve the sign-in from the app.','Tap the <strong>+ (plus)</strong> icon again and repeat Step 2 for your <strong>MarketSource account</strong> (<strong>example@marketsource.com</strong>).'])
+        +cdaSection('Important tips', ['&#128190; <strong>Back up your credentials</strong> — in the app go to Settings and enable cloud backup. This protects both accounts if you lose or replace your phone.','&#128161; <strong>Can\'t sign in directly through the app?</strong> — If your organization requires a different flow, visit <a style="color:#6ec1ff;" href="https://mysignins.microsoft.com/security-info" target="_blank">mysignins.microsoft.com/security-info</a> on your computer and use the QR code method instead.','&#128241; <strong>Jailbroken/rooted devices</strong> — starting February 2026, the Authenticator app will not work on jailbroken or rooted devices for work/school accounts.'])
+        +'<div style="background:rgba(94,232,122,0.08);border:1px solid rgba(94,232,122,0.25);border-radius:8px;padding:14px 16px;">'
+        +'<div style="font-size:13px;font-weight:700;color:#5ee87a;margin-bottom:7px;font-family:Arial,sans-serif;">&#10003; Setup complete for both accounts</div>'
+        +'<div style="font-size:12.5px;color:rgba(255,255,255,0.75);line-height:1.65;font-family:Arial,sans-serif;">Both <strong style="color:#6ec1ff;">TID@external.stellantis.com</strong> and <strong style="color:#ffa03c;">example@marketsource.com</strong> are now in your Authenticator app. See the <strong style="color:#fff;">Signing In</strong> tab for what to expect at each login.</div>'
+        +'</div>';
+    },
+
+    sms: function() {
+      return '<div style="background:rgba(255,100,100,0.08);border:1px solid rgba(255,100,100,0.3);border-radius:8px;padding:14px 16px;margin-bottom:10px;">'
+        +'<div style="font-size:13px;font-weight:700;color:#ff9999;margin-bottom:6px;font-family:Arial,sans-serif;">&#9888; Complete these steps twice</div>'
+        +'<div style="font-size:12px;color:rgba(255,255,255,0.8);line-height:1.7;font-family:Arial,sans-serif;">First with <strong style="color:#6ec1ff;">TID@external.stellantis.com</strong>, then again with <strong style="color:#ffa03c;">example@marketsource.com</strong>. The steps are identical for both accounts.</div>'
+        +'</div>'
+        +cdaInfoBox('<strong>Note:</strong> The Authenticator app is the recommended method. SMS requires cell signal every sign-in. Use this only if you cannot install the app.')
+        +cdaSection('Step 1 — Trigger the MFA prompt', ['Go to <a style="color:#6ec1ff;" href="https://mysignins.microsoft.com/security-info" target="_blank">mysignins.microsoft.com/security-info</a> and sign in with the account you are setting up.','When the <strong>"More information required"</strong> screen appears, click <strong>Next</strong>.'])
+        +cdaSection('Step 2 — Select the SMS method', ['On the setup screen, click <strong>"I want to set up a different method"</strong> at the bottom of the page.','Select <strong>Phone</strong> from the dropdown and click <strong>Confirm</strong>.'])
+        +cdaSection('Step 3 — Enter your mobile number', ['Select your <strong>country code</strong> (United States: +1) and enter your <strong>mobile phone number</strong>.','Make sure <strong>"Text me a code"</strong> is selected, then click <strong>Next</strong>.'])
+        +cdaSection('Step 4 — Verify your number', ['Microsoft will send a <strong>6-digit verification code</strong> to your phone via SMS.','Enter the code on your computer screen and click <strong>Next</strong> to confirm. Then <strong>sign out and repeat Steps 1–4 for your second account</strong>.'])
+        +'<div style="background:rgba(94,232,122,0.08);border:1px solid rgba(94,232,122,0.25);border-radius:8px;padding:14px 16px;">'
+        +'<div style="font-size:13px;font-weight:700;color:#5ee87a;margin-bottom:7px;font-family:Arial,sans-serif;">&#10003; SMS method setup complete for both accounts</div>'
+        +'<div style="font-size:12.5px;color:rgba(255,255,255,0.75);line-height:1.65;font-family:Arial,sans-serif;">Both accounts will send a 6-digit code to your phone at each sign-in. See the <strong style="color:#fff;">Signing In</strong> tab for what to expect.</div>'
+        +'</div>';
+    },
+
+    signin: function() {
+      return cdaSection('What to expect after MFA is set up', ['Each time you sign in to Microsoft 365 with either account, enter your username and password as normal.','After your password, Microsoft will trigger your second verification step depending on which method you chose.'])
+        +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">'
+        +'<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(110,193,255,0.2);border-radius:8px;padding:16px;border-top:3px solid #6ec1ff;">'
+        +'<div style="font-size:11.5px;font-weight:700;color:#6ec1ff;margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px;font-family:Arial,sans-serif;">Authenticator App</div>'
+        +'<div style="font-size:12.5px;color:rgba(255,255,255,0.85);line-height:1.7;font-family:Arial,sans-serif;">A <strong style="color:#fff;">number appears</strong> on your computer screen. Open the Authenticator app on your phone, tap that number, then tap <strong style="color:#fff;">Approve</strong>. Sign-in completes automatically.</div>'
+        +'</div>'
+        +'<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:16px;border-top:3px solid rgba(255,255,255,0.25);">'
+        +'<div style="font-size:11.5px;font-weight:700;color:rgba(255,255,255,0.55);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px;font-family:Arial,sans-serif;">SMS Text</div>'
+        +'<div style="font-size:12.5px;color:rgba(255,255,255,0.85);line-height:1.7;font-family:Arial,sans-serif;">A <strong style="color:#fff;">6-digit code</strong> is sent to your phone. Enter it on the sign-in screen and click <strong style="color:#fff;">Verify</strong>.</div>'
+        +'</div></div>'
+        +cdaSection('Troubleshooting', ['<strong>No Authenticator notification?</strong> — Check that your phone has internet access and that notifications are enabled for the Authenticator app. Tap "I can\'t use my Microsoft Authenticator app right now" to use a backup method.','<strong>No SMS code?</strong> — Confirm you have cell signal and tap <strong>Resend code</strong>. Codes expire after a few minutes.','<strong>Lost or replaced your phone?</strong> — Contact <strong>Stellantis IT at 800.332.9978</strong> or <strong>MarketSource IT at 800.416.6505</strong> depending on which account needs to be reset. If cloud backup was enabled, you can restore both accounts on a new device.','<strong>Need to change your verification method?</strong> — Visit <a style="color:#6ec1ff;" href="https://mysignins.microsoft.com/security-info" target="_blank">mysignins.microsoft.com/security-info</a> and sign in with the account you want to update.'])
+        +cdaInfoBox('If locked out of your <strong>Stellantis account</strong> call <strong>800.332.9978</strong>. If locked out of your <strong>MarketSource account</strong> call <strong>800.416.6505</strong>.');
+    }
+
+  };
+
+  function openMFAModal() {
+    document.getElementById('mfa-overlay').classList.add('open');
+    mfaShowTab('overview');
+  }
+
+  function closeMFAModal(e) {
+    if (!e || e.target === document.getElementById('mfa-overlay')) {
+      document.getElementById('mfa-overlay').classList.remove('open');
+    }
+  }
+
+  function mfaShowTab(tab) {
+    document.querySelectorAll('#mfa-modal .cda-tab').forEach(function(b) { b.classList.remove('active'); });
+    var btn = document.getElementById('mfa-tab-' + tab);
+    if (btn) btn.classList.add('active');
+    var body = document.getElementById('mfa-body');
+    body.scrollTop = 0;
+    body.innerHTML = MFA_TABS[tab] ? MFA_TABS[tab]() : '';
+  }
+
+  // ── END MICROSOFT MFA SETUP MODAL ─────────────────────────────────────────
 
   function submitICS() {
     var tid  = document.getElementById('ics-tid').value.trim();
