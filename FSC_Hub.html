@@ -2035,6 +2035,8 @@
       const ddTid  = document.getElementById('user-dd-tid');
       if (ddName) ddName.textContent = fullName;
       if (ddTid)  ddTid.textContent  = 'TID: ' + tid;
+      /* set session TID for FSC Connect dismissed state — must happen before loadDismissed() */
+      if (typeof _sessionTid !== 'undefined') _sessionTid = tid;
       // Populate team lead
       const leadData = FSC_LEAD_MAP[tid];
       const leadRow      = document.getElementById('user-dd-lead-row');
@@ -3905,23 +3907,22 @@ function closeSFModal(e) {
   var connectCurrentConv = null;
 
   /* dismissed convos — persisted in localStorage per TID so survives re-opens */
-  var DISMISSED_CONVS = {};
+  var DISMISSED_CONVS  = {};
+  var _sessionTid      = ''; /* set explicitly at login, never relies on DOM timing */
 
-  function dismissedKey(tid) { return 'fsc_dismissed_' + (tid || myTid() || 'unknown'); }
+  function dismissedKey()  { return 'fsc_dismissed_' + (_sessionTid || 'unknown'); }
 
   function loadDismissed() {
-    var tid = myTid();
-    if (!tid) return;
+    if (!_sessionTid) return;
     try {
-      var raw = sessionStorage.getItem(dismissedKey(tid));
+      var raw = sessionStorage.getItem(dismissedKey());
       DISMISSED_CONVS = (raw && raw !== 'undefined') ? JSON.parse(raw) : {};
     } catch(e) { DISMISSED_CONVS = {}; }
   }
 
   function saveDismissed() {
-    var tid = myTid();
-    if (!tid) return;
-    try { sessionStorage.setItem(dismissedKey(tid), JSON.stringify(DISMISSED_CONVS)); } catch(e) {}
+    if (!_sessionTid) return;
+    try { sessionStorage.setItem(dismissedKey(), JSON.stringify(DISMISSED_CONVS)); } catch(e) {}
   }
 
   /* ── All users from Supabase (for new message search) ── */
