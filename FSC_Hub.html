@@ -4166,11 +4166,21 @@ function closeSFModal(e) {
      Send message → Supabase
   ══════════════════════════════ */
   window.fscConnectSend = async function() {
-    if (!connectCurrentConv) return;
     var inp = document.getElementById('connect-input');
     var txt = inp.value.trim(); if (!txt) return;
     var tid = myTid();
     inp.value = '';
+
+    /* if a new DM is staged but not yet created, create it now on first send */
+    if (pendingNewDM && !connectCurrentConv) {
+      var cid = await fscConnectStartDM(pendingNewDM);
+      if (!cid) return;
+      pendingNewDM = null;
+      connectCurrentConv = cid;
+      fscConnectSelectConv(cid);
+    }
+
+    if (!connectCurrentConv) return;
 
     try {
       await fetch(SUPABASE_URL + '/rest/v1/messages', {
@@ -4286,6 +4296,9 @@ function closeSFModal(e) {
     } catch(e) { ALL_USERS = []; }
   }
 
+  /* pending new DM recipient — set when name clicked, cleared on send or cancel */
+  var pendingNewDM = null;
+
   window.toggleNewMessage = function() {
     var panel = document.getElementById('connect-search-panel');
     var inp   = document.getElementById('connect-search-input');
@@ -4307,7 +4320,7 @@ function closeSFModal(e) {
       var d = document.createElement('div');
       d.className = 'connect-search-result';
       d.textContent = u.name + ' (' + u.tid + ')';
-      d.addEventListener('click', function() { fscConnectStartDM(u); });
+      d.addEventListener('click', function() { fscConnectStageRecipient(u); });
       results.appendChild(d);
     });
 
@@ -4319,9 +4332,37 @@ function closeSFModal(e) {
     }
   };
 
+  /* Stage the recipient — show their name in the chat header, enable input, but don't create DM yet */
+  function fscConnectStageRecipient(user) {
+    document.getElementById('connect-search-panel').classList.remove('open');
+
+    /* check if DM already exists locally */
+    var existing = Object.values(CONNECT_CONVS).find(function(c) {
+      return c.type === 'direct' && c.region && c.region.includes(user.name);
+    });
+    if (existing) { fscConnectSelectConv(existing.id); pendingNewDM = null; return; }
+
+    /* stage — clear active selection, show recipient name, enable input */
+    connectCurrentConv = null;
+    pendingNewDM = user;
+
+    document.querySelectorAll('.connect-row').forEach(function(r){ r.classList.remove('active'); });
+
+    var av = document.getElementById('connect-hdr-av');
+    var initials = user.name.split(' ').slice(0,2).map(function(w){return w[0];}).join('').toUpperCase();
+    av.className = 'connect-av cav-teal'; av.textContent = initials;
+    document.getElementById('connect-hdr-name').textContent = user.name;
+    document.getElementById('connect-hdr-meta').textContent = user.tid;
+    document.getElementById('connect-hdr-status').style.display = 'none';
+    document.getElementById('connect-messages').innerHTML = '<div class="csystem-msg" style="margin-top:32px;color:rgba(255,255,255,0.2)">Send a message to start the conversation</div>';
+    document.getElementById('connect-input').placeholder = 'Message ' + user.name + '…';
+    document.getElementById('connect-input').disabled = false;
+    document.getElementById('connect-input').focus();
+  }
+
   window.fscConnectStartDM = async function(user) {
     var myT = myTid();
-    if (!myT) { alert('Please sign in first.'); return; }
+    if (!myT) return null;
 
     var h = {
       'apikey': SUPABASE_ANON_KEY,
@@ -4330,79 +4371,64 @@ function closeSFModal(e) {
       'Prefer': 'return=representation'
     };
 
-    /* close search panel */
-    document.getElementById('connect-search-panel').classList.remove('open');
-
+    /* check Supabase for existing DM */
     try {
-      /* check Supabase directly for existing DM between these two TIDs */
       var checkRes = await fetch(
         SUPABASE_URL + '/rest/v1/conversation_members?tid=eq.' + encodeURIComponent(myT) + '&select=conversation_id,conversations(type)',
         { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY } }
       );
       var myMemberships = await checkRes.json();
-
       if (Array.isArray(myMemberships)) {
         for (var i = 0; i < myMemberships.length; i++) {
           var m = myMemberships[i];
           if (!m.conversations || m.conversations.type !== 'direct') continue;
-          /* check if other user is also in this convo */
           var otherRes = await fetch(
             SUPABASE_URL + '/rest/v1/conversation_members?conversation_id=eq.' + m.conversation_id + '&tid=eq.' + encodeURIComponent(user.tid),
             { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY } }
           );
           var otherRows = await otherRes.json();
           if (Array.isArray(otherRows) && otherRows.length > 0) {
-            /* DM already exists — load and open it */
             await fscConnectLoadConv(m.conversation_id, myT);
             fscConnectBuildSidebar();
-            fscConnectSelectConv(m.conversation_id);
-            return;
+            return m.conversation_id;
           }
         }
       }
+    } catch(e) { console.error('DM check failed:', e); }
 
-      /* no existing DM — create one */
+    /* create new DM */
+    try {
       var cr     = await fetch(SUPABASE_URL + '/rest/v1/conversations', {
         method: 'POST', headers: h,
         body: JSON.stringify({ type: 'direct', created_by: myT })
       });
       var crBody = await cr.json();
       var conv   = Array.isArray(crBody) ? crBody[0] : crBody;
-      if (!conv || !conv.id) { console.error('No conversation id returned:', crBody); return; }
+      if (!conv || !conv.id) { console.error('No conversation id:', crBody); return null; }
       var cid = conv.id;
 
-      var mr = await fetch(SUPABASE_URL + '/rest/v1/conversation_members', {
+      await fetch(SUPABASE_URL + '/rest/v1/conversation_members', {
         method: 'POST', headers: h,
         body: JSON.stringify([
           { conversation_id: cid, tid: myT },
           { conversation_id: cid, tid: user.tid }
         ])
       });
-      if (!mr.ok) { var merr = await mr.json(); console.error('Member insert failed:', merr); return; }
 
       await fscConnectLoadConv(cid, myT);
       fscConnectBuildSidebar();
-      fscConnectSelectConv(cid);
+      return cid;
     } catch(e) {
       console.error('Failed to create DM:', e);
+      return null;
     }
   };
 
   /* ══════════════════════════════
      Delete conversation (removes user from it)
   ══════════════════════════════ */
-  window.fscConnectDeleteConv = async function(convId) {
-    var myT = myTid();
-    try {
-      await fetch(
-        SUPABASE_URL + '/rest/v1/conversation_members?conversation_id=eq.' + convId + '&tid=eq.' + encodeURIComponent(myT),
-        {
-          method: 'DELETE',
-          headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY }
-        }
-      );
-    } catch(e) { console.error('Delete failed:', e); }
-
+  window.fscConnectDeleteConv = function(convId) {
+    /* local only — just hide from this user's sidebar, don't touch Supabase */
     delete CONNECT_CONVS[convId];
     if (connectCurrentConv === convId) {
       connectCurrentConv = null;
