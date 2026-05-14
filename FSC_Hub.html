@@ -3958,6 +3958,13 @@ function closeSFModal(e) {
     var tid  = myTid();
     var list = document.getElementById('connect-contact-list');
     if (!tid) { list.innerHTML = '<div style="padding:14px;font-size:11px;color:rgba(255,255,255,0.3)">Sign in to use FSC Connect.</div>'; return; }
+
+    /* if already loaded, just rebuild the sidebar — don't wipe and reload */
+    if (Object.keys(CONNECT_CONVS).length > 0) {
+      fscConnectBuildSidebar();
+      return;
+    }
+
     list.innerHTML = '<div style="padding:14px;font-size:11px;color:rgba(255,255,255,0.3)">Loading…</div>';
 
     try {
@@ -3968,12 +3975,17 @@ function closeSFModal(e) {
       var memberships = await res.json();
       CONNECT_CONVS = {};
 
-      if (memberships.length === 0) {
+      /* filter out dismissed convos on initial load */
+      var visible = memberships.filter(function(m) {
+        return !DISMISSED_CONVS[m.conversation_id];
+      });
+
+      if (visible.length === 0) {
         list.innerHTML = '<div style="padding:14px;font-size:11px;color:rgba(255,255,255,0.3)">No conversations yet.<br>Hit + New Message to start one.</div>';
         return;
       }
 
-      await Promise.all(memberships.map(function(m) {
+      await Promise.all(visible.map(function(m) {
         return fscConnectLoadConv(m.conversation_id, tid);
       }));
 
