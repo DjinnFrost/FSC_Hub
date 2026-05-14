@@ -1162,6 +1162,211 @@
     border-color: rgba(255,100,100,0.55);
     color: #ff9999;
   }
+
+  /* ── FSC Connect button ── */
+  .fsc-connect-btn {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 13px; font-weight: 600;
+    color: rgba(255,255,255,0.85);
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 8px; padding: 5px 12px;
+    cursor: pointer; font-family: 'Segoe UI', Arial, sans-serif;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+  }
+  .fsc-connect-btn:hover {
+    background: rgba(110,193,255,0.12);
+    border-color: rgba(110,193,255,0.4);
+    color: #6ec1ff;
+  }
+  .fsc-connect-badge {
+    background: #378ADD; color: #fff;
+    font-size: 9px; font-weight: 700;
+    padding: 1px 5px; border-radius: 8px; display: none;
+  }
+  .fsc-connect-badge.visible { display: inline-block; }
+
+  /* ── Connect modal ── */
+  .connect-overlay {
+    display: none; position: fixed; inset: 0;
+    z-index: 8500; pointer-events: none;
+  }
+  .connect-overlay.open { display: block; }
+  .connect-modal {
+    background: linear-gradient(160deg, #0e2460 0%, #132e74 60%, #0a1e50 100%);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 14px;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.55);
+    width: 480px; height: 520px;
+    display: flex; flex-direction: column; overflow: hidden;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    position: fixed; top: 80px; right: 18px;
+    pointer-events: all; user-select: none;
+  }
+  .connect-modal-hdr {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 18px;
+    border-bottom: 1px solid rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.05); flex-shrink: 0;
+    cursor: grab;
+  }
+  .connect-modal-hdr:active { cursor: grabbing; }
+  .connect-modal-title {
+    font-size: 14px; font-weight: 700; color: #6ec1ff;
+    display: flex; align-items: center; gap: 7px;
+  }
+  .connect-close-btn {
+    background: none; border: none; color: rgba(255,255,255,0.5);
+    font-size: 18px; cursor: pointer; padding: 0; line-height: 1;
+    transition: color 0.15s;
+  }
+  .connect-close-btn:hover { color: #fff; }
+  .connect-body {
+    display: grid; grid-template-columns: 160px 1fr;
+    flex: 1; overflow: hidden; min-height: 0;
+  }
+  .connect-sidebar {
+    border-right: 1px solid rgba(255,255,255,0.10);
+    display: flex; flex-direction: column;
+    background: rgba(255,255,255,0.03); overflow: hidden;
+  }
+  .connect-me {
+    display: flex; align-items: center; gap: 7px;
+    padding: 10px 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .connect-av {
+    width: 26px; height: 26px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px; font-weight: 700; flex-shrink: 0;
+  }
+  .cav-blue   { background:#E6F1FB; color:#0C447C; }
+  .cav-teal   { background:#E1F5EE; color:#085041; }
+  .cav-purple { background:#EEEDFE; color:#3C3489; }
+  .cav-coral  { background:#FAECE7; color:#712B13; }
+  .cav-amber  { background:#FAEEDA; color:#633806; }
+  .connect-me-name { font-size:11px; font-weight:600; color:rgba(255,255,255,0.9); line-height:1.2; }
+  .connect-me-sub  { font-size:9px; color:rgba(255,255,255,0.4); }
+  .connect-online-dot { width:6px; height:6px; border-radius:50%; background:#1D9E75; margin-left:auto; flex-shrink:0; }
+  .connect-sec-lbl {
+    font-size:9px; font-weight:600; color:rgba(255,255,255,0.3);
+    padding:8px 12px 3px; letter-spacing:.07em; text-transform:uppercase;
+  }
+  .connect-contact-list { flex:1; overflow-y:auto; }
+  .connect-row {
+    display:flex; align-items:center; gap:6px;
+    padding:5px 12px; cursor:pointer;
+    transition:background 0.1s; position:relative;
+  }
+  .connect-row:hover { background:rgba(255,255,255,0.06); }
+  .connect-row.active { background:rgba(110,193,255,0.10); }
+  .connect-row.active::before {
+    content:''; position:absolute; left:0; top:0; bottom:0;
+    width:2px; background:#6ec1ff;
+  }
+  .connect-row-info { flex:1; min-width:0; }
+  .connect-row-name {
+    font-size:11px; font-weight:600; color:rgba(255,255,255,0.9);
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .connect-row-preview {
+    font-size:10px; color:rgba(255,255,255,0.4);
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .connect-unread-dot { width:6px; height:6px; border-radius:50%; background:#378ADD; flex-shrink:0; }
+  .connect-status-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
+  .csd-online { background:#1D9E75; }
+  .csd-away   { background:#EF9F27; }
+  .csd-off    { background:rgba(255,255,255,0.18); }
+  .connect-group-icon {
+    width:24px; height:24px; border-radius:5px;
+    background:rgba(110,193,255,0.15); color:#6ec1ff;
+    display:flex; align-items:center; justify-content:center;
+    font-size:11px; flex-shrink:0;
+  }
+  .connect-new-btn {
+    margin:8px 12px; padding:5px 0;
+    background:rgba(110,193,255,0.10);
+    border:1px solid rgba(110,193,255,0.25);
+    border-radius:6px; color:#6ec1ff;
+    font-size:11px; font-weight:600; cursor:pointer;
+    font-family:'Segoe UI',Arial,sans-serif;
+    transition:background 0.15s;
+  }
+  .connect-new-btn:hover { background:rgba(110,193,255,0.18); }
+  .connect-chat-area { display:flex; flex-direction:column; min-height:0; }
+  .connect-chat-hdr {
+    display:flex; align-items:center; gap:8px; padding:10px 14px;
+    border-bottom:1px solid rgba(255,255,255,0.10);
+    background:rgba(255,255,255,0.03); flex-shrink:0;
+  }
+  .connect-chat-name { font-size:13px; font-weight:600; color:#fff; }
+  .connect-chat-meta { font-size:10px; color:rgba(255,255,255,0.4); }
+  .connect-status-pill {
+    margin-left:auto; font-size:10px; font-weight:500;
+    padding:2px 7px; border-radius:6px;
+    display:flex; align-items:center; gap:4px;
+  }
+  .csp-online { background:rgba(29,158,117,0.18); color:#5DCAA5; }
+  .csp-away   { background:rgba(239,159,39,0.14);  color:#EF9F27; }
+  .connect-messages {
+    flex:1; overflow-y:auto; padding:10px 14px;
+    display:flex; flex-direction:column; gap:8px; min-height:0;
+  }
+  .cmsg-row { display:flex; align-items:flex-end; gap:6px; }
+  .cmsg-row.mine { flex-direction:row-reverse; }
+  .cmsg-meta { display:flex; flex-direction:column; }
+  .cmsg-row.mine .cmsg-meta { align-items:flex-end; }
+  .cmsg-time { font-size:9px; color:rgba(255,255,255,0.3); margin-bottom:2px; }
+  .cbubble {
+    max-width:72%; padding:6px 10px; border-radius:10px;
+    font-size:11px; line-height:1.5; color:rgba(255,255,255,0.88);
+    background:rgba(255,255,255,0.09); border:1px solid rgba(255,255,255,0.11);
+  }
+  .cbubble.mine { background:rgba(55,138,221,0.26); border-color:rgba(55,138,221,0.38); color:#cfe7ff; }
+  .csystem-msg { text-align:center; font-size:10px; color:rgba(255,255,255,0.3); padding:2px 0; }
+  .connect-input-bar {
+    padding:8px 10px; flex-shrink:0;
+    border-top:1px solid rgba(255,255,255,0.10);
+    display:flex; align-items:center; gap:7px;
+    background:rgba(255,255,255,0.03);
+  }
+  .connect-input {
+    flex:1; background:rgba(255,255,255,0.08);
+    border:1px solid rgba(255,255,255,0.15); border-radius:7px;
+    padding:6px 10px; font-size:11px; color:#fff; outline:none;
+    font-family:'Segoe UI',Arial,sans-serif;
+  }
+  .connect-input:focus { border-color:rgba(110,193,255,0.5); }
+  .connect-input::placeholder { color:rgba(255,255,255,0.3); }
+  .connect-send-btn {
+    width:28px; height:28px; border-radius:6px;
+    background:#1b56c5; border:none; color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; flex-shrink:0; font-size:14px; transition:background 0.15s;
+  }
+  .connect-send-btn:hover { background:#378ADD; }
+  /* new-message search panel */
+  .connect-search-panel {
+    display:none; flex-direction:column; gap:6px;
+    padding:10px 12px;
+    border-bottom:1px solid rgba(255,255,255,0.10);
+    background:rgba(255,255,255,0.04);
+  }
+  .connect-search-panel.open { display:flex; }
+  .connect-search-input {
+    background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.18);
+    border-radius:6px; padding:5px 9px; font-size:11px; color:#fff; outline:none;
+    font-family:'Segoe UI',Arial,sans-serif;
+  }
+  .connect-search-input::placeholder { color:rgba(255,255,255,0.3); }
+  .connect-search-results { display:flex; flex-direction:column; gap:2px; max-height:120px; overflow-y:auto; }
+  .connect-search-result {
+    padding:4px 8px; border-radius:5px; font-size:11px;
+    color:rgba(255,255,255,0.8); cursor:pointer;
+    transition:background 0.1s;
+  }
+  .connect-search-result:hover { background:rgba(110,193,255,0.12); color:#6ec1ff; }
 </style>
 </head>
 <body>
@@ -1200,6 +1405,10 @@
     </div>
   </div>
   <div class="nav-right">
+    <button class="fsc-connect-btn" id="fsc-connect-btn" onclick="openFSCConnect()" aria-label="Open FSC Connect">
+      &#9632; FSC Connect
+      <span class="fsc-connect-badge" id="fsc-connect-badge"></span>
+    </button>
     <div class="welcome-wrap" id="welcome-wrap">
       <button class="welcome" id="welcome-btn" onclick="toggleUserDropdown()" aria-expanded="false">Welcome, — ▾</button>
       <div class="user-dropdown" id="user-dropdown">
@@ -3609,6 +3818,498 @@ function closeSFModal(e) {
     document.getElementById('sf-overlay').classList.remove('open');
   }
 }
+</script>
+
+<!-- ══════════════════════════════════════
+     FSC Connect — draggable modal
+══════════════════════════════════════ -->
+<div class="connect-overlay" id="connect-overlay">
+  <div class="connect-modal" id="connect-modal">
+
+    <div class="connect-modal-hdr" id="connect-drag-handle">
+      <div class="connect-modal-title">
+        <span style="font-size:11px;letter-spacing:2px;color:rgba(255,255,255,0.25);margin-right:2px;">&#8942;&#8942;</span>
+        &#9632; FSC Connect
+      </div>
+      <button class="connect-close-btn" onclick="closeFSCConnect()" aria-label="Close">&#10005;</button>
+    </div>
+
+    <div class="connect-body">
+
+      <div class="connect-sidebar">
+        <div class="connect-me" id="connect-me-row">
+          <div class="connect-av cav-blue" id="connect-me-av">?</div>
+          <div>
+            <div class="connect-me-name" id="connect-me-name">—</div>
+            <div class="connect-me-sub" id="connect-me-tid">—</div>
+          </div>
+          <div class="connect-online-dot"></div>
+        </div>
+
+        <button class="connect-new-btn" onclick="toggleNewMessage()">+ New Message</button>
+
+        <div class="connect-search-panel" id="connect-search-panel">
+          <input class="connect-search-input" id="connect-search-input"
+            placeholder="Search name or TID…"
+            oninput="fscConnectSearch(this.value)" />
+          <div class="connect-search-results" id="connect-search-results"></div>
+        </div>
+
+        <div class="connect-contact-list" id="connect-contact-list">
+          <div style="padding:14px;font-size:11px;color:rgba(255,255,255,0.3)">Loading…</div>
+        </div>
+      </div>
+
+      <div class="connect-chat-area">
+        <div class="connect-chat-hdr">
+          <div class="connect-av cav-teal" id="connect-hdr-av">—</div>
+          <div>
+            <div class="connect-chat-name" id="connect-hdr-name">Select a conversation</div>
+            <div class="connect-chat-meta" id="connect-hdr-meta"></div>
+          </div>
+          <div class="connect-status-pill csp-online" id="connect-hdr-status" style="display:none"></div>
+        </div>
+
+        <div class="connect-messages" id="connect-messages">
+          <div class="csystem-msg" style="margin-top:32px;color:rgba(255,255,255,0.2)">
+            Choose a conversation or start a new message
+          </div>
+        </div>
+
+        <div class="connect-input-bar">
+          <input class="connect-input" id="connect-input"
+            placeholder="Select a conversation…" disabled
+            onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();fscConnectSend();}" />
+          <button class="connect-send-btn" onclick="fscConnectSend()" aria-label="Send">&#10148;</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+
+  /* ── State ── */
+  var CONNECT_CONVS     = {};
+  var connectCurrentConv = null;
+
+  /* ── All users from Supabase (for new message search) ── */
+  var ALL_USERS = [];
+
+  /* ── Helpers ── */
+  function myTid()  { return (document.getElementById('connect-me-tid').textContent  || '').trim(); }
+  function myName() { return (document.getElementById('connect-me-name').textContent || '').trim(); }
+
+  /* ══════════════════════════════
+     Open / Close
+  ══════════════════════════════ */
+  window.openFSCConnect = function() {
+    document.getElementById('connect-overlay').classList.add('open');
+    fscConnectSyncMe();
+    fscConnectLoadConvos();
+    fscConnectLoadAllUsers();
+    startMessagePolling();
+  };
+
+  window.closeFSCConnect = function() {
+    document.getElementById('connect-overlay').classList.remove('open');
+    if (window._connectPollTimer) {
+      clearInterval(window._connectPollTimer);
+      window._connectPollTimer = null;
+    }
+  };
+
+  /* ══════════════════════════════
+     Sync logged-in user into header
+  ══════════════════════════════ */
+  function fscConnectSyncMe() {
+    var nameEl = document.getElementById('user-dd-name');
+    var tidEl  = document.getElementById('user-dd-tid');
+    var name   = nameEl ? nameEl.textContent.trim() : '—';
+    var tid    = tidEl  ? tidEl.textContent.replace('TID:','').trim() : '—';
+    var initials = name !== '—'
+      ? name.split(' ').slice(0,2).map(function(w){return w[0];}).join('').toUpperCase()
+      : '?';
+    document.getElementById('connect-me-av').textContent   = initials;
+    document.getElementById('connect-me-name').textContent = name !== '—' ? name : 'Not signed in';
+    document.getElementById('connect-me-tid').textContent  = tid  !== '—' ? tid  : '';
+  }
+
+  /* ══════════════════════════════
+     Load conversations from Supabase
+  ══════════════════════════════ */
+  async function fscConnectLoadConvos() {
+    var tid  = myTid();
+    var list = document.getElementById('connect-contact-list');
+    if (!tid) { list.innerHTML = '<div style="padding:14px;font-size:11px;color:rgba(255,255,255,0.3)">Sign in to use FSC Connect.</div>'; return; }
+    list.innerHTML = '<div style="padding:14px;font-size:11px;color:rgba(255,255,255,0.3)">Loading…</div>';
+
+    try {
+      var res = await fetch(
+        SUPABASE_URL + '/rest/v1/conversation_members?tid=eq.' + encodeURIComponent(tid) + '&select=conversation_id',
+        { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY } }
+      );
+      var memberships = await res.json();
+      CONNECT_CONVS = {};
+
+      if (memberships.length === 0) {
+        list.innerHTML = '<div style="padding:14px;font-size:11px;color:rgba(255,255,255,0.3)">No conversations yet.<br>Hit + New Message to start one.</div>';
+        return;
+      }
+
+      await Promise.all(memberships.map(function(m) {
+        return fscConnectLoadConv(m.conversation_id, tid);
+      }));
+
+      fscConnectBuildSidebar();
+    } catch(e) {
+      list.innerHTML = '<div style="padding:14px;font-size:11px;color:#ff8080">Load failed: ' + e.message + '</div>';
+    }
+  }
+
+  async function fscConnectLoadConv(convId, tid) {
+    var h    = { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY };
+    var base = SUPABASE_URL + '/rest/v1/';
+
+    var [cr, mr, msr] = await Promise.all([
+      fetch(base + 'conversations?id=eq.'          + convId, { headers: h }),
+      fetch(base + 'conversation_members?conversation_id=eq.' + convId + '&select=tid,users(name,role)', { headers: h }),
+      fetch(base + 'messages?conversation_id=eq.'  + convId + '&order=created_at.asc&select=id,sender_tid,body,created_at,users(name)', { headers: h })
+    ]);
+
+    var conv    = (await cr.json())[0];
+    var members = await mr.json();
+    var msgsRaw = await msr.json();
+    if (!conv) return;
+
+    var others  = members.filter(function(m){ return m.tid !== tid; });
+    var display = conv.name || (others[0] && others[0].users ? others[0].users.name : convId.slice(0,8));
+    var initials= display.split(' ').slice(0,2).map(function(w){return w[0];}).join('').toUpperCase();
+    var avPool  = ['cav-teal','cav-purple','cav-coral','cav-amber','cav-blue'];
+    var avClass = avPool[(convId.charCodeAt(0)+convId.charCodeAt(1))%avPool.length];
+    var region  = others.map(function(m){ return m.users ? m.users.name : ''; }).filter(Boolean).join(' · ');
+
+    var msgs = msgsRaw.map(function(m) {
+      return {
+        id: m.id, from: m.sender_tid === tid ? 'me' : 'them',
+        name: m.users ? m.users.name : '', text: m.body,
+        time: new Date(m.created_at).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})
+      };
+    });
+
+    CONNECT_CONVS[convId] = {
+      id: convId, name: display, initials: initials, av: avClass,
+      type: conv.type, region: region, status: null,
+      isGroup: conv.type !== 'direct',
+      unread: false, msgs: msgs
+    };
+  }
+
+  /* ══════════════════════════════
+     Build sidebar
+  ══════════════════════════════ */
+  function fscConnectBuildSidebar() {
+    var list = document.getElementById('connect-contact-list');
+    list.innerHTML = '';
+
+    var keys    = Object.keys(CONNECT_CONVS);
+    var directs = keys.filter(function(k){ return CONNECT_CONVS[k].type === 'direct'; });
+    var groups  = keys.filter(function(k){ return CONNECT_CONVS[k].type === 'group'; });
+    var ann     = keys.filter(function(k){ return CONNECT_CONVS[k].type === 'announcement'; });
+
+    function secLabel(txt) {
+      var d = document.createElement('div');
+      d.className = 'connect-sec-lbl'; d.textContent = txt;
+      list.appendChild(d);
+    }
+
+    function makeRow(key) {
+      var c   = CONNECT_CONVS[key];
+      var row = document.createElement('div');
+      row.className = 'connect-row' + (connectCurrentConv === key ? ' active' : '');
+      row.id = 'connect-row-' + key;
+
+      if (c.isGroup || c.type === 'announcement') {
+        var gi = document.createElement('div');
+        gi.className = 'connect-group-icon';
+        gi.textContent = c.initials.slice(0,2);
+        row.appendChild(gi);
+      } else {
+        var av = document.createElement('div');
+        av.className = 'connect-av ' + c.av;
+        av.textContent = c.initials;
+        row.appendChild(av);
+      }
+
+      var info = document.createElement('div'); info.className = 'connect-row-info';
+      var nm   = document.createElement('div'); nm.className = 'connect-row-name'; nm.textContent = c.name;
+      var pv   = document.createElement('div'); pv.className = 'connect-row-preview';
+      var last = null;
+      for (var i = c.msgs.length - 1; i >= 0; i--) { if (!c.msgs[i].system) { last = c.msgs[i]; break; } }
+      pv.textContent = last ? (last.from === 'me' ? 'You: ' : (last.name ? last.name + ': ' : '')) + last.text : 'No messages yet';
+      info.appendChild(nm); info.appendChild(pv);
+      row.appendChild(info);
+
+      if (c.unread) {
+        var ud = document.createElement('div');
+        ud.className = 'connect-unread-dot'; ud.id = 'connect-unread-' + key;
+        row.appendChild(ud);
+      }
+
+      row.addEventListener('click', function(){ fscConnectSelectConv(key); });
+      list.appendChild(row);
+    }
+
+    if (directs.length)  { secLabel('Direct messages'); directs.forEach(makeRow); }
+    if (groups.length)   { secLabel('Groups');          groups.forEach(makeRow); }
+    if (ann.length)      { secLabel('Announcements');   ann.forEach(makeRow); }
+
+    fscConnectUpdateNavBadge();
+  }
+
+  /* ══════════════════════════════
+     Select conversation
+  ══════════════════════════════ */
+  function fscConnectSelectConv(key) {
+    connectCurrentConv = key;
+    var c = CONNECT_CONVS[key];
+    c.unread = false;
+    var ud = document.getElementById('connect-unread-' + key); if (ud) ud.remove();
+    fscConnectUpdateNavBadge();
+
+    document.querySelectorAll('.connect-row').forEach(function(r){ r.classList.remove('active'); });
+    var row = document.getElementById('connect-row-' + key); if (row) row.classList.add('active');
+
+    var av = document.getElementById('connect-hdr-av');
+    av.className = 'connect-av ' + c.av; av.textContent = c.initials;
+    document.getElementById('connect-hdr-name').textContent = c.name;
+    document.getElementById('connect-hdr-meta').textContent = c.region || '';
+
+    var sp = document.getElementById('connect-hdr-status'); sp.style.display = 'none';
+
+    var inp = document.getElementById('connect-input');
+    inp.placeholder = 'Message ' + c.name + '…'; inp.disabled = false;
+
+    fscConnectRenderMessages(key);
+  }
+
+  /* ══════════════════════════════
+     Render messages
+  ══════════════════════════════ */
+  function fscConnectRenderMessages(key) {
+    var c    = CONNECT_CONVS[key];
+    var area = document.getElementById('connect-messages');
+    area.innerHTML = '';
+    c.msgs.forEach(function(m) {
+      if (m.system) {
+        var d = document.createElement('div'); d.className = 'csystem-msg'; d.textContent = m.system;
+        area.appendChild(d); return;
+      }
+      var isMe = m.from === 'me';
+      var row  = document.createElement('div'); row.className = 'cmsg-row' + (isMe ? ' mine' : '');
+      var avEl = document.createElement('div');
+      avEl.className = 'connect-av ' + (isMe ? 'cav-blue' : c.av);
+      avEl.style.width = '22px'; avEl.style.height = '22px'; avEl.style.fontSize = '8px';
+      avEl.textContent = isMe
+        ? (document.getElementById('connect-me-av').textContent || 'ME')
+        : (m.name ? m.name.split(' ').slice(0,2).map(function(w){return w[0];}).join('').toUpperCase() : c.initials);
+      var meta = document.createElement('div'); meta.className = 'cmsg-meta';
+      var t    = document.createElement('div'); t.className = 'cmsg-time';
+      t.textContent = (!isMe && m.name ? m.name + ' · ' : '') + (m.time || '');
+      var b = document.createElement('div'); b.className = 'cbubble' + (isMe ? ' mine' : '');
+      b.textContent = m.text;
+      meta.appendChild(t); meta.appendChild(b);
+      row.appendChild(avEl); row.appendChild(meta);
+      area.appendChild(row);
+    });
+    area.scrollTop = area.scrollHeight;
+  }
+
+  /* ══════════════════════════════
+     Send message → Supabase
+  ══════════════════════════════ */
+  window.fscConnectSend = async function() {
+    if (!connectCurrentConv) return;
+    var inp = document.getElementById('connect-input');
+    var txt = inp.value.trim(); if (!txt) return;
+    var tid = myTid();
+    inp.value = '';
+
+    try {
+      await fetch(SUPABASE_URL + '/rest/v1/messages', {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({ conversation_id: connectCurrentConv, sender_tid: tid, body: txt })
+      });
+    } catch(e) { console.error('Send failed:', e); }
+
+    var now = new Date();
+    var t   = now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+    CONNECT_CONVS[connectCurrentConv].msgs.push({ from:'me', text:txt, time:t });
+    fscConnectRenderMessages(connectCurrentConv);
+    var pv = document.querySelector('#connect-row-' + connectCurrentConv + ' .connect-row-preview');
+    if (pv) pv.textContent = 'You: ' + txt;
+  };
+
+  /* ══════════════════════════════
+     5-second polling
+  ══════════════════════════════ */
+  function startMessagePolling() {
+    if (window._connectPollTimer) clearInterval(window._connectPollTimer);
+    window._connectPollTimer = setInterval(async function() {
+      if (!connectCurrentConv) return;
+      var tid     = myTid();
+      var current = CONNECT_CONVS[connectCurrentConv]; if (!current) return;
+      try {
+        var res = await fetch(
+          SUPABASE_URL + '/rest/v1/messages?conversation_id=eq.' + connectCurrentConv +
+          '&order=created_at.asc&select=id,sender_tid,body,created_at,users(name)',
+          { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY } }
+        );
+        var msgs = await res.json();
+        if (msgs.length !== current.msgs.length) {
+          current.msgs = msgs.map(function(m) {
+            return {
+              id: m.id, from: m.sender_tid === tid ? 'me' : 'them',
+              name: m.users ? m.users.name : '', text: m.body,
+              time: new Date(m.created_at).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})
+            };
+          });
+          fscConnectRenderMessages(connectCurrentConv);
+        }
+      } catch(e) { /* silent */ }
+    }, 5000);
+  }
+
+  /* ══════════════════════════════
+     New Message — search + start DM
+  ══════════════════════════════ */
+  async function fscConnectLoadAllUsers() {
+    try {
+      var res = await fetch(
+        SUPABASE_URL + '/rest/v1/users?select=tid,name,role&order=name.asc',
+        { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY } }
+      );
+      ALL_USERS = await res.json();
+    } catch(e) { ALL_USERS = []; }
+  }
+
+  window.toggleNewMessage = function() {
+    var panel = document.getElementById('connect-search-panel');
+    var inp   = document.getElementById('connect-search-input');
+    panel.classList.toggle('open');
+    if (panel.classList.contains('open')) { inp.value = ''; inp.focus(); fscConnectSearch(''); }
+  };
+
+  window.fscConnectSearch = function(q) {
+    var results = document.getElementById('connect-search-results');
+    results.innerHTML = '';
+    var tid = myTid();
+    var filtered = ALL_USERS.filter(function(u) {
+      if (u.tid === tid) return false;
+      var search = q.toLowerCase();
+      return !search || u.name.toLowerCase().includes(search) || u.tid.toLowerCase().includes(search);
+    }).slice(0, 8);
+
+    filtered.forEach(function(u) {
+      var d = document.createElement('div');
+      d.className = 'connect-search-result';
+      d.textContent = u.name + ' (' + u.tid + ')';
+      d.addEventListener('click', function() { fscConnectStartDM(u); });
+      results.appendChild(d);
+    });
+
+    if (!filtered.length) {
+      var d = document.createElement('div');
+      d.style.cssText = 'padding:4px 8px;font-size:10px;color:rgba(255,255,255,0.3)';
+      d.textContent = q ? 'No results' : 'Type to search…';
+      results.appendChild(d);
+    }
+  };
+
+  window.fscConnectStartDM = async function(user) {
+    var myT    = myTid();
+    var myN    = myName();
+    var h      = { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=representation' };
+
+    /* close search panel */
+    document.getElementById('connect-search-panel').classList.remove('open');
+
+    /* check if DM already exists */
+    var existing = Object.values(CONNECT_CONVS).find(function(c) {
+      return c.type === 'direct' && c.region && c.region.includes(user.name);
+    });
+    if (existing) { fscConnectSelectConv(existing.id); return; }
+
+    try {
+      /* create conversation */
+      var cr = await fetch(SUPABASE_URL + '/rest/v1/conversations', {
+        method: 'POST', headers: h,
+        body: JSON.stringify({ type: 'direct', created_by: myT })
+      });
+      var conv = (await cr.json())[0];
+      var cid  = conv.id;
+
+      /* add both members */
+      await fetch(SUPABASE_URL + '/rest/v1/conversation_members', {
+        method: 'POST', headers: h,
+        body: JSON.stringify([{ conversation_id: cid, tid: myT }, { conversation_id: cid, tid: user.tid }])
+      });
+
+      /* load it and open */
+      await fscConnectLoadConv(cid, myT);
+      fscConnectBuildSidebar();
+      fscConnectSelectConv(cid);
+    } catch(e) {
+      console.error('Failed to create DM:', e);
+    }
+  };
+
+  /* ══════════════════════════════
+     Nav badge
+  ══════════════════════════════ */
+  function fscConnectUpdateNavBadge() {
+    var count  = Object.keys(CONNECT_CONVS).filter(function(k){ return CONNECT_CONVS[k].unread; }).length;
+    var badge  = document.getElementById('fsc-connect-badge');
+    if (!badge) return;
+    if (count > 0) { badge.textContent = count; badge.classList.add('visible'); }
+    else { badge.classList.remove('visible'); }
+  }
+
+  /* ══════════════════════════════
+     Drag to move
+  ══════════════════════════════ */
+  (function() {
+    var modal, dragging = false, ox = 0, oy = 0;
+    document.addEventListener('mousedown', function(e) {
+      var hdr = e.target.closest('#connect-drag-handle');
+      if (!hdr || e.target.closest('.connect-close-btn')) return;
+      dragging = true;
+      modal = document.getElementById('connect-modal');
+      var rect = modal.getBoundingClientRect();
+      ox = e.clientX - rect.left; oy = e.clientY - rect.top;
+      modal.style.right = 'auto'; modal.style.cursor = 'grabbing';
+      e.preventDefault();
+    });
+    document.addEventListener('mousemove', function(e) {
+      if (!dragging || !modal) return;
+      var x = Math.max(0, Math.min(window.innerWidth  - modal.offsetWidth,  e.clientX - ox));
+      var y = Math.max(0, Math.min(window.innerHeight - modal.offsetHeight, e.clientY - oy));
+      modal.style.left = x + 'px'; modal.style.top = y + 'px';
+    });
+    document.addEventListener('mouseup', function() {
+      dragging = false; if (modal) modal.style.cursor = '';
+    });
+  })();
+
+})();
 </script>
 
 </body>
