@@ -3983,7 +3983,7 @@ function closeSFModal(e) {
     var [cr, mr, msr] = await Promise.all([
       fetch(base + 'conversations?id=eq.'          + convId, { headers: h }),
       fetch(base + 'conversation_members?conversation_id=eq.' + convId + '&select=tid,users(name,role)', { headers: h }),
-      fetch(base + 'messages?conversation_id=eq.'  + convId + '&order=created_at.asc&select=id,sender_tid,body,created_at,users(name)', { headers: h })
+      fetch(base + 'messages?conversation_id=eq.'  + convId + '&order=created_at.asc&select=id,sender_tid,body,created_at', { headers: h })
     ]);
 
     var conv    = (await cr.json())[0];
@@ -3991,20 +3991,28 @@ function closeSFModal(e) {
     var msgsRaw = await msr.json();
     if (!conv) return;
 
-    var others  = members.filter(function(m){ return m.tid !== tid; });
+    /* build a tid→name lookup from members so we can label messages */
+    var tidToName = {};
+    if (Array.isArray(members)) {
+      members.forEach(function(m) {
+        if (m.users && m.users.name) tidToName[m.tid] = m.users.name;
+      });
+    }
+
+    var others  = Array.isArray(members) ? members.filter(function(m){ return m.tid !== tid; }) : [];
     var display = conv.name || (others[0] && others[0].users ? others[0].users.name : convId.slice(0,8));
     var initials= display.split(' ').slice(0,2).map(function(w){return w[0];}).join('').toUpperCase();
     var avPool  = ['cav-teal','cav-purple','cav-coral','cav-amber','cav-blue'];
     var avClass = avPool[(convId.charCodeAt(0)+convId.charCodeAt(1))%avPool.length];
     var region  = others.map(function(m){ return m.users ? m.users.name : ''; }).filter(Boolean).join(' · ');
 
-    var msgs = msgsRaw.map(function(m) {
+    var msgs = Array.isArray(msgsRaw) ? msgsRaw.map(function(m) {
       return {
         id: m.id, from: m.sender_tid === tid ? 'me' : 'them',
-        name: m.users ? m.users.name : '', text: m.body,
+        name: tidToName[m.sender_tid] || '', text: m.body,
         time: new Date(m.created_at).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})
       };
-    });
+    }) : [];
 
     CONNECT_CONVS[convId] = {
       id: convId, name: display, initials: initials, av: avClass,
@@ -4177,15 +4185,16 @@ function closeSFModal(e) {
       try {
         var res = await fetch(
           SUPABASE_URL + '/rest/v1/messages?conversation_id=eq.' + connectCurrentConv +
-          '&order=created_at.asc&select=id,sender_tid,body,created_at,users(name)',
+          '&order=created_at.asc&select=id,sender_tid,body,created_at',
           { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY } }
         );
         var msgs = await res.json();
+        if (!Array.isArray(msgs)) return;
         if (msgs.length !== current.msgs.length) {
           current.msgs = msgs.map(function(m) {
             return {
               id: m.id, from: m.sender_tid === tid ? 'me' : 'them',
-              name: m.users ? m.users.name : '', text: m.body,
+              name: '', text: m.body,
               time: new Date(m.created_at).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})
             };
           });
