@@ -4106,7 +4106,6 @@ function closeSFModal(e) {
     c.unread = false;
     var ud = document.getElementById('connect-unread-' + key); if (ud) ud.remove();
     fscConnectUpdateNavBadge();
-
     document.querySelectorAll('.connect-row').forEach(function(r){ r.classList.remove('active'); });
     var row = document.getElementById('connect-row-' + key); if (row) row.classList.add('active');
 
@@ -4192,29 +4191,62 @@ function closeSFModal(e) {
   function startMessagePolling() {
     if (window._connectPollTimer) clearInterval(window._connectPollTimer);
     window._connectPollTimer = setInterval(async function() {
-      if (!connectCurrentConv) return;
-      var tid     = myTid();
-      var current = CONNECT_CONVS[connectCurrentConv]; if (!current) return;
-      try {
-        var res = await fetch(
-          SUPABASE_URL + '/rest/v1/messages?conversation_id=eq.' + connectCurrentConv +
-          '&order=created_at.asc&select=id,sender_tid,body,created_at',
-          { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY } }
-        );
-        var msgs = await res.json();
-        if (!Array.isArray(msgs)) return;
-        if (msgs.length !== current.msgs.length) {
-          current.msgs = msgs.map(function(m) {
-            return {
-              id: m.id, from: m.sender_tid === tid ? 'me' : 'them',
-              name: '', text: m.body,
-              time: new Date(m.created_at).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})
-            };
-          });
-          fscConnectRenderMessages(connectCurrentConv);
-        }
-      } catch(e) { /* silent */ }
-    }, 2000);
+      var tid = myTid();
+      if (!tid) return;
+
+      /* poll ALL conversations, not just the open one */
+      var convIds = Object.keys(CONNECT_CONVS);
+      if (!convIds.length) return;
+
+      await Promise.all(convIds.map(async function(convId) {
+        var current = CONNECT_CONVS[convId]; if (!current) return;
+        try {
+          var res = await fetch(
+            SUPABASE_URL + '/rest/v1/messages?conversation_id=eq.' + convId +
+            '&order=created_at.asc&select=id,sender_tid,body,created_at',
+            { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY } }
+          );
+          var msgs = await res.json();
+          if (!Array.isArray(msgs)) return;
+          if (msgs.length !== current.msgs.length) {
+            var newMsgs = msgs.map(function(m) {
+              return {
+                id: m.id, from: m.sender_tid === tid ? 'me' : 'them',
+                name: '', text: m.body,
+                time: new Date(m.created_at).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})
+              };
+            });
+            current.msgs = newMsgs;
+
+            /* update sidebar preview */
+            var last = newMsgs[newMsgs.length - 1];
+            var pv = document.querySelector('#connect-row-' + convId + ' .connect-row-preview');
+            if (pv && last) pv.textContent = (last.from === 'me' ? 'You: ' : '') + last.text;
+
+            if (convId === connectCurrentConv) {
+              /* active convo — just re-render messages */
+              fscConnectRenderMessages(convId);
+            } else {
+              /* background convo — mark unread */
+              var lastMsg = msgs[msgs.length - 1];
+              if (lastMsg && lastMsg.sender_tid !== tid) {
+                current.unread = true;
+                /* add dot if not already there */
+                var row = document.getElementById('connect-row-' + convId);
+                if (row && !document.getElementById('connect-unread-' + convId)) {
+                  var dot = document.createElement('div');
+                  dot.className = 'connect-unread-dot';
+                  dot.id = 'connect-unread-' + convId;
+                  /* insert before the delete button (last child) */
+                  row.insertBefore(dot, row.lastChild);
+                }
+                fscConnectUpdateNavBadge();
+              }
+            }
+          }
+        } catch(e) { /* silent */ }
+      }));
+    }, 1000);
   }
 
   /* ══════════════════════════════
