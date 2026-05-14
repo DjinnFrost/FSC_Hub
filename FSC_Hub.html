@@ -3899,7 +3899,8 @@ function closeSFModal(e) {
 (function() {
 
   /* ── State ── */
-  var CONNECT_CONVS     = {};
+  var CONNECT_CONVS      = {};
+  var DISMISSED_CONVS    = {}; /* convos hidden locally — poll skips these */
   var connectCurrentConv = null;
 
   /* ── All users from Supabase (for new message search) ── */
@@ -4221,8 +4222,26 @@ function closeSFModal(e) {
         var memberships = await convRes.json();
         if (Array.isArray(memberships)) {
           var newOnes = memberships.filter(function(m) {
-            return !CONNECT_CONVS[m.conversation_id];
+            return !CONNECT_CONVS[m.conversation_id] && !DISMISSED_CONVS[m.conversation_id];
           });
+          /* also check dismissed convos for new messages — re-surface if activity */
+          var dismissed = memberships.filter(function(m) {
+            return DISMISSED_CONVS[m.conversation_id];
+          });
+          await Promise.all(dismissed.map(async function(m) {
+            try {
+              var r = await fetch(
+                SUPABASE_URL + '/rest/v1/messages?conversation_id=eq.' + m.conversation_id + '&order=created_at.desc&limit=1&select=sender_tid',
+                { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY } }
+              );
+              var latest = await r.json();
+              if (Array.isArray(latest) && latest.length > 0 && latest[0].sender_tid !== tid) {
+                /* new message from someone else — un-dismiss and load */
+                delete DISMISSED_CONVS[m.conversation_id];
+                newOnes.push(m);
+              }
+            } catch(e) { /* silent */ }
+          }));
           if (newOnes.length > 0) {
             await Promise.all(newOnes.map(function(m) {
               return fscConnectLoadConv(m.conversation_id, tid);
@@ -4428,7 +4447,8 @@ function closeSFModal(e) {
      Delete conversation (removes user from it)
   ══════════════════════════════ */
   window.fscConnectDeleteConv = function(convId) {
-    /* local only — just hide from this user's sidebar, don't touch Supabase */
+    /* add to dismissed set so poll skips it */
+    DISMISSED_CONVS[convId] = true;
     delete CONNECT_CONVS[convId];
     if (connectCurrentConv === convId) {
       connectCurrentConv = null;
