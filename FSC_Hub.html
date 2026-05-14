@@ -3906,24 +3906,22 @@ function closeSFModal(e) {
   var CONNECT_CONVS      = {};
   var connectCurrentConv = null;
 
-  /* dismissed convos — persisted in localStorage per TID so survives re-opens */
+  /* dismissed convos — in-memory per TID, no sessionStorage (unreliable in Streamlit iframe) */
   var DISMISSED_CONVS  = {};
-  var _sessionTid      = ''; /* set explicitly at login, never relies on DOM timing */
+  var _dismissedByTid  = {}; /* { tid: { convId: true, ... } } */
   window._fscSessionTid = ''; /* exposed on window so login code outside this IIFE can set it */
 
-  function dismissedKey()  { return 'fsc_dismissed_' + (window._fscSessionTid || 'unknown'); }
+  function dismissedKey()  { return window._fscSessionTid || 'unknown'; }
 
   function loadDismissed() {
-    if (!window._fscSessionTid) return;
-    try {
-      var raw = sessionStorage.getItem(dismissedKey());
-      DISMISSED_CONVS = (raw && raw !== 'undefined') ? JSON.parse(raw) : {};
-    } catch(e) { DISMISSED_CONVS = {}; }
+    var tid = window._fscSessionTid; if (!tid) return;
+    if (!_dismissedByTid[tid]) _dismissedByTid[tid] = {};
+    DISMISSED_CONVS = _dismissedByTid[tid];
   }
 
   function saveDismissed() {
-    if (!window._fscSessionTid) return;
-    try { sessionStorage.setItem(dismissedKey(), JSON.stringify(DISMISSED_CONVS)); } catch(e) {}
+    var tid = window._fscSessionTid; if (!tid) return;
+    _dismissedByTid[tid] = DISMISSED_CONVS;
   }
 
   /* ── All users from Supabase (for new message search) ── */
