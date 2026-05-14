@@ -2036,7 +2036,7 @@
       if (ddName) ddName.textContent = fullName;
       if (ddTid)  ddTid.textContent  = 'TID: ' + tid;
       /* set session TID for FSC Connect dismissed state — must happen before loadDismissed() */
-      if (typeof _sessionTid !== 'undefined') _sessionTid = tid;
+      window._fscSessionTid = tid;
       // Populate team lead
       const leadData = FSC_LEAD_MAP[tid];
       const leadRow      = document.getElementById('user-dd-lead-row');
@@ -3909,11 +3909,12 @@ function closeSFModal(e) {
   /* dismissed convos — persisted in localStorage per TID so survives re-opens */
   var DISMISSED_CONVS  = {};
   var _sessionTid      = ''; /* set explicitly at login, never relies on DOM timing */
+  window._fscSessionTid = ''; /* exposed on window so login code outside this IIFE can set it */
 
-  function dismissedKey()  { return 'fsc_dismissed_' + (_sessionTid || 'unknown'); }
+  function dismissedKey()  { return 'fsc_dismissed_' + (window._fscSessionTid || 'unknown'); }
 
   function loadDismissed() {
-    if (!_sessionTid) return;
+    if (!window._fscSessionTid) return;
     try {
       var raw = sessionStorage.getItem(dismissedKey());
       DISMISSED_CONVS = (raw && raw !== 'undefined') ? JSON.parse(raw) : {};
@@ -3921,7 +3922,7 @@ function closeSFModal(e) {
   }
 
   function saveDismissed() {
-    if (!_sessionTid) return;
+    if (!window._fscSessionTid) return;
     try { sessionStorage.setItem(dismissedKey(), JSON.stringify(DISMISSED_CONVS)); } catch(e) {}
   }
 
