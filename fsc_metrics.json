@@ -1,23 +1,23 @@
 {
-  "updated_at": "2026-05-13T11:32:36.314968-04:00",
+  "updated_at": "2026-05-14T12:58:56.833737-04:00",
   "users": {
     "T0453V4": {
       "name": "Alex Torres-Irizarry",
-      "qtd_pct_to_goal": "55.6%",
-      "qtd_repairs": 25,
-      "mtd_repairs": 4
+      "qtd_pct_to_goal": "60.0%",
+      "qtd_repairs": 27,
+      "mtd_repairs": 6
     },
     "T0351T6": {
       "name": "Ali Shafqat",
-      "qtd_pct_to_goal": "51.1%",
-      "qtd_repairs": 23,
-      "mtd_repairs": 4
+      "qtd_pct_to_goal": "55.6%",
+      "qtd_repairs": 25,
+      "mtd_repairs": 6
     },
     "T0304XT": {
       "name": "Andrew Brockmeyer",
-      "qtd_pct_to_goal": "33.3%",
-      "qtd_repairs": 15,
-      "mtd_repairs": 4
+      "qtd_pct_to_goal": "35.6%",
+      "qtd_repairs": 16,
+      "mtd_repairs": 5
     },
     "T0311PW": {
       "name": "Austin Mickelson",
@@ -39,15 +39,15 @@
     },
     "T0306FH": {
       "name": "Brandon Cook",
-      "qtd_pct_to_goal": "60.0%",
-      "qtd_repairs": 27,
-      "mtd_repairs": 5
+      "qtd_pct_to_goal": "66.7%",
+      "qtd_repairs": 30,
+      "mtd_repairs": 8
     },
     "T0090ZU": {
       "name": "Brandon Tiede",
-      "qtd_pct_to_goal": "75.6%",
-      "qtd_repairs": 34,
-      "mtd_repairs": 10
+      "qtd_pct_to_goal": "77.8%",
+      "qtd_repairs": 35,
+      "mtd_repairs": 11
     },
     "T0304XV": {
       "name": "Chad Attaway",
@@ -81,15 +81,15 @@
     },
     "T0390ZI": {
       "name": "Daniel Peper",
-      "qtd_pct_to_goal": "28.9%",
-      "qtd_repairs": 13,
-      "mtd_repairs": 8
+      "qtd_pct_to_goal": "33.3%",
+      "qtd_repairs": 15,
+      "mtd_repairs": 10
     },
     "T0306FJ": {
       "name": "Dean Danas",
-      "qtd_pct_to_goal": "80.0%",
-      "qtd_repairs": 36,
-      "mtd_repairs": 6
+      "qtd_pct_to_goal": "84.4%",
+      "qtd_repairs": 38,
+      "mtd_repairs": 8
     },
     "T0306FK": {
       "name": "Edwin Alexander",
@@ -99,9 +99,9 @@
     },
     "T0307EH": {
       "name": "Gary Christiansen",
-      "qtd_pct_to_goal": "73.3%",
-      "qtd_repairs": 33,
-      "mtd_repairs": 6
+      "qtd_pct_to_goal": "75.6%",
+      "qtd_repairs": 34,
+      "mtd_repairs": 7
     },
     "T0338N1": {
       "name": "George Dobler Iii",
@@ -129,9 +129,9 @@
     },
     "T0318DT": {
       "name": "James Deacon",
-      "qtd_pct_to_goal": "148.9%",
-      "qtd_repairs": 67,
-      "mtd_repairs": 21
+      "qtd_pct_to_goal": "151.1%",
+      "qtd_repairs": 68,
+      "mtd_repairs": 22
     },
     "T0304XW": {
       "name": "James Jackson",
@@ -141,9 +141,9 @@
     },
     "T0294MO": {
       "name": "Jason Nunnally",
-      "qtd_pct_to_goal": "71.1%",
-      "qtd_repairs": 32,
-      "mtd_repairs": 6
+      "qtd_pct_to_goal": "77.8%",
+      "qtd_repairs": 35,
+      "mtd_repairs": 9
     },
     "T0300H0": {
       "name": "Jay Safford",
@@ -153,27 +153,27 @@
     },
     "T0471OK": {
       "name": "Jeff Gay",
-      "qtd_pct_to_goal": "57.8%",
-      "qtd_repairs": 26,
-      "mtd_repairs": 10
+      "qtd_pct_to_goal": "60.0%",
+      "qtd_repairs": 27,
+      "mtd_repairs": 11
     },
     "T0300HV": {
       "name": "Jemell Braithwaite",
-      "qtd_pct_to_goal": "113.3%",
-      "qtd_repairs": 51,
-      "mtd_repairs": 13
+      "qtd_pct_to_goal": "115.6%",
+      "qtd_repairs": 52,
+      "mtd_repairs": 14
     },
     "T0400IJ": {
       "name": "Jeremy Kihnke",
-      "qtd_pct_to_goal": "40.0%",
-      "qtd_repairs": 18,
-      "mtd_repairs": 4
+      "qtd_pct_to_goal": "42.2%",
+      "qtd_repairs": 19,
+      "mtd_repairs": 5
     },
     "T0322OO": {
       "name": "John Eilenberg",
-      "qtd_pct_to_goal": "51.1%",
-      "qtd_repairs": 23,
-      "mtd_repairs": 5
+      "qtd_pct_to_goal": "57.8%",
+      "qtd_repairs": 26,
+      "mtd_repairs": 8
     },
     "T0300HT": {
       "name": "John Shaab",
@@ -207,39 +207,39 @@
     },
     "T0314R5": {
       "name": "Justin Harbison",
-      "qtd_pct_to_goal": "102.2%",
-      "qtd_repairs": 46,
-      "mtd_repairs": 12
+      "qtd_pct_to_goal": "106.7%",
+      "qtd_repairs": 48,
+      "mtd_repairs": 14
     },
     "T0458AG": {
       "name": "Justin Moring",
-      "qtd_pct_to_goal": "71.1%",
-      "qtd_repairs": 32,
-      "mtd_repairs": 10
+      "qtd_pct_to_goal": "73.3%",
+      "qtd_repairs": 33,
+      "mtd_repairs": 11
     },
     "T0311PV": {
       "name": "Justin Reynolds",
-      "qtd_pct_to_goal": "80.0%",
-      "qtd_repairs": 36,
-      "mtd_repairs": 10
+      "qtd_pct_to_goal": "84.4%",
+      "qtd_repairs": 38,
+      "mtd_repairs": 12
     },
     "T0471OO": {
       "name": "Keith Whitaker",
-      "qtd_pct_to_goal": "42.2%",
-      "qtd_repairs": 19,
-      "mtd_repairs": 10
+      "qtd_pct_to_goal": "46.7%",
+      "qtd_repairs": 21,
+      "mtd_repairs": 12
     },
     "T0314R4": {
       "name": "Kenneth Hawkes",
-      "qtd_pct_to_goal": "115.6%",
-      "qtd_repairs": 52,
-      "mtd_repairs": 24
+      "qtd_pct_to_goal": "113.3%",
+      "qtd_repairs": 51,
+      "mtd_repairs": 23
     },
     "T0378EV": {
       "name": "Kenneth Warg",
-      "qtd_pct_to_goal": "57.8%",
-      "qtd_repairs": 26,
-      "mtd_repairs": 7
+      "qtd_pct_to_goal": "60.0%",
+      "qtd_repairs": 27,
+      "mtd_repairs": 8
     },
     "T0312AE": {
       "name": "Kevin Colley",
@@ -249,15 +249,15 @@
     },
     "T0471OD": {
       "name": "Kevin Mata",
-      "qtd_pct_to_goal": "24.4%",
-      "qtd_repairs": 11,
-      "mtd_repairs": 5
+      "qtd_pct_to_goal": "26.7%",
+      "qtd_repairs": 12,
+      "mtd_repairs": 6
     },
     "T0390ZG": {
       "name": "Kumasi Rayford",
-      "qtd_pct_to_goal": "64.4%",
-      "qtd_repairs": 29,
-      "mtd_repairs": 4
+      "qtd_pct_to_goal": "68.9%",
+      "qtd_repairs": 31,
+      "mtd_repairs": 6
     },
     "T0314R6": {
       "name": "Kyle Tibbetts",
@@ -267,15 +267,15 @@
     },
     "T0304KR": {
       "name": "Llewelyn Mcclamy",
-      "qtd_pct_to_goal": "66.7%",
-      "qtd_repairs": 30,
-      "mtd_repairs": 7
+      "qtd_pct_to_goal": "75.6%",
+      "qtd_repairs": 34,
+      "mtd_repairs": 11
     },
     "T0294M5": {
       "name": "Luis Colon",
-      "qtd_pct_to_goal": "33.3%",
-      "qtd_repairs": 15,
-      "mtd_repairs": 1
+      "qtd_pct_to_goal": "35.6%",
+      "qtd_repairs": 16,
+      "mtd_repairs": 2
     },
     "T0318DR": {
       "name": "Mark Simon II",
@@ -285,9 +285,9 @@
     },
     "T0294MI": {
       "name": "Marvez Newman",
-      "qtd_pct_to_goal": "71.1%",
-      "qtd_repairs": 32,
-      "mtd_repairs": 8
+      "qtd_pct_to_goal": "73.3%",
+      "qtd_repairs": 33,
+      "mtd_repairs": 9
     },
     "T0306V9": {
       "name": "Matthew Williams",
@@ -303,21 +303,21 @@
     },
     "T0307EF": {
       "name": "Michael Lewis",
-      "qtd_pct_to_goal": "28.9%",
-      "qtd_repairs": 13,
-      "mtd_repairs": 1
+      "qtd_pct_to_goal": "33.3%",
+      "qtd_repairs": 15,
+      "mtd_repairs": 3
     },
     "T0335UJ": {
       "name": "Michael Meddley",
-      "qtd_pct_to_goal": "84.4%",
-      "qtd_repairs": 38,
-      "mtd_repairs": 11
+      "qtd_pct_to_goal": "86.7%",
+      "qtd_repairs": 39,
+      "mtd_repairs": 12
     },
     "T0294M9": {
       "name": "Michael Salemme",
-      "qtd_pct_to_goal": "93.3%",
-      "qtd_repairs": 42,
-      "mtd_repairs": 19
+      "qtd_pct_to_goal": "95.6%",
+      "qtd_repairs": 43,
+      "mtd_repairs": 20
     },
     "T0320I3": {
       "name": "Michael Santos",
@@ -357,27 +357,27 @@
     },
     "T0346ZQ": {
       "name": "Richard Walker",
-      "qtd_pct_to_goal": "20.0%",
-      "qtd_repairs": 9,
-      "mtd_repairs": 0
+      "qtd_pct_to_goal": "22.2%",
+      "qtd_repairs": 10,
+      "mtd_repairs": 1
     },
     "T0471OI": {
       "name": "Rob LaChance",
-      "qtd_pct_to_goal": "71.1%",
-      "qtd_repairs": 32,
-      "mtd_repairs": 12
+      "qtd_pct_to_goal": "73.3%",
+      "qtd_repairs": 33,
+      "mtd_repairs": 13
     },
     "T0322OR": {
       "name": "Robert Chialastri",
-      "qtd_pct_to_goal": "91.1%",
-      "qtd_repairs": 41,
-      "mtd_repairs": 11
+      "qtd_pct_to_goal": "97.8%",
+      "qtd_repairs": 44,
+      "mtd_repairs": 14
     },
     "T0300HX": {
       "name": "Robert Chung",
-      "qtd_pct_to_goal": "35.6%",
-      "qtd_repairs": 16,
-      "mtd_repairs": 4
+      "qtd_pct_to_goal": "42.2%",
+      "qtd_repairs": 19,
+      "mtd_repairs": 7
     },
     "T0306L5": {
       "name": "Robert Plizga",
@@ -387,27 +387,27 @@
     },
     "T0322OQ": {
       "name": "Robert White",
-      "qtd_pct_to_goal": "31.1%",
-      "qtd_repairs": 14,
-      "mtd_repairs": 5
+      "qtd_pct_to_goal": "33.3%",
+      "qtd_repairs": 15,
+      "mtd_repairs": 6
     },
     "T0329IF": {
       "name": "Roderick Shaw",
-      "qtd_pct_to_goal": "60.0%",
-      "qtd_repairs": 27,
-      "mtd_repairs": 7
+      "qtd_pct_to_goal": "62.2%",
+      "qtd_repairs": 28,
+      "mtd_repairs": 8
     },
     "T0423HH": {
       "name": "Rodrigo Elizondo",
-      "qtd_pct_to_goal": "51.1%",
-      "qtd_repairs": 23,
-      "mtd_repairs": 1
+      "qtd_pct_to_goal": "55.6%",
+      "qtd_repairs": 25,
+      "mtd_repairs": 3
     },
     "T0304KV": {
       "name": "Ryan Frey",
-      "qtd_pct_to_goal": "73.3%",
-      "qtd_repairs": 33,
-      "mtd_repairs": 5
+      "qtd_pct_to_goal": "77.8%",
+      "qtd_repairs": 35,
+      "mtd_repairs": 7
     },
     "T0300P3": {
       "name": "Thomas Cueman",
@@ -417,9 +417,9 @@
     },
     "T0294M8": {
       "name": "Thomas Sapkowski",
-      "qtd_pct_to_goal": "91.1%",
-      "qtd_repairs": 41,
-      "mtd_repairs": 12
+      "qtd_pct_to_goal": "93.3%",
+      "qtd_repairs": 42,
+      "mtd_repairs": 13
     },
     "T0458AK": {
       "name": "Tim Graber",
@@ -429,9 +429,9 @@
     },
     "T2237TR": {
       "name": "Timothy Roell",
-      "qtd_pct_to_goal": "71.1%",
-      "qtd_repairs": 32,
-      "mtd_repairs": 6
+      "qtd_pct_to_goal": "75.6%",
+      "qtd_repairs": 34,
+      "mtd_repairs": 8
     },
     "T0440PG": {
       "name": "Todd Howe",
@@ -441,9 +441,9 @@
     },
     "T0318DS": {
       "name": "Victor Gray",
-      "qtd_pct_to_goal": "33.3%",
-      "qtd_repairs": 15,
-      "mtd_repairs": 3
+      "qtd_pct_to_goal": "35.6%",
+      "qtd_repairs": 16,
+      "mtd_repairs": 4
     },
     "T0332YY": {
       "name": "William Wood",
@@ -453,9 +453,9 @@
     },
     "T0317U1": {
       "name": "Zedric Ford",
-      "qtd_pct_to_goal": "168.9%",
-      "qtd_repairs": 76,
-      "mtd_repairs": 13
+      "qtd_pct_to_goal": "171.1%",
+      "qtd_repairs": 77,
+      "mtd_repairs": 14
     }
   }
 }
