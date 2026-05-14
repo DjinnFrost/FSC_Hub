@@ -4246,6 +4246,8 @@ function closeSFModal(e) {
     /* ── Timer 1: check for new conversations every 3s ── */
     async function checkNewConvos() {
       var tid = myTid(); if (!tid) return;
+      /* always reload dismissed state before checking — ensures it's current */
+      loadDismissed();
       try {
         var convRes = await fetch(
           SUPABASE_URL + '/rest/v1/conversation_members?tid=eq.' + encodeURIComponent(tid) + '&select=conversation_id',
@@ -4335,9 +4337,9 @@ function closeSFModal(e) {
 
     window._connectPollTimer  = setInterval(checkMessages,   1000);
     window._connectConvoTimer = setInterval(checkNewConvos,  3000);
-    /* run both immediately on start */
-    checkNewConvos();
+    /* run messages immediately, delay convo check so loadDismissed() fires first */
     checkMessages();
+    setTimeout(checkNewConvos, 1200);
   }
 
   /* ══════════════════════════════
