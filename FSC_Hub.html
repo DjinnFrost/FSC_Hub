@@ -3926,15 +3926,13 @@ function closeSFModal(e) {
     fscConnectLoadConvos();
     fscConnectLoadAllUsers();
     /* only start polling if not already running from background */
-    if (!window._connectPollTimer) startMessagePolling();
+    if (!window._connectPollTimer && !window._connectConvoTimer) startMessagePolling();
   };
 
   window.closeFSCConnect = function() {
     document.getElementById('connect-overlay').classList.remove('open');
-    if (window._connectPollTimer) {
-      clearInterval(window._connectPollTimer);
-      window._connectPollTimer = null;
-    }
+    if (window._connectPollTimer)  { clearInterval(window._connectPollTimer);  window._connectPollTimer  = null; }
+    if (window._connectConvoTimer) { clearInterval(window._connectConvoTimer); window._connectConvoTimer = null; }
   };
 
   /* ══════════════════════════════
@@ -4208,50 +4206,50 @@ function closeSFModal(e) {
      5-second polling
   ══════════════════════════════ */
   function startMessagePolling() {
-    if (window._connectPollTimer) clearInterval(window._connectPollTimer);
-    window._connectPollTimer = setInterval(async function() {
-      var tid = myTid();
-      if (!tid) return;
+    if (window._connectPollTimer)  clearInterval(window._connectPollTimer);
+    if (window._connectConvoTimer) clearInterval(window._connectConvoTimer);
 
-      /* ── 1. Check for brand-new conversations this user isn't aware of yet ── */
+    /* ── Timer 1: check for new conversations every 3s ── */
+    async function checkNewConvos() {
+      var tid = myTid(); if (!tid) return;
       try {
         var convRes = await fetch(
           SUPABASE_URL + '/rest/v1/conversation_members?tid=eq.' + encodeURIComponent(tid) + '&select=conversation_id',
           { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY } }
         );
         var memberships = await convRes.json();
-        if (Array.isArray(memberships)) {
-          var newOnes = memberships.filter(function(m) {
-            return !CONNECT_CONVS[m.conversation_id] && !DISMISSED_CONVS[m.conversation_id];
-          });
-          /* also check dismissed convos for new messages — re-surface if activity */
-          var dismissed = memberships.filter(function(m) {
-            return DISMISSED_CONVS[m.conversation_id];
-          });
-          await Promise.all(dismissed.map(async function(m) {
-            try {
-              var r = await fetch(
-                SUPABASE_URL + '/rest/v1/messages?conversation_id=eq.' + m.conversation_id + '&order=created_at.desc&limit=1&select=sender_tid',
-                { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY } }
-              );
-              var latest = await r.json();
-              if (Array.isArray(latest) && latest.length > 0 && latest[0].sender_tid !== tid) {
-                /* new message from someone else — un-dismiss and load */
-                delete DISMISSED_CONVS[m.conversation_id];
-                newOnes.push(m);
-              }
-            } catch(e) { /* silent */ }
-          }));
-          if (newOnes.length > 0) {
-            await Promise.all(newOnes.map(function(m) {
-              return fscConnectLoadConv(m.conversation_id, tid);
-            }));
-            fscConnectBuildSidebar();
-          }
+        if (!Array.isArray(memberships)) return;
+
+        var newOnes = memberships.filter(function(m) {
+          return !CONNECT_CONVS[m.conversation_id] && !DISMISSED_CONVS[m.conversation_id];
+        });
+
+        /* check dismissed convos for new messages from others — re-surface if so */
+        var dismissed = memberships.filter(function(m) { return DISMISSED_CONVS[m.conversation_id]; });
+        await Promise.all(dismissed.map(async function(m) {
+          try {
+            var r = await fetch(
+              SUPABASE_URL + '/rest/v1/messages?conversation_id=eq.' + m.conversation_id + '&order=created_at.desc&limit=1&select=sender_tid',
+              { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY } }
+            );
+            var latest = await r.json();
+            if (Array.isArray(latest) && latest.length > 0 && latest[0].sender_tid !== tid) {
+              delete DISMISSED_CONVS[m.conversation_id];
+              newOnes.push(m);
+            }
+          } catch(e) { /* silent */ }
+        }));
+
+        if (newOnes.length > 0) {
+          await Promise.all(newOnes.map(function(m) { return fscConnectLoadConv(m.conversation_id, tid); }));
+          fscConnectBuildSidebar();
         }
       } catch(e) { /* silent */ }
+    }
 
-      /* ── 2. Poll all known conversations for new messages ── */
+    /* ── Timer 2: check for new messages every 1s ── */
+    async function checkMessages() {
+      var tid = myTid(); if (!tid) return;
       var convIds = Object.keys(CONNECT_CONVS);
       if (!convIds.length) return;
 
@@ -4264,42 +4262,47 @@ function closeSFModal(e) {
             { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY } }
           );
           var msgs = await res.json();
-          if (!Array.isArray(msgs)) return;
-          if (msgs.length !== current.msgs.length) {
-            var newMsgs = msgs.map(function(m) {
-              return {
-                id: m.id, from: m.sender_tid === tid ? 'me' : 'them',
-                name: '', text: m.body,
-                time: new Date(m.created_at).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})
-              };
-            });
-            current.msgs = newMsgs;
+          if (!Array.isArray(msgs) || msgs.length === current.msgs.length) return;
 
-            /* update sidebar preview */
-            var last = newMsgs[newMsgs.length - 1];
-            var pv = document.querySelector('#connect-row-' + convId + ' .connect-row-preview');
-            if (pv && last) pv.textContent = (last.from === 'me' ? 'You: ' : '') + last.text;
+          var newMsgs = msgs.map(function(m) {
+            return {
+              id: m.id, from: m.sender_tid === tid ? 'me' : 'them',
+              name: '', text: m.body,
+              time: new Date(m.created_at).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})
+            };
+          });
+          current.msgs = newMsgs;
 
-            if (convId === connectCurrentConv) {
-              fscConnectRenderMessages(convId);
-            } else {
-              var lastMsg = msgs[msgs.length - 1];
-              if (lastMsg && lastMsg.sender_tid !== tid) {
-                current.unread = true;
-                var row = document.getElementById('connect-row-' + convId);
-                if (row && !document.getElementById('connect-unread-' + convId)) {
-                  var dot = document.createElement('div');
-                  dot.className = 'connect-unread-dot';
-                  dot.id = 'connect-unread-' + convId;
-                  row.insertBefore(dot, row.lastChild);
-                }
-                fscConnectUpdateNavBadge();
+          /* update sidebar preview */
+          var last = newMsgs[newMsgs.length - 1];
+          var pv = document.querySelector('#connect-row-' + convId + ' .connect-row-preview');
+          if (pv && last) pv.textContent = (last.from === 'me' ? 'You: ' : '') + last.text;
+
+          if (convId === connectCurrentConv) {
+            fscConnectRenderMessages(convId);
+          } else {
+            var lastMsg = msgs[msgs.length - 1];
+            if (lastMsg && lastMsg.sender_tid !== tid) {
+              current.unread = true;
+              var row = document.getElementById('connect-row-' + convId);
+              if (row && !document.getElementById('connect-unread-' + convId)) {
+                var dot = document.createElement('div');
+                dot.className = 'connect-unread-dot';
+                dot.id = 'connect-unread-' + convId;
+                row.insertBefore(dot, row.lastChild);
               }
+              fscConnectUpdateNavBadge();
             }
           }
         } catch(e) { /* silent */ }
       }));
-    }, 1000);
+    }
+
+    window._connectPollTimer  = setInterval(checkMessages,   1000);
+    window._connectConvoTimer = setInterval(checkNewConvos,  3000);
+    /* run both immediately on start */
+    checkNewConvos();
+    checkMessages();
   }
 
   /* ══════════════════════════════
