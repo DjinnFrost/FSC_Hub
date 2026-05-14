@@ -2079,6 +2079,13 @@
 
       // Render Dealer Technical Advisors
       renderTAPanel(tid);
+
+      // Start FSC Connect background polling immediately after login
+      // so new conversations and messages arrive without opening the window
+      setTimeout(function() {
+        if (typeof fscConnectSyncMe === 'function') fscConnectSyncMe();
+        if (typeof startMessagePolling === 'function') startMessagePolling();
+      }, 800);
     } else {
       errorEl.textContent = 'Invalid TID. Please try again.';
       input.classList.remove('shake');
@@ -3917,7 +3924,8 @@ function closeSFModal(e) {
     fscConnectSyncMe();
     fscConnectLoadConvos();
     fscConnectLoadAllUsers();
-    startMessagePolling();
+    /* only start polling if not already running from background */
+    if (!window._connectPollTimer) startMessagePolling();
   };
 
   window.closeFSCConnect = function() {
@@ -4194,7 +4202,27 @@ function closeSFModal(e) {
       var tid = myTid();
       if (!tid) return;
 
-      /* poll ALL conversations, not just the open one */
+      /* ── 1. Check for brand-new conversations this user isn't aware of yet ── */
+      try {
+        var convRes = await fetch(
+          SUPABASE_URL + '/rest/v1/conversation_members?tid=eq.' + encodeURIComponent(tid) + '&select=conversation_id',
+          { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY } }
+        );
+        var memberships = await convRes.json();
+        if (Array.isArray(memberships)) {
+          var newOnes = memberships.filter(function(m) {
+            return !CONNECT_CONVS[m.conversation_id];
+          });
+          if (newOnes.length > 0) {
+            await Promise.all(newOnes.map(function(m) {
+              return fscConnectLoadConv(m.conversation_id, tid);
+            }));
+            fscConnectBuildSidebar();
+          }
+        }
+      } catch(e) { /* silent */ }
+
+      /* ── 2. Poll all known conversations for new messages ── */
       var convIds = Object.keys(CONNECT_CONVS);
       if (!convIds.length) return;
 
@@ -4224,20 +4252,16 @@ function closeSFModal(e) {
             if (pv && last) pv.textContent = (last.from === 'me' ? 'You: ' : '') + last.text;
 
             if (convId === connectCurrentConv) {
-              /* active convo — just re-render messages */
               fscConnectRenderMessages(convId);
             } else {
-              /* background convo — mark unread */
               var lastMsg = msgs[msgs.length - 1];
               if (lastMsg && lastMsg.sender_tid !== tid) {
                 current.unread = true;
-                /* add dot if not already there */
                 var row = document.getElementById('connect-row-' + convId);
                 if (row && !document.getElementById('connect-unread-' + convId)) {
                   var dot = document.createElement('div');
                   dot.className = 'connect-unread-dot';
                   dot.id = 'connect-unread-' + convId;
-                  /* insert before the delete button (last child) */
                   row.insertBefore(dot, row.lastChild);
                 }
                 fscConnectUpdateNavBadge();
