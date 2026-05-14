@@ -3899,7 +3899,14 @@ function closeSFModal(e) {
   var ALL_USERS = [];
 
   /* ── Helpers ── */
-  function myTid()  { return (document.getElementById('connect-me-tid').textContent  || '').trim(); }
+  function myTid() {
+    /* primary: connect modal header (set by fscConnectSyncMe) */
+    var t = (document.getElementById('connect-me-tid').textContent || '').trim();
+    if (t) return t;
+    /* fallback: main user dropdown */
+    var dd = document.getElementById('user-dd-tid');
+    return dd ? dd.textContent.replace('TID:', '').trim() : '';
+  }
   function myName() { return (document.getElementById('connect-me-name').textContent || '').trim(); }
 
   /* ══════════════════════════════
@@ -4235,35 +4242,55 @@ function closeSFModal(e) {
   };
 
   window.fscConnectStartDM = async function(user) {
-    var myT    = myTid();
-    var myN    = myName();
-    var h      = { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=representation' };
+    var myT = myTid();
+    if (!myT) { alert('Please sign in first.'); return; }
+
+    var h = {
+      'apikey': SUPABASE_ANON_KEY,
+      'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+      'Content-Type': 'application/json',
+      'Prefer': 'return=representation'
+    };
 
     /* close search panel */
     document.getElementById('connect-search-panel').classList.remove('open');
 
-    /* check if DM already exists */
+    /* check if DM already exists locally */
     var existing = Object.values(CONNECT_CONVS).find(function(c) {
       return c.type === 'direct' && c.region && c.region.includes(user.name);
     });
     if (existing) { fscConnectSelectConv(existing.id); return; }
 
     try {
-      /* create conversation */
-      var cr = await fetch(SUPABASE_URL + '/rest/v1/conversations', {
+      /* create conversation — Supabase returns array with Prefer:return=representation */
+      var cr  = await fetch(SUPABASE_URL + '/rest/v1/conversations', {
         method: 'POST', headers: h,
         body: JSON.stringify({ type: 'direct', created_by: myT })
       });
-      var conv = (await cr.json())[0];
-      var cid  = conv.id;
+      var crBody = await cr.json();
+      /* handle both array and object response shapes */
+      var conv = Array.isArray(crBody) ? crBody[0] : crBody;
+      if (!conv || !conv.id) {
+        console.error('No conversation id returned:', crBody);
+        return;
+      }
+      var cid = conv.id;
 
       /* add both members */
-      await fetch(SUPABASE_URL + '/rest/v1/conversation_members', {
+      var mr = await fetch(SUPABASE_URL + '/rest/v1/conversation_members', {
         method: 'POST', headers: h,
-        body: JSON.stringify([{ conversation_id: cid, tid: myT }, { conversation_id: cid, tid: user.tid }])
+        body: JSON.stringify([
+          { conversation_id: cid, tid: myT },
+          { conversation_id: cid, tid: user.tid }
+        ])
       });
+      if (!mr.ok) {
+        var merr = await mr.json();
+        console.error('Member insert failed:', merr);
+        return;
+      }
 
-      /* load it and open */
+      /* load and open */
       await fscConnectLoadConv(cid, myT);
       fscConnectBuildSidebar();
       fscConnectSelectConv(cid);
