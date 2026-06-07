@@ -1401,6 +1401,39 @@
   .asgn-count { font-size:11px;color:rgba(255,255,255,0.4);margin-left:auto; }
   .lead-badge { display:inline-block;font-size:10.5px;padding:2px 8px;border-radius:10px;background:rgba(255,200,80,0.15);color:#f5cc6a;font-weight:600;white-space:nowrap; }
 
+
+  /* ── TABLEAU PANEL & MODAL ── */
+  .tab-tile-btn {
+    width:100%; display:flex; align-items:center; gap:12px;
+    background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12);
+    border-radius:10px; padding:12px 14px; cursor:pointer;
+    transition:background 0.15s, border-color 0.15s;
+  }
+  .tab-tile-btn:hover { background:rgba(255,255,255,0.11); border-color:rgba(255,255,255,0.22); }
+  .tab-tile-logo { height:30px; object-fit:contain; flex-shrink:0; }
+  .tab-tile-label { font-size:13px; font-weight:600; color:rgba(255,255,255,0.88); font-family:Arial,sans-serif; text-align:left; line-height:1.3; }
+  .tab-tile-sub { font-size:10.5px; color:rgba(255,255,255,0.42); font-weight:400; display:block; margin-top:2px; }
+
+  .tab-overlay { position:fixed;inset:0;background:rgba(0,0,0,0.72);z-index:9999;display:none;align-items:center;justify-content:center; }
+  .tab-overlay.open { display:flex; }
+  .tab-modal {
+    background:linear-gradient(135deg,#0e1d3a 0%,#1a2d50 100%);
+    border:1px solid rgba(255,255,255,0.14); border-radius:14px;
+    width:min(96vw,1300px); height:90vh;
+    display:flex; flex-direction:column;
+    box-shadow:0 24px 64px rgba(0,0,0,0.75);
+  }
+  .tab-modal-header {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 22px 14px; border-bottom:1px solid rgba(255,255,255,0.1); flex-shrink:0;
+  }
+  .tab-modal-header-left { display:flex; align-items:center; gap:14px; }
+  .tab-header-logo { height:30px; object-fit:contain; }
+  .tab-modal-title { font-size:16px; font-weight:700; color:#fff; font-family:Arial,sans-serif; }
+  .tab-modal-sub { font-size:11.5px; color:rgba(255,255,255,0.45); margin-top:2px; }
+  .tab-modal-body { flex:1; overflow:hidden; border-radius:0 0 14px 14px; background:#fff; }
+  .tab-modal-body iframe { width:100%; height:100%; border:none; display:block; }
+
 </style>
 </head>
 <body>
@@ -1620,6 +1653,14 @@
 
     <section class="panel side-card">
       <button class="btn-fts" onclick="openFTS()">FTS Request Form</button>
+    </section>
+
+    <section class="panel side-card" id="tableau-panel">
+      <div class="side-title">Tableau Progress Report</div>
+      <button class="tab-tile-btn" onclick="openTableauModal()">
+        <img src="Tab.jpg" alt="Tableau" class="tab-tile-logo">
+        <span class="tab-tile-label">FSC Progress Report<span class="tab-tile-sub">Tableau · Buy Back Prevention</span></span>
+      </button>
     </section>
 
     <section class="panel side-card" id="gauge-panel">
@@ -4768,5 +4809,46 @@ function closeSFModal(e) {
   </div>
 </div>
 
+
+<!-- TABLEAU REPORT MODAL -->
+<div class="tab-overlay" id="tab-overlay" onclick="closeTableauModal(event)">
+  <div class="tab-modal" onclick="event.stopPropagation()">
+    <div class="tab-modal-header">
+      <div class="tab-modal-header-left">
+        <img src="Tab.jpg" alt="Tableau" class="tab-header-logo">
+        <div>
+          <div class="tab-modal-title">FSC Progress Report</div>
+          <div class="tab-modal-sub">Stellantis Buy Back Prevention &nbsp;·&nbsp; Tableau Online</div>
+        </div>
+      </div>
+      <button class="fts-close" onclick="closeTableauModal()" style="flex-shrink:0;margin-left:14px;">&#10005;</button>
+    </div>
+    <div class="tab-modal-body">
+      <iframe id="tab-iframe"
+        src=""
+        allowfullscreen
+        sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-top-navigation">
+      </iframe>
+    </div>
+  </div>
+</div>
+
+<script>
+  const TABLEAU_URL = 'https://prod-useast-b.online.tableau.com/t/allegistableauonline/views/FSCProgressReport/Summary?:embed=yes&:showVizHome=no&:toolbar=top&:tabs=no';
+
+  function openTableauModal() {
+    var iframe = document.getElementById('tab-iframe');
+    if (!iframe.src || iframe.src === 'about:blank' || iframe.src === '') {
+      iframe.src = TABLEAU_URL;
+    }
+    document.getElementById('tab-overlay').classList.add('open');
+  }
+
+  function closeTableauModal(e) {
+    if (!e || e.target === document.getElementById('tab-overlay')) {
+      document.getElementById('tab-overlay').classList.remove('open');
+    }
+  }
+</script>
 </body>
 </html>
