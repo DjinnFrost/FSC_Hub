@@ -42,12 +42,14 @@ html = html.replace('src="csms.png"',                 f'src="{img_to_data_uri(BA
 html = html.replace('src="UKG.png"',                  f'src="{img_to_data_uri(BASE_DIR / "UKG.png")}"')
 html = html.replace('src="MarketSource.png"',         f'src="{img_to_data_uri(BASE_DIR / "MarketSource.png")}"')
 html = html.replace('src="Marketsource_Insider.png"', f'src="{img_to_data_uri(BASE_DIR / "Marketsource_Insider.png")}"')
+html = html.replace('src="Tab.jpg"',                f'src="{img_to_data_uri(BASE_DIR / "Tab.jpg")}"')
  
-# Inject Supabase config for FSC Connect JS
+# Inject Supabase config + GitHub repo name for FSC Connect JS
 supabase_js = (
     '<script>\n'
     'var SUPABASE_URL = "' + st.secrets["SUPABASE_URL"] + '";\n'
     'var SUPABASE_ANON_KEY = "' + st.secrets["SUPABASE_KEY"] + '";\n'
+    'var _GH_REPO = "' + GITHUB_REPO + '";\n'
     '</script>\n'
 )
 html = html.replace("</head>", supabase_js + "</head>", 1)
