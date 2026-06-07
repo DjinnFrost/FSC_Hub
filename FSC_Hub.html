@@ -1367,6 +1367,40 @@
     transition:background 0.1s;
   }
   .connect-search-result:hover { background:rgba(110,193,255,0.12); color:#6ec1ff; }
+
+  /* ── ASSIGNMENT MATRIX MODAL ── */
+  .asgn-overlay { position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:9999;display:none;align-items:center;justify-content:center; }
+  .asgn-overlay.open { display:flex; }
+  .asgn-modal { background:linear-gradient(135deg,#0e1d3a 0%,#1a2d50 100%);border:1px solid rgba(255,255,255,0.14);border-radius:14px;width:min(92vw,1080px);max-height:88vh;display:flex;flex-direction:column;box-shadow:0 24px 64px rgba(0,0,0,0.7); }
+  .asgn-header { display:flex;align-items:center;justify-content:space-between;padding:18px 22px 14px;border-bottom:1px solid rgba(255,255,255,0.1); }
+  .asgn-title { font-size:17px;font-weight:700;color:#fff;font-family:Arial,sans-serif; }
+  .asgn-body { overflow-y:auto;padding:18px 22px 22px;flex:1; }
+  .asgn-body::-webkit-scrollbar { width:5px; }
+  .asgn-body::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.18);border-radius:4px; }
+  .asgn-controls { display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px; }
+  .asgn-search { flex:1;min-width:180px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.18);border-radius:8px;padding:8px 12px;color:#fff;font-size:13px;outline:none; }
+  .asgn-search::placeholder { color:rgba(255,255,255,0.35); }
+  .asgn-select { background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.18);border-radius:8px;padding:8px 12px;color:#fff;font-size:13px;outline:none; }
+  .asgn-select option { background:#1a2d50; }
+  .asgn-table { width:100%;border-collapse:collapse;font-size:12.5px; }
+  .asgn-table th { background:rgba(255,255,255,0.08);color:#8eb4ff;font-weight:600;padding:9px 10px;text-align:left;border-bottom:1px solid rgba(255,255,255,0.1);position:sticky;top:0;white-space:nowrap; }
+  .asgn-table td { padding:8px 10px;color:rgba(255,255,255,0.88);border-bottom:1px solid rgba(255,255,255,0.06);vertical-align:top; }
+  .asgn-table tr:hover td { background:rgba(255,255,255,0.04); }
+  .asgn-table .bc-tag { display:inline-block;font-size:10px;padding:1px 6px;border-radius:4px;background:rgba(110,193,255,0.15);color:#6ec1ff;margin:1px 2px 1px 0;white-space:nowrap; }
+  .asgn-table .ta-tag { display:inline-block;font-size:10px;padding:1px 6px;border-radius:4px;background:rgba(100,200,140,0.15);color:#7de0a0;margin:1px 2px 1px 0;white-space:nowrap; }
+  .asgn-tid { font-family:monospace;font-size:11px;color:rgba(255,255,255,0.5);display:block; }
+  .asgn-form-grid { display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px; }
+  .asgn-field label { display:block;font-size:11px;color:rgba(255,255,255,0.5);margin-bottom:5px;font-family:Arial,sans-serif; }
+  .asgn-field input, .asgn-field select { width:100%;box-sizing:border-box;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.2);border-radius:8px;padding:9px 12px;color:#fff;font-size:13px;outline:none; }
+  .asgn-field select option { background:#1a2d50; }
+  .asgn-field input::placeholder { color:rgba(255,255,255,0.3); }
+  .asgn-submit { background:linear-gradient(90deg,#1a6aff,#1155cc);border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:600;padding:10px 24px;cursor:pointer;transition:opacity 0.15s; }
+  .asgn-submit:hover { opacity:0.85; }
+  .asgn-success { font-size:12px;color:#7de0a0;margin-top:8px;display:none; }
+  .asgn-err { font-size:12px;color:#ff7d7d;margin-top:8px;display:none; }
+  .asgn-count { font-size:11px;color:rgba(255,255,255,0.4);margin-left:auto; }
+  .lead-badge { display:inline-block;font-size:10.5px;padding:2px 8px;border-radius:10px;background:rgba(255,200,80,0.15);color:#f5cc6a;font-weight:600;white-space:nowrap; }
+
 </style>
 </head>
 <body>
@@ -1624,6 +1658,7 @@
         <div class="resource-link" onclick="openCDAModal()">CDA Overview &amp; Setup Guide</div>
         <div class="resource-link" onclick="openSFModal()">Get Started with Salesforce</div>
         <div class="resource-link" onclick="openMFAModal()">Microsoft MFA Setup</div>
+        <div class="resource-link" onclick="openAsgnModal()">FSC Assignment Matrix</div>
       </div>
     </section>
   </div>
@@ -2049,19 +2084,15 @@
         leadRow.style.display = '';
         // Populate contact info
         const tlc = TL_CONTACTS[leadData.lead_name] || null;
-        if (leadContacts && tlc) {
-          const fmtPhone = p => p.replace(/[^\d]/g,'').replace(/(\d{3})(\d{3})(\d{4})/,'$1.$2.$3');
-          leadContacts.innerHTML = `
-            <div class="user-dd-lead-block">
-              <div class="user-dd-lead-source ms">MarketSource</div>
-              <div class="user-dd-lead-contact-line">${fmtPhone(tlc.ms_phone)}</div>
-              <div class="user-dd-lead-contact-line">${tlc.ms_email}</div>
-            </div>
-            <div class="user-dd-lead-block">
-              <div class="user-dd-lead-source st">Stellantis</div>
-              <div class="user-dd-lead-contact-line">${fmtPhone(tlc.st_phone)}</div>
-              <div class="user-dd-lead-contact-line">${tlc.st_email}</div>
-            </div>`;
+        if (leadContacts && tlc && (tlc.ms_phone || tlc.ms_email || tlc.st_phone || tlc.st_email)) {
+          const fmtPhone = p => p ? p.replace(/[^\d]/g,'').replace(/(\d{3})(\d{3})(\d{4})/,'$1.$2.$3') : '';
+          const msLines = [tlc.ms_phone ? `<div class="user-dd-lead-contact-line">${fmtPhone(tlc.ms_phone)}</div>` : '',
+                           tlc.ms_email ? `<div class="user-dd-lead-contact-line">${tlc.ms_email}</div>` : ''].join('');
+          const stLines = [tlc.st_phone ? `<div class="user-dd-lead-contact-line">${fmtPhone(tlc.st_phone)}</div>` : '',
+                           tlc.st_email ? `<div class="user-dd-lead-contact-line">${tlc.st_email}</div>` : ''].join('');
+          leadContacts.innerHTML =
+            (msLines ? `<div class="user-dd-lead-block"><div class="user-dd-lead-source ms">MarketSource</div>${msLines}</div>` : '') +
+            (stLines ? `<div class="user-dd-lead-block"><div class="user-dd-lead-source st">Stellantis</div>${stLines}</div>` : '');
         } else if (leadContacts) {
           leadContacts.innerHTML = '';
         }
@@ -3493,11 +3524,11 @@
   }
 
   // ── FSC TEAM LEAD DATA ────────────────────────────────────────────────────
-  const FSC_LEAD_MAP = {"T0306FJ":{"lead_name":"Carlos Pena","lead_tid":"T0300P6"},"T0090ZU":{"lead_name":"Jamal Douglas","lead_tid":"T0327UU"},"T0390ZI":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0378EZ":{"lead_name":"Paul Brown","lead_tid":"T0294M6"},"T0318DS":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T0304KR":{"lead_name":"Carlos Pena","lead_tid":"T0300P6"},"T0307EF":{"lead_name":"Paul Brown","lead_tid":"T0294M6"},"T0307EH":{"lead_name":"Carlos Pena","lead_tid":"T0300P6"},"T0311PX":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T0304XV":{"lead_name":"Paul Brown","lead_tid":"T0294M6"},"T0306FH":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T2237TR":{"lead_name":"Jamal Douglas","lead_tid":"T0327UU"},"T0300HY":{"lead_name":"Carlos Pena","lead_tid":"T0300P6"},"T0314R4":{"lead_name":"Jonathan Castillo","lead_tid":"T0300P2"},"T0300P5":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T0294M9":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T0300HV":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T0300HT":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T0471OK":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T0294M4":{"lead_name":"Carlos Pena","lead_tid":"T0300P6"},"T0317U1":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T0300HX":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0419PV":{"lead_name":"Carlos Pena","lead_tid":"T0300P6"},"T0453V3":{"lead_name":"Carlos Pena","lead_tid":"T0300P6"},"T0400IJ":{"lead_name":"Paul Brown","lead_tid":"T0294M6"},"T0304XW":{"lead_name":"Jamal Douglas","lead_tid":"T0327UU"},"T0329IF":{"lead_name":"Paul Brown","lead_tid":"T0294M6"},"T0458AK":{"lead_name":"Paul Brown","lead_tid":"T0294M6"},"T0471OO":{"lead_name":"Paul Brown","lead_tid":"T0294M6"},"T0335UJ":{"lead_name":"Carlos Pena","lead_tid":"T0300P6"},"T0306L5":{"lead_name":"Paul Brown","lead_tid":"T0294M6"},"T0440PG":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T0318DT":{"lead_name":"Jamal Douglas","lead_tid":"T0327UU"},"T0314R6":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0311PC":{"lead_name":"Carlos Cordero","lead_tid":"T0294MH"},"T0311PV":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0311PW":{"lead_name":"Jamal Douglas","lead_tid":"T0327UU"},"T0314R5":{"lead_name":"Jamal Douglas","lead_tid":"T0327UU"},"T0346ZQ":{"lead_name":"Jonathan Castillo","lead_tid":"T0300P2"},"T0497SZ":{"lead_name":"Jonathan Castillo","lead_tid":"T0300P2"},"T0497S3":{"lead_name":"Jonathan Castillo","lead_tid":"T0300P2"},"T0317UZ":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0322OO":{"lead_name":"Paul Brown","lead_tid":"T0294M6"},"T04710N":{"lead_name":"Jonathan Castillo","lead_tid":"T0300P2"},"T0458AH":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T0294MV":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0458AG":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T0322OR":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0471OP":{"lead_name":"Paul Brown","lead_tid":"T0294M6"},"T0390ZG":{"lead_name":"Jamal Douglas","lead_tid":"T0327UU"},"T0322OQ":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0471OI":{"lead_name":"Carlos Cordero","lead_tid":"T0294MH"},"T0320I3":{"lead_name":"Jonathan Castillo","lead_tid":"T0300P2"},"T0300P3":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T0320I5":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T0453V4":{"lead_name":"Carlos Cordero","lead_tid":"T0294MH"},"T0306FK":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0471OJ":{"lead_name":"Jonathan Castillo","lead_tid":"T0300P2"},"T0351T6":{"lead_name":"Jonathan Castillo","lead_tid":"T0300P2"},"T0378EV":{"lead_name":"Jonathan Castillo","lead_tid":"T0300P2"},"T0332YY":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0311PD":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0294MO":{"lead_name":"Carlos Cordero","lead_tid":"T0294MH"},"T0419PW":{"lead_name":"Paul Brown","lead_tid":"T0294M6"},"T0294M5":{"lead_name":"Jonathan Castillo","lead_tid":"T0300P2"},"T0312AE":{"lead_name":"Carlos Cordero","lead_tid":"T0294MH"},"T0346ZR":{"lead_name":"Jonathan Castillo","lead_tid":"T0300P2"},"T0471OD":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T0317U0":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0338N1":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0304KU":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0423HH":{"lead_name":"Jamal Douglas","lead_tid":"T0327UU"},"T0304KV":{"lead_name":"Jamal Douglas","lead_tid":"T0327UU"},"T0318DR":{"lead_name":"Carlos Cordero","lead_tid":"T0294MH"},"T0294MI":{"lead_name":"Carlos Cordero","lead_tid":"T0294MH"},"T0311PU":{"lead_name":"Paul Brown","lead_tid":"T0294M6"},"T0306V9":{"lead_name":"Carlos Cordero","lead_tid":"T0294MH"},"T0300H0":{"lead_name":"Carlos Cordero","lead_tid":"T0294MH"},"T0294M8":{"lead_name":"Jamal Douglas","lead_tid":"T0327UU"},"T0304XT":{"lead_name":"Carlos Cordero","lead_tid":"T0294MH"}};
+  const FSC_LEAD_MAP = {"T0306FJ":{"lead_name":"Jonathan Castillo","lead_tid":"T0300P2"},"T0090ZU":{"lead_name":"Paul Brown","lead_tid":"T0294M6"},"T0378EZ":{"lead_name":"Todd Howe","lead_tid":"T0440PG"},"T0318DS":{"lead_name":"Jason Nunnally","lead_tid":"T0294MO"},"T0304KR":{"lead_name":"William Wood","lead_tid":"T0332YY"},"T0307EF":{"lead_name":"Daniel Peper","lead_tid":"T0390ZI"},"T0307EH":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T0311PX":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T0304XV":{"lead_name":"Todd Howe","lead_tid":"T0440PG"},"T0306FH":{"lead_name":"William Wood","lead_tid":"T0332YY"},"T2237TR":{"lead_name":"Kumasi Rayford","lead_tid":"T0390ZG"},"T0300HY":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T0300P5":{"lead_name":"Jonathan Castillo","lead_tid":"T0300P2"},"T0294M9":{"lead_name":"Jonathan Castillo","lead_tid":"T0300P2"},"T0300HV":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T0471OD":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T0471OK":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T0294M4":{"lead_name":"William Wood","lead_tid":"T0332YY"},"T0317U1":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0300HX":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0400IJ":{"lead_name":"Daniel Peper","lead_tid":"T0390ZI"},"T0329IF":{"lead_name":"Daniel Peper","lead_tid":"T0390ZI"},"T0458AK":{"lead_name":"Paul Brown","lead_tid":"T0294M6"},"T0471OO":{"lead_name":"William Wood","lead_tid":"T0332YY"},"T0306L5":{"lead_name":"Todd Howe","lead_tid":"T0440PG"},"T0318DT":{"lead_name":"Todd Howe","lead_tid":"T0440PG"},"T0314R6":{"lead_name":"Jason Nunnally","lead_tid":"T0294MO"},"T0311PC":{"lead_name":"Carlos Cordero","lead_tid":"T0294MH"},"T0311PV":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0314R5":{"lead_name":"Kumasi Rayford","lead_tid":"T0390ZG"},"T0346ZQ":{"lead_name":"Kenneth Hawkes","lead_tid":"T0314R4"},"T0317UZ":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0322OO":{"lead_name":"Daniel Peper","lead_tid":"T0390ZI"},"T0458AH":{"lead_name":"Jason Nunnally","lead_tid":"T0294MO"},"T0458AG":{"lead_name":"Jason Nunnally","lead_tid":"T0294MO"},"T0475Q3":{"lead_name":"Todd Howe","lead_tid":"T0440PG"},"T0322OR":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0471OP":{"lead_name":"Daniel Peper","lead_tid":"T0390ZI"},"T0423HH":{"lead_name":"Kumasi Rayford","lead_tid":"T0390ZG"},"T0322OQ":{"lead_name":"Jason Nunnally","lead_tid":"T0294MO"},"T0471OI":{"lead_name":"Carlos Cordero","lead_tid":"T0294MH"},"T0300P3":{"lead_name":"Jonathan Castillo","lead_tid":"T0300P2"},"T0320I5":{"lead_name":"Jason Nunnally","lead_tid":"T0294MO"},"T0453V4":{"lead_name":"Carlos Cordero","lead_tid":"T0294MH"},"T0306FK":{"lead_name":"Jason Nunnally","lead_tid":"T0294MO"},"T0471OJ":{"lead_name":"Jonathan Castillo","lead_tid":"T0300P2"},"T0351T6":{"lead_name":"Jonathan Castillo","lead_tid":"T0300P2"},"T0378EV":{"lead_name":"Kenneth Hawkes","lead_tid":"T0314R4"},"T0311PD":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0419PW":{"lead_name":"Daniel Peper","lead_tid":"T0390ZI"},"T0294M5":{"lead_name":"Kenneth Hawkes","lead_tid":"T0314R4"},"T0312AE":{"lead_name":"Carlos Cordero","lead_tid":"T0294MH"},"T0346ZR":{"lead_name":"Kenneth Hawkes","lead_tid":"T0314R4"},"T0317U0":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0338N1":{"lead_name":"Jason Nunnally","lead_tid":"T0294MO"},"T0304KU":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0304KV":{"lead_name":"Todd Howe","lead_tid":"T0440PG"},"T0485U0":{"lead_name":"Todd Howe","lead_tid":"T0440PG"},"T0318DR":{"lead_name":"Carlos Cordero","lead_tid":"T0294MH"},"T0294MI":{"lead_name":"Carlos Cordero","lead_tid":"T0294MH"},"T0311PU":{"lead_name":"Todd Howe","lead_tid":"T0440PG"},"T0306V9":{"lead_name":"Carlos Cordero","lead_tid":"T0294MH"},"T0300H0":{"lead_name":"Carlos Cordero","lead_tid":"T0294MH"},"T0294M8":{"lead_name":"Paul Brown","lead_tid":"T0294M6"},"T0304XT":{"lead_name":"Carlos Cordero","lead_tid":"T0294MH"},"T0300HT":{"lead_name":"Jonathan Castillo","lead_tid":"T0300P2"}};
 
 
   // ── TEAM LEAD CONTACT DATA ────────────────────────────────────────────────
-  const TL_CONTACTS = {"Carlos Pena":{"ms_phone":"571-300-3665","ms_email":"capena@marketsource.com","st_phone":"(248) 736-5863","st_email":"carlos.pena3@external.stellantis.com"},"Carlos Cordero":{"ms_phone":"305-297-0153","ms_email":"ccorderocast@marketsource.com","st_phone":"(248) 622-1039","st_email":"carlos.cordero1@external.stellantis.com"},"Jamal Douglas":{"ms_phone":"734-883-5623","ms_email":"jamadouglas@marketsource.com","st_phone":"(656) 241-3409","st_email":"jamal.douglas@external.stellantis.com"},"Jesus Velez":{"ms_phone":"347-416-2888","ms_email":"jevelez@marketsource.com","st_phone":"(248) 421-0974","st_email":"jesus.velez1@external.stellantis.com"},"Jonathan Castillo":{"ms_phone":"862-754-0677","ms_email":"jonacastillo@marketsource.com","st_phone":"(248) 933-9076","st_email":"jonathan.juniorcastillo@external.stellantis.com"},"Paul Brown":{"ms_phone":"815-603-2166","ms_email":"paubrown@marketsource.com","st_phone":"(248) 622-9102","st_email":"paul.brown1@external.stellantis.com"},"Kevin Sack":{"ms_phone":"678-910-6272","ms_email":"ksack@marketsource.com","st_phone":"(947) 226-0479","st_email":"kevin.sack@external.stellantis.com"}};
+  const TL_CONTACTS = {"Carlos Cordero":{"ms_phone":"305-297-0153","ms_email":"ccorderocast@marketsource.com","st_phone":"(248) 622-1039","st_email":"carlos.cordero1@external.stellantis.com"},"Jamal Douglas":{"ms_phone":"734-883-5623","ms_email":"jamadouglas@marketsource.com","st_phone":"(656) 241-3409","st_email":"jamal.douglas@external.stellantis.com"},"Jesus Velez":{"ms_phone":"347-416-2888","ms_email":"jevelez@marketsource.com","st_phone":"(248) 421-0974","st_email":"jesus.velez1@external.stellantis.com"},"Jonathan Castillo":{"ms_phone":"862-754-0677","ms_email":"jonacastillo@marketsource.com","st_phone":"(248) 933-9076","st_email":"jonathan.juniorcastillo@external.stellantis.com"},"Paul Brown":{"ms_phone":"815-603-2166","ms_email":"paubrown@marketsource.com","st_phone":"(248) 622-9102","st_email":"paul.brown1@external.stellantis.com"},"Kevin Sack":{"ms_phone":"678-910-6272","ms_email":"ksack@marketsource.com","st_phone":"(947) 226-0479","st_email":"kevin.sack@external.stellantis.com"},"Todd Howe":{"ms_phone":"770-325-4019","ms_email":"tohowe@marketsource.com","st_phone":"636-215-9076","st_email":"todd.howe@external.stellantis.com"},"William Wood":{"ms_phone":"770-375-4056","ms_email":"wilwood@marketsource.com","st_phone":"248-384-0200","st_email":"william.wood1@external.stellantis.com"},"Jason Nunnally":{"ms_phone":"770-225-0217","ms_email":"jnunnally@marketsource.com","st_phone":"947-226-0504","st_email":"jason.nunnally@external.stellantis.com"},"Daniel Peper":{"ms_phone":"770-225-0207","ms_email":"dpeper@marketsource.com","st_phone":"812-940-9683","st_email":"daniel.peper@external.stellantis.com"},"Kumasi Rayford":{"ms_phone":"770-325-1669","ms_email":"kurayford@marketsource.com","st_phone":"947-985-7187","st_email":"kumasi.rayford@external.stellantis.com"},"Kenneth Hawkes":{"ms_phone":"770-674-5024","ms_email":"khawkes@marketsource.com","st_phone":"248-494-1573","st_email":"kenneth.hawkes@external.stellantis.com"}};
 
 
 </script>
@@ -4539,6 +4570,203 @@ function closeSFModal(e) {
 
 })();
 </script>
+
+<script>
+
+  // Derive repo from _GH_API if available
+  window._GH_TOKEN = (typeof _GH_TOKEN !== 'undefined') ? _GH_TOKEN : '';
+  window._GH_REPO  = (typeof _GH_API !== 'undefined') ? _GH_API.replace('https://api.github.com/repos/','').split('/contents/')[0] : '';
+
+
+  const FSC_ASSIGNMENT_MAP = {"T0306FJ":{"fsc_name":"Dean Danas","lead_name":"Jonathan Castillo","lead_tid":"T0300P2","tas":{"T0312AI":"Jacob Rudolph","T7988AF":"Andrew Foresto","T5229RD":"Robert Dunion","TA48713":"Ted Hunt"},"bcs":["NORTHEAST"],"dealer_count":20},"T0090ZU":{"fsc_name":"Brandon Tiede","lead_name":"Paul Brown","lead_tid":"T0294M6","tas":{"T4762RP":"Richard Palm","T0264Q7":"Jon Sundstrom"},"bcs":["GREAT LAKES","VIRTUAL"],"dealer_count":30},"T0378EZ":{"fsc_name":"Michael Schmitt","lead_name":"Todd Howe","lead_tid":"T0440PG","tas":{"T0264Q7":"Jon Sundstrom","T0294MV":"Hamit Yasarturk","T4557KB":"Kurt Benda","T0346ZS":"Jeffrey Heiden"},"bcs":["MIDWEST","VIRTUAL"],"dealer_count":43},"T0318DS":{"fsc_name":"Victor Gray","lead_name":"Jason Nunnally","lead_tid":"T0294MO","tas":{"TA25799":"Bobby Keeser","T0417GV":"Alex Van Zomeren","T0312AG":"Lance Grinnell","T9998DR":"Darren Rose","T0745KL":"Kim Larson"},"bcs":["SOUTHWEST","VIRTUAL"],"dealer_count":26},"T0304KR":{"fsc_name":"Llewelyn Mcclamy","lead_name":"William Wood","lead_tid":"T0332YY","tas":{"T0264Q6":"James Nason","T0234DA":"Douglas Achenbach","TA15055":"Timothy Harbaugh","TA48713":"Ted Hunt"},"bcs":["NORTHEAST","VIRTUAL"],"dealer_count":24},"T0307EF":{"fsc_name":"Michael Lewis","lead_name":"Daniel Peper","lead_tid":"T0390ZI","tas":{"T1807MB":"Michael Bell","T0264Q6":"James Nason","TA28091":"Kyle Smith","T9030RD":"Roland Dube"},"bcs":["GREAT LAKES","VIRTUAL"],"dealer_count":19},"T0307EH":{"fsc_name":"Gary Christiansen","lead_name":"Jesus Velez","lead_tid":"T0312AH","tas":{"T6279VD":"Victor Desa","T0264Q6":"James Nason","T0370CU":"John Francis"},"bcs":["NORTHEAST","VIRTUAL"],"dealer_count":14},"T0311PX":{"fsc_name":"Joshua Suruda","lead_name":"Jesus Velez","lead_tid":"T0312AH","tas":{"T7988AF":"Andrew Foresto","T0264Q6":"James Nason","T5229RD":"Robert Dunion","TA48713":"Ted Hunt","T0264Q7":"Jon Sundstrom"},"bcs":["NORTHEAST","VIRTUAL"],"dealer_count":25},"T0304XV":{"fsc_name":"Chad Attaway","lead_name":"Todd Howe","lead_tid":"T0440PG","tas":{"T0264Q7":"Jon Sundstrom","T0149TY":"Tyler Yeomans","T0294MV":"Hamit Yasarturk","TA15952":"Adam Hawkins","T0678BB":"Brian Bridges"},"bcs":["MIDWEST","VIRTUAL"],"dealer_count":40},"T0306FH":{"fsc_name":"Brandon Cook","lead_name":"William Wood","lead_tid":"T0332YY","tas":{"TA15055":"Timothy Harbaugh","TA48713":"Ted Hunt","T0306FI":"Ryan Paulson","T0234DA":"Douglas Achenbach","T0264Q6":"James Nason"},"bcs":["GREAT LAKES","NORTHEAST","VIRTUAL"],"dealer_count":29},"T2237TR":{"fsc_name":"Timothy Roell","lead_name":"Kumasi Rayford","lead_tid":"T0390ZG","tas":{"T0287H2":"Daniel Hyde","T0550CM":"Cory Mace"},"bcs":["GREAT LAKES"],"dealer_count":12},"T0300HY":{"fsc_name":"Jon Stachkunas","lead_name":"Jesus Velez","lead_tid":"T0312AH","tas":{"T6279VD":"Victor Desa"},"bcs":["NORTHEAST"],"dealer_count":15},"T0300P5":{"fsc_name":"Richard Mastriano","lead_name":"Jonathan Castillo","lead_tid":"T0300P2","tas":{"T0312AI":"Jacob Rudolph","T5229RD":"Robert Dunion","T0300P4":"Vincent Munoz"},"bcs":["NORTHEAST"],"dealer_count":9},"T0294M9":{"fsc_name":"Michael Salemme","lead_name":"Jonathan Castillo","lead_tid":"T0300P2","tas":{"T0300P4":"Vincent Munoz","T0312AI":"Jacob Rudolph"},"bcs":["NORTHEAST"],"dealer_count":11},"T0300HV":{"fsc_name":"Jemell Braithwaite","lead_name":"Jesus Velez","lead_tid":"T0312AH","tas":{"TA32929":"Jonathan Kaminski"},"bcs":["NORTHEAST"],"dealer_count":12},"T0471OD":{"fsc_name":"Kevin Mata","lead_name":"Jesus Velez","lead_tid":"T0312AH","tas":{"TA32929":"Jonathan Kaminski"},"bcs":["NORTHEAST"],"dealer_count":12},"T0471OK":{"fsc_name":"Jeff Gay","lead_name":"Jesus Velez","lead_tid":"T0312AH","tas":{"TA48713":"Ted Hunt","T0312AI":"Jacob Rudolph","T7988AF":"Andrew Foresto","T0264Q6":"James Nason"},"bcs":["NORTHEAST","VIRTUAL"],"dealer_count":18},"T0294M4":{"fsc_name":"Curtis Hochtman","lead_name":"William Wood","lead_tid":"T0332YY","tas":{"T4990JS":"Jeffrey Stone","T0264Q6":"James Nason","TA28085":"Michael Taylor","TA48713":"Ted Hunt"},"bcs":["NORTHEAST","SOUTHEAST","VIRTUAL"],"dealer_count":15},"T0317U1":{"fsc_name":"Zedric Ford","lead_name":"Kevin Sack","lead_tid":"T0294MP","tas":{"T8395JR":"Jose Rodriguez","T0264Q6":"James Nason"},"bcs":["SOUTHEAST","VIRTUAL"],"dealer_count":17},"T0300HX":{"fsc_name":"Robert Chung","lead_name":"Kevin Sack","lead_tid":"T0294MP","tas":{"TA18960":"Tyler Johnson","T7671JG":"Justin Gill","T0264Q6":"James Nason"},"bcs":["SOUTHEAST","VIRTUAL"],"dealer_count":16},"T0400IJ":{"fsc_name":"Jeremy Kihnke","lead_name":"Daniel Peper","lead_tid":"T0390ZI","tas":{"T0264Q6":"James Nason","T1807MB":"Michael Bell","T9030RD":"Roland Dube"},"bcs":["GREAT LAKES","VIRTUAL"],"dealer_count":21},"T0329IF":{"fsc_name":"Roderick Shaw","lead_name":"Daniel Peper","lead_tid":"T0390ZI","tas":{"T9030RD":"Roland Dube","T0264Q6":"James Nason"},"bcs":["GREAT LAKES","VIRTUAL"],"dealer_count":17},"T0458AK":{"fsc_name":"Tim Graber","lead_name":"Paul Brown","lead_tid":"T0294M6","tas":{"TA25512":"Pierre Abraham","T9030RD":"Roland Dube","T0264Q6":"James Nason","T0264Q7":"Jon Sundstrom","T0346ZP":"Ian Schlegel"},"bcs":["GREAT LAKES","VIRTUAL"],"dealer_count":23},"T0471OO":{"fsc_name":"Keith Whitaker","lead_name":"William Wood","lead_tid":"T0332YY","tas":{"TA28091":"Kyle Smith","T0306FI":"Ryan Paulson","T0264Q6":"James Nason"},"bcs":["GREAT LAKES","VIRTUAL"],"dealer_count":22},"T0306L5":{"fsc_name":"Robert Plizga","lead_name":"Todd Howe","lead_tid":"T0440PG","tas":{"T4557KB":"Kurt Benda","T1991ES":"Edward Szymanski","T7284TB":"Trevor Bahr","T0264Q7":"Jon Sundstrom","T0346ZS":"Jeffrey Heiden"},"bcs":["MIDWEST","VIRTUAL"],"dealer_count":26},"T0318DT":{"fsc_name":"James Deacon","lead_name":"Todd Howe","lead_tid":"T0440PG","tas":{"TA30128":"Sean Shively","T0264Q7":"Jon Sundstrom","T7284TB":"Trevor Bahr","T4762RP":"Richard Palm"},"bcs":["GREAT LAKES","MIDWEST","VIRTUAL"],"dealer_count":30},"T0314R6":{"fsc_name":"Kyle Tibbetts","lead_name":"Jason Nunnally","lead_tid":"T0294MO","tas":{"T5929DH":"Daniel Hansen","T0264Q6":"James Nason","TA20820":"John Yanusz","TA17362":"Aaron Durkit","T0417GV":"Alex Van Zomeren"},"bcs":["GREAT LAKES","SOUTHEAST","VIRTUAL"],"dealer_count":15},"T0311PC":{"fsc_name":"Philip Turner","lead_name":"Carlos Cordero","lead_tid":"T0294MH","tas":{"T1922J0":"Joseph Phillips"},"bcs":["SOUTHEAST"],"dealer_count":10},"T0311PV":{"fsc_name":"Justin Reynolds","lead_name":"Kevin Sack","lead_tid":"T0294MP","tas":{"TA18960":"Tyler Johnson","T0264Q6":"James Nason","T7671JG":"Justin Gill"},"bcs":["SOUTHEAST","VIRTUAL"],"dealer_count":27},"T0314R5":{"fsc_name":"Justin Harbison","lead_name":"Kumasi Rayford","lead_tid":"T0390ZG","tas":{"T9030RD":"Roland Dube","T0287H2":"Daniel Hyde","T0550CM":"Cory Mace","TA18964":"Nathaniel Baker","TA25512":"Pierre Abraham","T0264Q7":"Jon Sundstrom"},"bcs":["GREAT LAKES","VIRTUAL"],"dealer_count":17},"T0346ZQ":{"fsc_name":"Richard Walker","lead_name":"Kenneth Hawkes","lead_tid":"T0314R4","tas":{"T0324NF":"Jonathon Bulluck","T0264Q6":"James Nason"},"bcs":["NORTHEAST","VIRTUAL"],"dealer_count":22},"T0317UZ":{"fsc_name":"Christopher Anderson","lead_name":"Kevin Sack","lead_tid":"T0294MP","tas":{"T7671JG":"Justin Gill","TA22440":"Louis Marler","T0264Q6":"James Nason","T5505J0":"James Salinas"},"bcs":["SOUTHEAST","VIRTUAL"],"dealer_count":17},"T0322OO":{"fsc_name":"Matt Eilenberg","lead_name":"Daniel Peper","lead_tid":"T0390ZI","tas":{"TA14892":"James Michnya","T0264Q7":"Jon Sundstrom","T9030RD":"Roland Dube","T0264Q6":"James Nason","T8088D2":"Daniel Sherman"},"bcs":["GREAT LAKES","MIDWEST","VIRTUAL"],"dealer_count":28},"T0458AH":{"fsc_name":"Brandon Allen","lead_name":"Jason Nunnally","lead_tid":"T0294MO","tas":{"T0745KL":"Kim Larson","T9998DR":"Darren Rose","T0312AG":"Lance Grinnell","TA25799":"Bobby Keeser","T0417GV":"Alex Van Zomeren"},"bcs":["SOUTHWEST","VIRTUAL"],"dealer_count":37},"T0458AG":{"fsc_name":"Justin Moring","lead_name":"Jason Nunnally","lead_tid":"T0294MO","tas":{"T7242BG":"Billy Gipson","T0294MY":"Salvador Baca","T0417GV":"Alex Van Zomeren","T7490MW":"Matt Witters","T0312AG":"Lance Grinnell","T0264Q7":"Jon Sundstrom"},"bcs":["GREAT LAKES","SOUTHWEST","VIRTUAL"],"dealer_count":43},"T0475Q3":{"fsc_name":"Adam Schmidt","lead_name":"Todd Howe","lead_tid":"T0440PG","tas":{"TA15952":"Adam Hawkins","T9860LT":"Lucas Thatcher","T0264Q7":"Jon Sundstrom","TA20342":"Joshua Arbogast"},"bcs":["MIDWEST","VIRTUAL"],"dealer_count":42},"T0322OR":{"fsc_name":"Robert Chialastri","lead_name":"Kevin Sack","lead_tid":"T0294MP","tas":{"T0264Q6":"James Nason","TA22440":"Louis Marler"},"bcs":["SOUTHEAST","VIRTUAL"],"dealer_count":16},"T0471OP":{"fsc_name":"Ben Jaenke","lead_name":"Daniel Peper","lead_tid":"T0390ZI","tas":{"T0346ZP":"Ian Schlegel","T0306FI":"Ryan Paulson","TA28091":"Kyle Smith"},"bcs":["GREAT LAKES"],"dealer_count":28},"T0423HH":{"fsc_name":"Rodrigo Elizondo","lead_name":"Kumasi Rayford","lead_tid":"T0390ZG","tas":{"T0550CM":"Cory Mace","T0287H2":"Daniel Hyde","TA25512":"Pierre Abraham"},"bcs":["GREAT LAKES"],"dealer_count":17},"T0322OQ":{"fsc_name":"Robert White","lead_name":"Jason Nunnally","lead_tid":"T0294MO","tas":{"TA17362":"Aaron Durkit","TA05352":"Blake Terry","T0264Q6":"James Nason","T0353K8":"Ryan Foster","T0417GV":"Alex Van Zomeren","TA25799":"Bobby Keeser"},"bcs":["SOUTHEAST","SOUTHWEST","VIRTUAL"],"dealer_count":19},"T0471OI":{"fsc_name":"Rob LaChance","lead_name":"Carlos Cordero","lead_tid":"T0294MH","tas":{"T1922J0":"Joseph Phillips","TA14430":"Michael Huckleberry","T3506CP":"Christopher Price"},"bcs":["SOUTHEAST"],"dealer_count":8},"T0300P3":{"fsc_name":"Thomas Cueman","lead_name":"Jonathan Castillo","lead_tid":"T0300P2","tas":{"T0370CU":"John Francis","T1806WJ":"Walter Johnson","T0300P4":"Vincent Munoz"},"bcs":["NORTHEAST"],"dealer_count":19},"T0320I5":{"fsc_name":"Mitch Brockman","lead_name":"Jason Nunnally","lead_tid":"T0294MO","tas":{"T0294MY":"Salvador Baca","T7490MW":"Matt Witters","T8388RT":"Daniel Torres","T0149TY":"Tyler Yeomans","T0264Q6":"James Nason","T0417GV":"Alex Van Zomeren","T0264Q7":"Jon Sundstrom","T0208JK":"Jeffrey Kern"},"bcs":["MIDWEST","SOUTHWEST","VIRTUAL"],"dealer_count":39},"T0453V4":{"fsc_name":"Alex Torres-Irizarry","lead_name":"Carlos Cordero","lead_tid":"T0294MH","tas":{"T3506CP":"Christopher Price"},"bcs":["SOUTHEAST"],"dealer_count":8},"T0306FK":{"fsc_name":"Edwin Alexander","lead_name":"Jason Nunnally","lead_tid":"T0294MO","tas":{"T7242BG":"Billy Gipson","TA14892":"James Michnya","T0264Q6":"James Nason","TA20820":"John Yanusz","T0264Q7":"Jon Sundstrom"},"bcs":["GREAT LAKES","VIRTUAL"],"dealer_count":28},"T0471OJ":{"fsc_name":"Jose Rivera","lead_name":"Jonathan Castillo","lead_tid":"T0300P2","tas":{"T0312AI":"Jacob Rudolph","T0300P4":"Vincent Munoz"},"bcs":["NORTHEAST"],"dealer_count":9},"T0351T6":{"fsc_name":"Ali Shafqat","lead_name":"Jonathan Castillo","lead_tid":"T0300P2","tas":{"T0300P4":"Vincent Munoz","T5229RD":"Robert Dunion","T0312AI":"Jacob Rudolph","T7988AF":"Andrew Foresto"},"bcs":["NORTHEAST"],"dealer_count":7},"T0378EV":{"fsc_name":"Kenneth Warg","lead_name":"Kenneth Hawkes","lead_tid":"T0314R4","tas":{"T1806WJ":"Walter Johnson","T0264Q6":"James Nason","TA27703":"Mathew Mcleod"},"bcs":["NORTHEAST","VIRTUAL"],"dealer_count":22},"T0311PD":{"fsc_name":"Joseph Lipford","lead_name":"Kevin Sack","lead_tid":"T0294MP","tas":{"T0264Q6":"James Nason","TA22440":"Louis Marler","T0353K8":"Ryan Foster"},"bcs":["SOUTHEAST","VIRTUAL"],"dealer_count":19},"T0419PW":{"fsc_name":"Hayder Thanee","lead_name":"Daniel Peper","lead_tid":"T0390ZI","tas":{"T0264Q6":"James Nason","T0346ZP":"Ian Schlegel"},"bcs":["GREAT LAKES","VIRTUAL"],"dealer_count":12},"T0294M5":{"fsc_name":"Luis Colon","lead_name":"Kenneth Hawkes","lead_tid":"T0314R4","tas":{"T0264Q6":"James Nason","TA28762":"Tyler Mitchum","TA15055":"Timothy Harbaugh","T4142SS":"Sarah Sevier"},"bcs":["NORTHEAST","VIRTUAL"],"dealer_count":16},"T0312AE":{"fsc_name":"Kevin Colley","lead_name":"Carlos Cordero","lead_tid":"T0294MH","tas":{"TA14430":"Michael Huckleberry","T5868JB":"James Berry","T1922J0":"Joseph Phillips"},"bcs":["SOUTHEAST"],"dealer_count":10},"T0346ZR":{"fsc_name":"Michael Amos","lead_name":"Kenneth Hawkes","lead_tid":"T0314R4","tas":{"TA15055":"Timothy Harbaugh","TA28762":"Tyler Mitchum","T0264Q6":"James Nason"},"bcs":["NORTHEAST","VIRTUAL"],"dealer_count":17},"T0317U0":{"fsc_name":"Christopher Hotchkiss","lead_name":"Kevin Sack","lead_tid":"T0294MP","tas":{"T7671JG":"Justin Gill"},"bcs":["SOUTHEAST"],"dealer_count":16},"T0338N1":{"fsc_name":"George \u201cScotty\u201d Dobler III","lead_name":"Jason Nunnally","lead_tid":"T0294MO","tas":{"T0312AG":"Lance Grinnell","TA05352":"Blake Terry","T0417GV":"Alex Van Zomeren"},"bcs":["SOUTHWEST","VIRTUAL"],"dealer_count":23},"T0304KU":{"fsc_name":"Charlie Hawkins","lead_name":"Kevin Sack","lead_tid":"T0294MP","tas":{"T5929DH":"Daniel Hansen","T5505J0":"James Salinas","T0264Q6":"James Nason","T7671JG":"Justin Gill"},"bcs":["SOUTHEAST","VIRTUAL"],"dealer_count":22},"T0304KV":{"fsc_name":"Ryan Frey","lead_name":"Todd Howe","lead_tid":"T0440PG","tas":{"T0264Q7":"Jon Sundstrom","T0346ZS":"Jeffrey Heiden","TA30128":"Sean Shively","T7284TB":"Trevor Bahr"},"bcs":["MIDWEST","VIRTUAL"],"dealer_count":29},"T0485U0":{"fsc_name":"John Musci","lead_name":"Todd Howe","lead_tid":"T0440PG","tas":{"T7284TB":"Trevor Bahr","T0346ZS":"Jeffrey Heiden","T0264Q7":"Jon Sundstrom"},"bcs":["MIDWEST","VIRTUAL"],"dealer_count":17},"T0318DR":{"fsc_name":"Mark Simon","lead_name":"Carlos Cordero","lead_tid":"T0294MH","tas":{"T5868JB":"James Berry","T3506CP":"Christopher Price"},"bcs":["SOUTHEAST"],"dealer_count":16},"T0294MI":{"fsc_name":"Marvez Newman","lead_name":"Carlos Cordero","lead_tid":"T0294MH","tas":{"T1922J0":"Joseph Phillips","T5868JB":"James Berry","TA14430":"Michael Huckleberry","T0264Q6":"James Nason"},"bcs":["SOUTHEAST","VIRTUAL"],"dealer_count":11},"T0311PU":{"fsc_name":"Pablo Alanis","lead_name":"Todd Howe","lead_tid":"T0440PG","tas":{"T0264Q7":"Jon Sundstrom","T9030RD":"Roland Dube","T1991ES":"Edward Szymanski","T8088D2":"Daniel Sherman","T4557KB":"Kurt Benda","T0264Q6":"James Nason"},"bcs":["GREAT LAKES","MIDWEST","VIRTUAL"],"dealer_count":39},"T0306V9":{"fsc_name":"Matthew Williams","lead_name":"Carlos Cordero","lead_tid":"T0294MH","tas":{"T0264Q6":"James Nason","TA14430":"Michael Huckleberry","T5868JB":"James Berry","TA22440":"Louis Marler"},"bcs":["SOUTHEAST","VIRTUAL"],"dealer_count":13},"T0300H0":{"fsc_name":"Jay Safford","lead_name":"Carlos Cordero","lead_tid":"T0294MH","tas":{"T3506CP":"Christopher Price"},"bcs":["SOUTHEAST"],"dealer_count":3},"T0294M8":{"fsc_name":"Thomas Sapkowski","lead_name":"Paul Brown","lead_tid":"T0294M6","tas":{"T0264Q7":"Jon Sundstrom","TA18964":"Nathaniel Baker"},"bcs":["GREAT LAKES","VIRTUAL"],"dealer_count":20},"T0304XT":{"fsc_name":"Andrew Brockmeyer","lead_name":"Carlos Cordero","lead_tid":"T0294MH","tas":{"T3506CP":"Christopher Price","T1922J0":"Joseph Phillips"},"bcs":["SOUTHEAST"],"dealer_count":9},"T0300HT":{"fsc_name":"Jack Shaab","lead_name":"Jonathan Castillo","lead_tid":"T0300P2","tas":{"T0370CU":"John Francis","T0300P4":"Vincent Munoz"},"bcs":["NORTHEAST"],"dealer_count":9}};
+  const LEAD_INDEX = {"T0294MH":"Carlos Cordero","T0390ZI":"Daniel Peper","T0327UU":"Jamal Douglas","T0294MO":"Jason Nunnally","T0312AH":"Jesus Velez","T0300P2":"Jonathan Castillo","T0314R4":"Kenneth Hawkes","T0294MP":"Kevin Sack","T0390ZG":"Kumasi Rayford","T0294M6":"Paul Brown","T0440PG":"Todd Howe","T0332YY":"William Wood"};
+
+  function openAsgnModal() {
+    buildAsgnLeadFilter();
+    renderAsgnTable('');
+    buildAddLeadSelect();
+    document.getElementById('asgn-overlay').classList.add('open');
+  }
+  function closeAsgnModal(e) {
+    if (!e || e.target === document.getElementById('asgn-overlay')) {
+      document.getElementById('asgn-overlay').classList.remove('open');
+    }
+  }
+  function buildAsgnLeadFilter() {
+    var sel = document.getElementById('asgn-lead-filter');
+    sel.innerHTML = '<option value="">All Leads</option>';
+    Object.entries(LEAD_INDEX).forEach(function([tid,name]) {
+      var o = document.createElement('option'); o.value = tid; o.textContent = name;
+      sel.appendChild(o);
+    });
+  }
+  function buildAddLeadSelect() {
+    var sel = document.getElementById('asgn-new-lead-sel');
+    sel.innerHTML = '<option value="">Select Lead...</option>';
+    Object.entries(LEAD_INDEX).forEach(function([tid,name]) {
+      var o = document.createElement('option'); o.value = tid; o.textContent = name + '  (' + tid + ')';
+      sel.appendChild(o);
+    });
+  }
+  function renderAsgnTable(filterLead) {
+    var search = document.getElementById('asgn-search').value.toLowerCase();
+    var tbody = document.getElementById('asgn-tbody');
+    tbody.innerHTML = '';
+    var count = 0;
+    var entries = Object.entries(FSC_ASSIGNMENT_MAP);
+    entries.sort(function(a,b){
+      var la = a[1].lead_name.toLowerCase(), lb = b[1].lead_name.toLowerCase();
+      if (la !== lb) return la < lb ? -1 : 1;
+      return a[1].fsc_name.toLowerCase() < b[1].fsc_name.toLowerCase() ? -1 : 1;
+    });
+    entries.forEach(function([tid, d]) {
+      if (filterLead && d.lead_tid !== filterLead) return;
+      var haystack = (d.fsc_name + ' ' + tid + ' ' + d.lead_name + ' ' + d.bcs.join(' ')).toLowerCase();
+      if (search && haystack.indexOf(search) === -1) return;
+      count++;
+      var taHtml = Object.entries(d.tas).map(function([ttid,tname]){
+        return '<span class="ta-tag" title="' + ttid + '">' + tname + '</span>';
+      }).join('');
+      var bcHtml = d.bcs.map(function(bc){ return '<span class="bc-tag">' + bc + '</span>'; }).join('');
+      var fscLabel = d.fsc_name;
+      if (d.is_lead) fscLabel += ' <span style="font-size:9px;vertical-align:middle;background:rgba(255,179,71,0.2);color:#ffb347;border-radius:4px;padding:1px 5px;">LEAD</span>';
+      var leadCell;
+      if (d.is_self_lead) {
+        leadCell = '<span class="lead-badge" style="background:rgba(255,160,60,0.18);color:#ffb347;">Team Lead</span>'
+          + '<span class="asgn-tid" style="color:rgba(255,255,255,0.3);">Not in lead sheet — update Excel</span>';
+      } else if (d.is_lead) {
+        leadCell = '<span class="lead-badge">' + d.lead_name + '</span>'
+          + '<span class="asgn-tid">' + d.lead_tid + '</span>'
+          + '<span style="font-size:10px;color:rgba(255,179,71,0.8);display:block;margin-top:2px;">Also a Team Lead</span>';
+      } else {
+        leadCell = '<span class="lead-badge">' + d.lead_name + '</span>'
+          + '<span class="asgn-tid">' + d.lead_tid + '</span>';
+      }
+      var tr = document.createElement('tr');
+      if (d.is_self_lead) tr.style.background = 'rgba(255,160,60,0.06)';
+      tr.innerHTML =
+        '<td><strong style="color:#fff">' + fscLabel + '</strong><span class="asgn-tid">' + tid + '</span></td>'
+        + '<td>' + leadCell + '</td>'
+        + '<td>' + (taHtml || '<span style="opacity:.35">&#8212;</span>') + '</td>'
+        + '<td>' + bcHtml + '</td>'
+        + '<td style="text-align:center;color:rgba(255,255,255,0.6)">' + d.dealer_count + '</td>';
+      tbody.appendChild(tr);
+    });
+    document.getElementById('asgn-count-label').textContent = count + ' FSC' + (count !== 1 ? 's' : '');
+  }
+  function asgnShowTab(tab) {
+    document.querySelectorAll('.asgn-tab').forEach(function(t){ t.classList.remove('active'); });
+    document.querySelectorAll('.asgn-tab-panel').forEach(function(p){ p.style.display='none'; });
+    document.getElementById('asgn-tab-' + tab).classList.add('active');
+    document.getElementById('asgn-panel-' + tab).style.display = '';
+  }
+  function submitNewFSC() {
+    var name = document.getElementById('asgn-new-name').value.trim();
+    var tid  = document.getElementById('asgn-new-tid').value.trim().toUpperCase();
+    var leadTid = document.getElementById('asgn-new-lead-sel').value;
+    var leadName = leadTid ? LEAD_INDEX[leadTid] : '';
+    var errEl = document.getElementById('asgn-add-err');
+    var okEl  = document.getElementById('asgn-add-ok');
+    errEl.style.display = 'none'; okEl.style.display = 'none';
+    if (!name || !tid || !leadTid) { errEl.textContent = 'All fields required.'; errEl.style.display = 'block'; return; }
+    if (FSC_ASSIGNMENT_MAP[tid]) { errEl.textContent = 'TID already exists in map.'; errEl.style.display = 'block'; return; }
+    var row = '"' + name + '","' + tid + '","' + leadName + '","' + leadTid + '"';
+    // Write to GitHub via repo derived from injected _GH_REPO / _GH_TOKEN
+    (async function(){
+      try {
+        var getR = await fetch('https://api.github.com/repos/' + window._GH_REPO + '/contents/FSC_Assignments.csv', {
+          headers:{'Authorization':'Bearer '+window._GH_TOKEN,'Accept':'application/vnd.github+json'}});
+        var sha = null; var existing = 'FSC Name,FSC TID,Lead Name,Lead TID\n';
+        if (getR.ok){var j=await getR.json(); sha=j.sha; existing=atob(j.content.replace(/\n/g,''));}
+        var lines = existing.split('\n').filter(function(l){return l.trim();});
+        if (!lines.length || lines[0].indexOf('FSC Name') === -1) lines.unshift('FSC Name,FSC TID,Lead Name,Lead TID');
+        lines.push(row);
+        var encoded = btoa(unescape(encodeURIComponent(lines.join('\n')+'\n')));
+        var payload = {message:'Add FSC: '+name+' ('+tid+')',content:encoded};
+        if (sha) payload.sha = sha;
+        var putR = await fetch('https://api.github.com/repos/'+window._GH_REPO+'/contents/FSC_Assignments.csv',{
+          method:'PUT',headers:{'Authorization':'Bearer '+window._GH_TOKEN,'Accept':'application/vnd.github+json','Content-Type':'application/json'},
+          body:JSON.stringify(payload)});
+        if (!putR.ok){var e2=await putR.json(); throw new Error(e2.message||'GitHub write failed');}
+        okEl.textContent = name + ' (' + tid + ') added under ' + leadName + '.';
+        okEl.style.display = 'block';
+        document.getElementById('asgn-new-name').value = '';
+        document.getElementById('asgn-new-tid').value  = '';
+        document.getElementById('asgn-new-lead-sel').value = '';
+      } catch(err){ errEl.textContent = 'Error: ' + err.message; errEl.style.display='block'; }
+    })();
+  }
+
+</script>
+
+<!-- ASSIGNMENT MATRIX OVERLAY -->
+<div class="asgn-overlay" id="asgn-overlay" onclick="closeAsgnModal(event)">
+  <div class="asgn-modal" onclick="event.stopPropagation()">
+    <div class="asgn-header">
+      <div>
+        <div class="asgn-title">FSC Assignment Matrix</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.45);margin-top:3px;">FSC ↔ Lead &nbsp;·&nbsp; FSC ↔ TA &nbsp;·&nbsp; FSC ↔ Dealer / BC</div>
+      </div>
+      <button class="fts-close" onclick="closeAsgnModal()" style="flex-shrink:0;margin-left:14px;">&#10005;</button>
+    </div>
+
+    <div style="display:flex;gap:0;border-bottom:1px solid rgba(255,255,255,0.10);background:rgba(255,255,255,0.04);flex-shrink:0;">
+      <button class="cda-tab active asgn-tab" id="asgn-tab-matrix" onclick="asgnShowTab('matrix')">Assignment Matrix</button>
+      <button class="cda-tab asgn-tab" id="asgn-tab-add" onclick="asgnShowTab('add')">Add FSC</button>
+    </div>
+
+    <div class="asgn-body">
+      <!-- MATRIX TAB -->
+      <div id="asgn-panel-matrix">
+        <div class="asgn-controls">
+          <input class="asgn-search" id="asgn-search" placeholder="Search FSC, TID, Lead…" oninput="renderAsgnTable(document.getElementById('asgn-lead-filter').value)">
+          <select class="asgn-select" id="asgn-lead-filter" onchange="renderAsgnTable(this.value)">
+            <option value="">All Leads</option>
+          </select>
+          <span class="asgn-count" id="asgn-count-label"></span>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="asgn-table">
+            <thead>
+              <tr>
+                <th>FSC</th>
+                <th>Lead Assigned</th>
+                <th>Dealer Tech Advisors</th>
+                <th>Business Center</th>
+                <th style="text-align:center;"># Dealers</th>
+              </tr>
+            </thead>
+            <tbody id="asgn-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ADD FSC TAB -->
+      <div id="asgn-panel-add" style="display:none;">
+        <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:16px;line-height:1.6;">
+          Add a new FSC to the team assignment list. This writes a record to <code style="color:#6ec1ff">FSC_Assignments.csv</code> in the GitHub repo.
+        </div>
+        <div class="asgn-form-grid">
+          <div class="asgn-field">
+            <label>FSC Name</label>
+            <input id="asgn-new-name" type="text" placeholder="First Last">
+          </div>
+          <div class="asgn-field">
+            <label>FSC TID</label>
+            <input id="asgn-new-tid" type="text" placeholder="T0000XX" style="font-family:monospace;">
+          </div>
+          <div class="asgn-field" style="grid-column:1/-1;">
+            <label>Lead Assigned</label>
+            <select id="asgn-new-lead-sel"></select>
+          </div>
+        </div>
+        <button class="asgn-submit" onclick="submitNewFSC()">Submit New FSC</button>
+        <div class="asgn-success" id="asgn-add-ok"></div>
+        <div class="asgn-err" id="asgn-add-err"></div>
+      </div>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
