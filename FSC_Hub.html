@@ -1639,18 +1639,7 @@
   <div class="right-col">
 
 
-    <section class="panel side-card">
-      <div class="side-title">Recent Highlights</div>
-      <div class="side-list">
-        <div class="side-item"><span class="dot sm"></span><span>New process for escalations</span></div>
-        <div class="side-item"><span class="dot sm"></span><span>Training deadlines confirmed</span></div>
-        <div class="side-item"><span class="dot sm"></span><span>FTS request review process discussed</span></div>
-      </div>
-    </section>
 
-    <section class="panel side-card">
-      <button class="btn-fts" onclick="openFTS()">FTS Request Form</button>
-    </section>
 
     <section class="panel side-card" id="tableau-panel">
       <a class="tile" href="https://prod-useast-b.online.tableau.com/t/allegistableauonline/views/FSCProgressReport/Summary" target="_blank" rel="noopener" style="width:100%;box-sizing:border-box;">
@@ -1664,6 +1653,12 @@
       <div id="gauge-container">
         <div style="font-size:12px;color:rgba(255,255,255,0.5);text-align:center;padding:18px 0;">Sign in to view your pace</div>
       </div>
+    </section>
+
+    <section class="panel side-card">
+      <div class="side-title">Request Forms</div>
+      <button class="btn-fts" onclick="openFTS()">FTS Request Form</button>
+      <button class="btn-fts" onclick="openFlyingDoctor()" style="margin-top:10px;">Flying Doctor Request</button>
     </section>
 
     <section class="panel side-card" id="ta-panel">
@@ -1997,6 +1992,65 @@
 
 </div>
 
+<!-- FLYING DOCTOR OVERLAY -->
+<div class="fts-overlay" id="fd-overlay" onclick="closeFlyingDoctor()"></div>
+
+<!-- FLYING DOCTOR DRAWER -->
+<div class="fts-drawer" id="fd-drawer">
+
+  <div class="fts-drawer-header">
+    <div>
+      <h2>Flying Doctor Request</h2>
+      <p>Submit a case escalation to the Flying Doctors team. All fields marked <span style="color:#ff7d7d;">*</span> are required.</p>
+      <p style="margin-top:8px; color:rgba(255,255,255,0.65); font-size:12px;"><strong style="color:rgba(110,193,255,0.9);">Instructions:</strong> Fill form with necessary details, download form, then email form to your Lead.</p>
+    </div>
+    <button class="fts-close" onclick="closeFlyingDoctor()">✕</button>
+  </div>
+
+  <div class="fts-drawer-body">
+
+    <div class="fts-group">
+      <label class="fts-label" for="fd-case">
+        1. Enter BBP Case number <span class="req">*</span>
+      </label>
+      <div class="fts-sublabel">Expected format = BBP-123456789 (13 Characters exactly). If there are multiple cases, enter the most recent and relevant case. This pulls all case information the Flying Doctor team needs.</div>
+      <input class="fts-input" id="fd-case" type="text" maxlength="13" placeholder="Please enter at least 13 characters">
+    </div>
+
+    <div class="fts-group">
+      <label class="fts-label" for="fd-url">
+        2. Enter BBP URL <span class="req">*</span>
+      </label>
+      <div class="fts-sublabel">Copy this link directly from your web browser</div>
+      <input class="fts-input" id="fd-url" type="url" placeholder="Please enter a URL">
+    </div>
+
+    <div class="fts-group">
+      <label class="fts-label" for="fd-comment">
+        3. Enter escalation comment <span class="req">*</span>
+      </label>
+      <div class="fts-sublabel">Is there anything Hrag or the Flying Doctors should know about this case that is not contained within BBP case entered?</div>
+      <textarea class="fts-textarea" id="fd-comment" placeholder="Enter your answer" style="min-height:100px;"></textarea>
+    </div>
+
+    <div class="fts-group" style="display:flex;align-items:center;gap:10px;margin-top:6px;">
+      <input type="checkbox" id="fd-receipt" style="width:16px;height:16px;accent-color:#1e57c5;flex-shrink:0;cursor:pointer;">
+      <label for="fd-receipt" style="font-size:13px;color:rgba(255,255,255,0.82);cursor:pointer;margin:0;">Send me an email receipt of my responses</label>
+    </div>
+
+  </div>
+
+  <div class="fts-drawer-footer">
+    <div class="fts-status" id="fd-status"></div>
+    <button class="btn-submit" id="fd-submit-btn" onclick="submitFlyingDoctor()">
+      <span>Download Form</span>
+      <span style="font-size:16px;">↓</span>
+    </button>
+    <div class="fts-note">Download the form and email it to your Lead.</div>
+  </div>
+
+</div>
+
 <script>
   const TID_MAP = {
     'T0453V4': 'Alex',
@@ -2321,6 +2375,102 @@
     document.getElementById('fts-drawer').classList.add('open');
     document.body.style.overflow = 'hidden';
     setStatus('', '');
+  }
+
+  function openFlyingDoctor() {
+    document.getElementById('fd-overlay').classList.add('open');
+    document.getElementById('fd-drawer').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeFlyingDoctor() {
+    document.getElementById('fd-overlay').classList.remove('open');
+    document.getElementById('fd-drawer').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function fdVal(id) {
+    const el = document.getElementById(id);
+    return el ? (el.value || '').trim() : '';
+  }
+
+  function submitFlyingDoctor() {
+    const caseNum = fdVal('fd-case');
+    const bbpUrl  = fdVal('fd-url');
+    const comment = fdVal('fd-comment');
+    const errEl   = document.getElementById('fd-status');
+    const btn     = document.getElementById('fd-submit-btn');
+    errEl.textContent = '';
+
+    if (caseNum.length !== 13) {
+      errEl.textContent = 'BBP Case number must be exactly 13 characters (e.g. BBP-123456789).';
+      errEl.style.color = '#ff7d7d'; return;
+    }
+    if (!bbpUrl) {
+      errEl.textContent = 'BBP URL is required.';
+      errEl.style.color = '#ff7d7d'; return;
+    }
+    if (!comment) {
+      errEl.textContent = 'Escalation comment is required.';
+      errEl.style.color = '#ff7d7d'; return;
+    }
+
+    btn.disabled = true;
+    errEl.textContent = 'Generating file…';
+    errEl.style.color = 'rgba(255,255,255,0.6)';
+
+    try {
+      const ts  = new Date().toLocaleString();
+      const hr  = '─'.repeat(52);
+      const dhr = '═'.repeat(52);
+      const receipt = document.getElementById('fd-receipt');
+      const wantsReceipt = receipt && receipt.checked;
+      const lines = [];
+
+      lines.push('FLYING DOCTOR REQUEST');
+      lines.push(dhr);
+      lines.push('Generated: ' + ts);
+      lines.push('');
+      lines.push('CASE INFORMATION');
+      lines.push(hr);
+      lines.push('BBP Case Number : ' + caseNum);
+      lines.push('BBP URL         : ' + bbpUrl);
+      lines.push('');
+      lines.push('ESCALATION COMMENT');
+      lines.push(hr);
+      lines.push(comment);
+      lines.push('');
+      lines.push('Email receipt requested: ' + (wantsReceipt ? 'Yes' : 'No'));
+      lines.push('');
+      lines.push(dhr);
+      lines.push('Attach this document to an email and send to your Lead.');
+
+      const text = lines.join('\n');
+      const blob = new Blob([text], { type: 'text/plain' });
+      const url  = URL.createObjectURL(blob);
+      const a    = document.createElement('a');
+      const safeCase = caseNum.replace(/[^a-z0-9]/gi, '_');
+      a.href     = url;
+      a.download = 'FlyingDoctor_' + safeCase + '_' + Date.now() + '.txt';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      errEl.textContent = 'Downloaded successfully.';
+      errEl.style.color = '#7de0a0';
+
+      document.getElementById('fd-case').value    = '';
+      document.getElementById('fd-url').value     = '';
+      document.getElementById('fd-comment').value = '';
+      if (receipt) receipt.checked = false;
+
+    } catch (err) {
+      errEl.textContent = 'Error generating file. Please try again.';
+      errEl.style.color = '#ff7d7d';
+    } finally {
+      btn.disabled = false;
+    }
   }
 
   function closeFTS() {
