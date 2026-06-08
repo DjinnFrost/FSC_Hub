@@ -1609,9 +1609,9 @@
       </div>
     </section>
 
-    <section class="panel">
-      <div class="panel-header">Calendar &amp; Meeting Notes</div>
-      <div class="panel-body">
+    <section class="panel" id="calendar-panel">
+      <div class="panel-header" id="calendar-panel-header">Calendar &amp; Meeting Notes</div>
+      <div class="panel-body" id="calendar-panel-body">
         <div class="calendar-grid">
           <div class="calendar-card">
             <div class="cal-top">
@@ -1649,7 +1649,7 @@
     </section>
 
     <section class="panel side-card" id="gauge-panel">
-      <div class="side-title">My Case Pace</div>
+      <div class="side-title" id="gauge-panel-title">My Case Pace</div>
       <div id="gauge-container">
         <div style="font-size:12px;color:rgba(255,255,255,0.5);text-align:center;padding:18px 0;">Sign in to view your pace</div>
       </div>
@@ -2198,11 +2198,25 @@
 
       errorEl.textContent = '';
 
-      // Initialize gauge with this user's MTD data
-      initUserGauge(tid);
+      // Detect TL vs FSC login
+      const myFSCs = Object.entries(FSC_LEAD_MAP)
+        .filter(([, v]) => v.lead_tid === tid)
+        .map(([k]) => k);
+
+      if (myFSCs.length > 0) {
+        _tlMyFSCs = myFSCs;
+        initTLGauge(tid, myFSCs);
+      } else {
+        // Initialize gauge with this user's MTD data
+        initUserGauge(tid);
+      }
 
       // Render Dealer Technical Advisors
-      renderTAPanel(tid);
+      if (myFSCs.length > 0) {
+        renderTLTAPanel(myFSCs);
+      } else {
+        renderTAPanel(tid);
+      }
 
       // Start FSC Connect background polling immediately after login
       setTimeout(function() {
@@ -2663,7 +2677,11 @@
 
   function gaugeDrawHalf(canvas, opts) {
     const { displayValue, themeA, themeB, themeMid } = opts;
-    const strokeWidth = 14;
+    const goal       = opts.goal || GAUGE_GOAL;
+    const degPerCase = 180 / goal;
+    const mini       = !!opts.mini;
+    const strokeWidth = mini ? 10 : 14;
+    const sidePad     = mini ? 18 : 28;
     const dpr = window.devicePixelRatio || 1;
     const displayW = canvas.clientWidth || canvas.width;
     const displayH = canvas.clientHeight || canvas.height;
@@ -2678,13 +2696,13 @@
     ctx.clearRect(0, 0, W, H);
 
     const font = 'system-ui, -apple-system, sans-serif';
-    const tickLabelFontSize = 11;
-    const tickLabelMargin   = 14;
+    const tickLabelFontSize = mini ? 9 : 11;
+    const tickLabelMargin   = mini ? 10 : 14;
     const bottomPad = tickLabelFontSize + tickLabelMargin + 8;
-    const sidePad   = 28;
     const cx = W / 2;
     const cy = H - bottomPad;
     const r  = Math.min(W / 2 - sidePad, cy - strokeWidth / 2 - 4);
+    if (r <= 0) { ctx.restore(); return; }
 
     const textSecondary = 'rgba(255,255,255,0.5)';
     const trackColor    = 'rgba(255,255,255,0.1)';
@@ -2699,8 +2717,8 @@
     ctx.stroke();
 
     // Progress arc
-    const casesForArc = Math.min(displayValue, GAUGE_GOAL);
-    const sweepRad    = (casesForArc * GAUGE_DEG_PER_CASE) * (Math.PI / 180);
+    const casesForArc = Math.min(displayValue, goal);
+    const sweepRad    = (casesForArc * degPerCase) * (Math.PI / 180);
     const progressEnd = ARC_START + sweepRad;
 
     if (sweepRad > 0.01) {
@@ -2715,11 +2733,12 @@
       ctx.stroke();
     }
 
-    // 0 and goal ticks
-    [0, GAUGE_GOAL].forEach(tv => {
-      const angle  = ARC_START + (tv * GAUGE_DEG_PER_CASE) * (Math.PI / 180);
+    // 0 and goal ticks — mini mode only shows the goal tick
+    const ticks = mini ? [goal] : [0, goal];
+    ticks.forEach(tv => {
+      const angle  = ARC_START + (tv * degPerCase) * (Math.PI / 180);
       const sinA   = Math.sin(angle), cosA = Math.cos(angle);
-      const isGoal = tv === GAUGE_GOAL;
+      const isGoal = tv === goal;
       const innerR = r - strokeWidth / 2 - (isGoal ? 6 : 4);
       const outerR = r + strokeWidth / 2 + (isGoal ? 8 : 4);
 
@@ -2739,17 +2758,19 @@
       ctx.fillText(String(tv), cx + labelR * cosA, cy + labelR * sinA);
     });
 
-    // "goal" sub-label
-    const goalAngle = ARC_START + (GAUGE_GOAL * GAUGE_DEG_PER_CASE) * (Math.PI / 180);
-    ctx.font         = `400 10px ${font}`;
-    ctx.fillStyle    = 'rgba(255,255,255,0.3)';
-    ctx.textAlign    = 'left';
-    ctx.textBaseline = 'middle';
-    ctx.fillText('goal', cx + (r + strokeWidth/2 + 20) * Math.cos(goalAngle), cy + (r + strokeWidth/2 + 20) * Math.sin(goalAngle) - 10);
+    // "goal" sub-label — full size only
+    if (!mini) {
+      const goalAngle = ARC_START + (goal * degPerCase) * (Math.PI / 180);
+      ctx.font         = `400 10px ${font}`;
+      ctx.fillStyle    = 'rgba(255,255,255,0.3)';
+      ctx.textAlign    = 'left';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('goal', cx + (r + strokeWidth/2 + 20) * Math.cos(goalAngle), cy + (r + strokeWidth/2 + 20) * Math.sin(goalAngle) - 10);
+    }
 
     // Center text
-    const countFontSize = Math.round(r * 0.52);
-    const labelFontSize = Math.max(12, Math.round(r * 0.14));
+    const countFontSize = mini ? Math.round(r * 0.60) : Math.round(r * 0.52);
+    const labelFontSize = mini ? Math.max(9,  Math.round(r * 0.13)) : Math.max(12, Math.round(r * 0.14));
     const blockCenterY  = cy - r * 0.38;
     const countY  = blockCenterY - countFontSize * 0.3;
     const labelY  = countY + countFontSize * 0.6 + 4;
@@ -2838,10 +2859,150 @@
     gaugeAnimateTo(canvas, 0, mtd, opts);
 
     new ResizeObserver(() => {
-      gaugeDrawHalf(canvas, { ...opts, displayValue: mtd });
+      requestAnimationFrame(() => gaugeDrawHalf(canvas, { ...opts, displayValue: mtd }));
     }).observe(canvas);
   }
-  // ── TA CONTACT INFO (name → phone, email) ───────────────────────────────
+  // ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ──
+  // TL GAUGE — team aggregate pace
+  // ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ──
+  function initTLGauge(tlTid, myFSCs) {
+    const container = document.getElementById('gauge-container');
+    if (!container) return;
+
+    // Relabel gauge panel title
+    const titleEl = document.getElementById('gauge-panel-title');
+    if (titleEl) titleEl.textContent = 'Team Pace';
+
+    // Compute team totals
+    const teamGoal = GAUGE_GOAL * myFSCs.length;
+    let teamClosed = 0;
+    myFSCs.forEach(fscTid => {
+      const u = FSC_METRICS.users[fscTid];
+      if (u) teamClosed += (u.mtd_repairs || 0);
+    });
+
+    const mtd = teamClosed;
+    const gToday  = new Date();
+    const gYear   = gToday.getFullYear();
+    const gMonth  = gToday.getMonth();
+    const gDay    = gToday.getDate();
+    const totalWD     = gaugeGetWorkingDaysInMonth(gYear, gMonth);
+    const elapsedWD   = gaugeGetWorkingDaysElapsed(gYear, gMonth, gDay);
+    const expectedByNow = elapsedWD > 0 ? (teamGoal / totalWD) * elapsedWD : 0;
+    const paceRatio   = expectedByNow > 0 ? mtd / expectedByNow : (mtd > 0 ? 2 : 1);
+    const theme       = gaugeGetThemeColors(paceRatio);
+
+    const deficit = Math.max(0, Math.ceil(expectedByNow) - mtd);
+    const surplus = Math.max(0, mtd - Math.floor(expectedByNow));
+    let statusMsg = '';
+    if (theme.behind) {
+      statusMsg = deficit > 0 ? `${deficit} case${deficit !== 1 ? 's' : ''} behind pace` : '';
+    } else {
+      statusMsg = surplus > 0 ? `${surplus} case${surplus !== 1 ? 's' : ''} ahead of pace` : 'Right on pace';
+    }
+
+    const pillBg    = theme.behind ? 'rgba(250,204,21,0.18)' : 'rgba(34,197,94,0.18)';
+    const pillColor = theme.behind ? '#fde68a' : '#86efac';
+
+    container.innerHTML = `
+      <canvas id="userGaugeCanvas" style="width:100%;display:block;" height="180"></canvas>
+      <div style="display:flex;align-items:center;gap:8px;justify-content:center;margin-top:6px;">
+        <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;background:${pillBg};color:${pillColor};letter-spacing:0.04em;">${theme.status}</span>
+        <span style="font-size:11px;color:rgba(255,255,255,0.45);">${statusMsg}</span>
+      </div>
+      <div style="font-size:10px;color:rgba(255,255,255,0.3);text-align:center;margin-top:6px;">${gToday.toLocaleString('default',{month:'long'})} ${gDay}, ${gYear}</div>
+    `;
+
+    const canvas = document.getElementById('userGaugeCanvas');
+    const opts   = { themeA: theme.a, themeB: theme.b, themeMid: theme.mid, goal: teamGoal };
+    gaugeAnimateTo(canvas, 0, mtd, opts);
+    new ResizeObserver(() => { requestAnimationFrame(() => gaugeDrawHalf(canvas, { ...opts, displayValue: mtd })); }).observe(canvas);
+
+    // Replace calendar section with team grid
+    renderTLTeamGrid(myFSCs);
+  }
+
+  // ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ──
+  // TL TEAM GRID — one mini gauge card per FSC
+  // ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ── ──
+  function renderTLTeamGrid(myFSCs) {
+    const headerEl = document.getElementById('calendar-panel-header');
+    const bodyEl   = document.getElementById('calendar-panel-body');
+    if (!headerEl || !bodyEl) return;
+
+    headerEl.textContent = 'Team Overview';
+
+    const gToday    = new Date();
+    const gYear     = gToday.getFullYear();
+    const gMonth    = gToday.getMonth();
+    const gDay      = gToday.getDate();
+    const totalWD   = gaugeGetWorkingDaysInMonth(gYear, gMonth);
+    const elapsedWD = gaugeGetWorkingDaysElapsed(gYear, gMonth, gDay);
+
+    // Sort FSCs: behind pace first, then ahead
+    const sorted = myFSCs.slice().sort((a, b) => {
+      const ua = FSC_METRICS.users[a], ub = FSC_METRICS.users[b];
+      const ma = ua ? (ua.mtd_repairs || 0) : 0;
+      const mb = ub ? (ub.mtd_repairs || 0) : 0;
+      return ma - mb; // ascending: lowest first
+    });
+
+    let cardsHtml = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:12px;">';
+    sorted.forEach(fscTid => {
+      const u    = FSC_METRICS.users[fscTid];
+      const mtd  = u ? (u.mtd_repairs || 0) : 0;
+      const name = (u && u.name) ? u.name : (FSC_DEALER_MAP[fscTid] ? FSC_DEALER_MAP[fscTid].fsc_name : fscTid);
+      const exp  = elapsedWD > 0 ? (GAUGE_GOAL / totalWD) * elapsedWD : 0;
+      const ratio = exp > 0 ? mtd / exp : (mtd > 0 ? 2 : 1);
+      const t    = gaugeGetThemeColors(ratio);
+      const pb   = t.behind ? 'rgba(250,204,21,0.18)' : 'rgba(34,197,94,0.18)';
+      const pc   = t.behind ? '#fde68a' : '#86efac';
+      const deficit = Math.max(0, Math.ceil(exp) - mtd);
+      const surplus = Math.max(0, mtd - Math.floor(exp));
+      let paceMsg = '';
+      if (t.behind) {
+        paceMsg = deficit > 0 ? `${deficit} case${deficit !== 1 ? 's' : ''} behind` : '';
+      } else {
+        paceMsg = surplus > 0 ? `${surplus} case${surplus !== 1 ? 's' : ''} ahead` : 'Right on pace';
+      }
+      cardsHtml += `
+        <div style="background:rgba(255,255,255,0.04);border-radius:12px;padding:10px 8px 8px;border:1px solid rgba(255,255,255,0.07);">
+          <div style="font-size:11.5px;font-weight:600;text-align:center;color:rgba(255,255,255,0.85);margin-bottom:6px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${name}">${name}</div>
+          <canvas id="tl-mini-${fscTid}" style="width:100%;display:block;" height="130"></canvas>
+          <div style="text-align:center;margin-top:5px;">
+            <span style="font-size:9.5px;font-weight:600;padding:2px 8px;border-radius:20px;background:${pb};color:${pc};">${t.status}</span>
+          </div>
+          <div style="text-align:center;margin-top:3px;font-size:9px;color:rgba(255,255,255,0.38);">${paceMsg}</div>
+        </div>`;
+    });
+    cardsHtml += '</div>';
+    bodyEl.innerHTML = cardsHtml;
+
+    // Draw mini gauges — pre-size each canvas from actual layout rect before drawing
+    setTimeout(() => {
+      sorted.forEach(fscTid => {
+        const canvas = document.getElementById(`tl-mini-${fscTid}`);
+        if (!canvas) return;
+        const u   = FSC_METRICS.users[fscTid];
+        const mtd = u ? (u.mtd_repairs || 0) : 0;
+        const exp = elapsedWD > 0 ? (GAUGE_GOAL / totalWD) * elapsedWD : 0;
+        const ratio = exp > 0 ? mtd / exp : (mtd > 0 ? 2 : 1);
+        const t   = gaugeGetThemeColors(ratio);
+        const opts = { themeA: t.a, themeB: t.b, themeMid: t.mid, goal: GAUGE_GOAL, displayValue: mtd, mini: true };
+
+        // Pre-size from actual rendered rect so gaugeDrawHalf never sees 0 width
+        const rect = canvas.getBoundingClientRect();
+        if (rect.width > 0) {
+          const dpr = window.devicePixelRatio || 1;
+          canvas.width  = Math.round(rect.width  * dpr);
+          canvas.height = Math.round(rect.height * dpr);
+        }
+
+        gaugeDrawHalf(canvas, opts);
+        new ResizeObserver(() => { requestAnimationFrame(() => gaugeDrawHalf(canvas, opts)); }).observe(canvas);
+      });
+    }, 150);
+  }
   const TA_CONTACTS = {
     "Aaron Durkit":       { phone: "",                 email: "aaron.durkit@stellantis.com" },
     "Adam Hawkins":       { phone: "(913) 291-8115",   email: "adam.hawkins1@stellantis.com" },
@@ -2943,6 +3104,51 @@
     return raw; // fallback if unusual format
   }
 
+  function renderTLTAPanel(myFSCs) {
+    const content = document.getElementById('ta-content');
+    if (!content) return;
+
+    // Collect all unique TA names across the team, case-insensitive dedup
+    const seen   = new Set();
+    const taNames = [];
+    myFSCs.forEach(fscTid => {
+      (FSC_TA_MAP[fscTid] || []).forEach(name => {
+        const key = name.trim().toLowerCase();
+        if (key && !seen.has(key)) {
+          seen.add(key);
+          taNames.push(name.trim());
+        }
+      });
+    });
+
+    if (taNames.length === 0) {
+      content.innerHTML = '<div class="ta-signed-out">No TA assignments found for this team</div>';
+      return;
+    }
+
+    // Sort alphabetically
+    taNames.sort((a, b) => a.localeCompare(b));
+
+    const cards = taNames.map(name => {
+      const initials = name.split(' ').filter(Boolean).slice(0, 2).map(w => w[0].toUpperCase()).join('');
+      const c = taContact(name) || { phone: '', email: '' };
+      let contactLines = '';
+      if (c.phone) contactLines += `<div class="ta-contact-row">${formatPhone(c.phone)}</div>`;
+      if (c.email) contactLines += `<div class="ta-contact-row">${c.email}</div>`;
+
+      const safeName = name.replace(/'/g, "\\'");
+      return `<div class="ta-card">
+        <div class="ta-avatar">${initials}</div>
+        <div class="ta-info">
+          <button class="ta-name-btn" onclick="openTLDirModal('${safeName}')" title="View ${name}'s dealers">${name}</button>
+          ${contactLines}
+        </div>
+      </div>`;
+    }).join('');
+
+    content.innerHTML = `<div class="ta-scroll"><div class="ta-list">${cards}</div></div>`;
+  }
+
   function renderTAPanel(tid) {
     const content = document.getElementById('ta-content');
     const tas = FSC_TA_MAP[tid] || [];
@@ -3002,6 +3208,61 @@
   // ── DEALER DIRECTORY STATE ──────────────────────────────────────────────
   let _dirCurrentTA = null;
   let _dirCurrentDealers = [];
+  let _tlMyFSCs = []; // populated at TL login, used by openTLDirModal
+
+  function openTLDirModal(taName) {
+    // Collect all dealers for this TA across the team, grouped by FSC
+    const fscGroups = [];
+    _tlMyFSCs.forEach(fscTid => {
+      const data = FSC_DEALER_MAP[fscTid];
+      if (!data) return;
+      const dealers = data.dealers.filter(d =>
+        d.ta_name.trim().toUpperCase() === taName.trim().toUpperCase()
+      );
+      if (dealers.length > 0) fscGroups.push({ fscName: data.fsc_name, dealers });
+    });
+    if (fscGroups.length === 0) return;
+
+    // Header
+    const c = taContact(taName) || {};
+    document.getElementById('dir-ta-name').textContent = taName;
+    document.getElementById('dir-ta-meta').textContent =
+      c.email || (c.phone ? formatPhone(c.phone) : 'Dealer Directory');
+    const badge = document.getElementById('dir-ta-badge');
+    if (badge) badge.style.display = '';
+
+    // Clear BC panel — spans multiple FSCs
+    const existingBC = document.getElementById('dir-bc-panel');
+    if (existingBC) existingBC.remove();
+
+    // Render dealers grouped by FSC name
+    let html = '';
+    fscGroups.forEach(({ fscName, dealers }) => {
+      const rows = dealers.map(d => {
+        const loc  = [d.city, d.state].filter(Boolean).join(', ');
+        const phone = d.phone
+          ? `<span class="dir-dealer-phone">${formatPhone(d.phone)}</span>` : '';
+        return `<div class="dir-dealer-row">
+          <div class="dir-dealer-code">Dealer Code: ${d.code}</div>
+          <div class="dir-dealer-info">
+            <div class="dir-dealer-name">${d.name}</div>
+            <div class="dir-dealer-loc-row">
+              <span class="dir-dealer-loc">${loc}</span>
+              ${phone ? '<span class="dir-loc-sep">·</span>' + phone : ''}
+            </div>
+          </div>
+        </div>`;
+      }).join('');
+      html += `<div class="dir-am-group">
+        <div class="dir-am-label" style="color:var(--cyan,#6ec1ff);">FSC: ${fscName}</div>
+        ${rows}
+      </div>`;
+    });
+    document.getElementById('dir-dealers-body').innerHTML = html;
+
+    document.getElementById('dir-overlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
 
   function openDirModal(taName, fscTid) {
     var overlay = document.getElementById('dir-overlay');
@@ -3178,6 +3439,37 @@
     if (lr) lr.style.display = 'none';
     document.getElementById('ta-content').innerHTML = '<div class="ta-signed-out">Sign in to view your assigned TAs</div>';
     document.getElementById('gauge-container').innerHTML = '<div style="font-size:12px;color:rgba(255,255,255,0.5);text-align:center;padding:18px 0;">Sign in to view your pace</div>';
+
+    // Reset TL-specific state
+    _tlMyFSCs = [];
+    const gaugeTitle = document.getElementById('gauge-panel-title');
+    if (gaugeTitle) gaugeTitle.textContent = 'My Case Pace';
+    const calHeader = document.getElementById('calendar-panel-header');
+    if (calHeader) calHeader.textContent = 'Calendar \u0026 Meeting Notes';
+    const calBody = document.getElementById('calendar-panel-body');
+    if (calBody) {
+      calBody.innerHTML = `<div class="calendar-grid">
+          <div class="calendar-card">
+            <div class="cal-top">
+              <div class="cal-month" id="cal-month-label"></div>
+              <div class="cal-actions">
+                <button class="cal-btn" onclick="changeMonth(-1)">&#8249;</button>
+                <button class="cal-btn" onclick="changeMonth(1)">&#8250;</button>
+              </div>
+            </div>
+            <table class="calendar">
+              <thead><tr><th>S</th><th>M</th><th>T</th><th>W</th><th>T</th><th>F</th><th>S</th></tr></thead>
+              <tbody id="cal-body"></tbody>
+            </table>
+          </div>
+          <div class="notes-card">
+            <h3 id="notes-date"></h3>
+            <div id="notes-meetings"></div>
+          </div>
+        </div>`;
+      renderCalendar();
+    }
+
     currentTID = null;
     const gate = document.getElementById('login-gate');
     gate.style.display = 'flex';
@@ -3649,7 +3941,7 @@
   }
 
   // ── FSC TEAM LEAD DATA ────────────────────────────────────────────────────
-  const FSC_LEAD_MAP = {"T0306FJ":{"lead_name":"Jonathan Castillo","lead_tid":"T0300P2"},"T0090ZU":{"lead_name":"Paul Brown","lead_tid":"T0294M6"},"T0378EZ":{"lead_name":"Todd Howe","lead_tid":"T0440PG"},"T0318DS":{"lead_name":"Jason Nunnally","lead_tid":"T0294MO"},"T0304KR":{"lead_name":"William Wood","lead_tid":"T0332YY"},"T0307EF":{"lead_name":"Daniel Peper","lead_tid":"T0390ZI"},"T0307EH":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T0311PX":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T0304XV":{"lead_name":"Todd Howe","lead_tid":"T0440PG"},"T0306FH":{"lead_name":"William Wood","lead_tid":"T0332YY"},"T2237TR":{"lead_name":"Kumasi Rayford","lead_tid":"T0390ZG"},"T0300HY":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T0300P5":{"lead_name":"Jonathan Castillo","lead_tid":"T0300P2"},"T0294M9":{"lead_name":"Jonathan Castillo","lead_tid":"T0300P2"},"T0300HV":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T0471OD":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T0471OK":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T0294M4":{"lead_name":"William Wood","lead_tid":"T0332YY"},"T0317U1":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0300HX":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0400IJ":{"lead_name":"Daniel Peper","lead_tid":"T0390ZI"},"T0329IF":{"lead_name":"Daniel Peper","lead_tid":"T0390ZI"},"T0458AK":{"lead_name":"Paul Brown","lead_tid":"T0294M6"},"T0471OO":{"lead_name":"William Wood","lead_tid":"T0332YY"},"T0306L5":{"lead_name":"Todd Howe","lead_tid":"T0440PG"},"T0318DT":{"lead_name":"Todd Howe","lead_tid":"T0440PG"},"T0314R6":{"lead_name":"Jason Nunnally","lead_tid":"T0294MO"},"T0311PC":{"lead_name":"Carlos Cordero","lead_tid":"T0294MH"},"T0311PV":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0314R5":{"lead_name":"Kumasi Rayford","lead_tid":"T0390ZG"},"T0346ZQ":{"lead_name":"Kenneth Hawkes","lead_tid":"T0314R4"},"T0317UZ":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0322OO":{"lead_name":"Daniel Peper","lead_tid":"T0390ZI"},"T0458AH":{"lead_name":"Jason Nunnally","lead_tid":"T0294MO"},"T0458AG":{"lead_name":"Jason Nunnally","lead_tid":"T0294MO"},"T0475Q3":{"lead_name":"Todd Howe","lead_tid":"T0440PG"},"T0322OR":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0471OP":{"lead_name":"Daniel Peper","lead_tid":"T0390ZI"},"T0423HH":{"lead_name":"Kumasi Rayford","lead_tid":"T0390ZG"},"T0322OQ":{"lead_name":"Jason Nunnally","lead_tid":"T0294MO"},"T0471OI":{"lead_name":"Carlos Cordero","lead_tid":"T0294MH"},"T0300P3":{"lead_name":"Jonathan Castillo","lead_tid":"T0300P2"},"T0320I5":{"lead_name":"Jason Nunnally","lead_tid":"T0294MO"},"T0453V4":{"lead_name":"Carlos Cordero","lead_tid":"T0294MH"},"T0306FK":{"lead_name":"Jason Nunnally","lead_tid":"T0294MO"},"T0471OJ":{"lead_name":"Jonathan Castillo","lead_tid":"T0300P2"},"T0351T6":{"lead_name":"Jonathan Castillo","lead_tid":"T0300P2"},"T0378EV":{"lead_name":"Kenneth Hawkes","lead_tid":"T0314R4"},"T0311PD":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0419PW":{"lead_name":"Daniel Peper","lead_tid":"T0390ZI"},"T0294M5":{"lead_name":"Kenneth Hawkes","lead_tid":"T0314R4"},"T0312AE":{"lead_name":"Carlos Cordero","lead_tid":"T0294MH"},"T0346ZR":{"lead_name":"Kenneth Hawkes","lead_tid":"T0314R4"},"T0317U0":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0338N1":{"lead_name":"Jason Nunnally","lead_tid":"T0294MO"},"T0304KU":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0304KV":{"lead_name":"Todd Howe","lead_tid":"T0440PG"},"T0485U0":{"lead_name":"Todd Howe","lead_tid":"T0440PG"},"T0318DR":{"lead_name":"Carlos Cordero","lead_tid":"T0294MH"},"T0294MI":{"lead_name":"Carlos Cordero","lead_tid":"T0294MH"},"T0311PU":{"lead_name":"Todd Howe","lead_tid":"T0440PG"},"T0306V9":{"lead_name":"Carlos Cordero","lead_tid":"T0294MH"},"T0300H0":{"lead_name":"Carlos Cordero","lead_tid":"T0294MH"},"T0294M8":{"lead_name":"Paul Brown","lead_tid":"T0294M6"},"T0304XT":{"lead_name":"Carlos Cordero","lead_tid":"T0294MH"},"T0300HT":{"lead_name":"Jonathan Castillo","lead_tid":"T0300P2"}};
+  const FSC_LEAD_MAP = {"T0306FJ":{"lead_name":"Jonathan Castillo","lead_tid":"T0300P2"},"T0090ZU":{"lead_name":"Paul Brown","lead_tid":"T0294M6"},"T0390ZI":{"lead_name":"Daniel Peper","lead_tid":"T0390ZI"},"T0378EZ":{"lead_name":"Todd Howe","lead_tid":"T0440PG"},"T0318DS":{"lead_name":"Jason Nunnally","lead_tid":"T0294MO"},"T0304KR":{"lead_name":"William Wood","lead_tid":"T0332YY"},"T0307EF":{"lead_name":"Daniel Peper","lead_tid":"T0390ZI"},"T0307EH":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T0311PX":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T0304XV":{"lead_name":"Todd Howe","lead_tid":"T0440PG"},"T0306FH":{"lead_name":"William Wood","lead_tid":"T0332YY"},"T2237TR":{"lead_name":"Kumasi Rayford","lead_tid":"T0390ZG"},"T0300HY":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T0314R4":{"lead_name":"Kenneth Hawkes","lead_tid":"T0314R4"},"T0300P5":{"lead_name":"Jonathan Castillo","lead_tid":"T0300P2"},"T0294M9":{"lead_name":"Jonathan Castillo","lead_tid":"T0300P2"},"T0300HV":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T0471OD":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T0471OK":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T0294M4":{"lead_name":"William Wood","lead_tid":"T0332YY"},"T0317U1":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0300HX":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0400IJ":{"lead_name":"Daniel Peper","lead_tid":"T0390ZI"},"T0329IF":{"lead_name":"Daniel Peper","lead_tid":"T0390ZI"},"T0458AK":{"lead_name":"Paul Brown","lead_tid":"T0294M6"},"T0471OO":{"lead_name":"William Wood","lead_tid":"T0332YY"},"T0306L5":{"lead_name":"Todd Howe","lead_tid":"T0440PG"},"T0440PG":{"lead_name":"Jesus Velez","lead_tid":"T0312AH"},"T0318DT":{"lead_name":"Todd Howe","lead_tid":"T0440PG"},"T0314R6":{"lead_name":"Jason Nunnally","lead_tid":"T0294MO"},"T0311PC":{"lead_name":"Carlos Cordero","lead_tid":"T0294MH"},"T0311PV":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0314R5":{"lead_name":"Jamal Douglas","lead_tid":"T0327UU"},"T0346ZQ":{"lead_name":"Kenneth Hawkes","lead_tid":"T0314R4"},"T0317UZ":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0322OO":{"lead_name":"Daniel Peper","lead_tid":"T0390ZI"},"T0458AH":{"lead_name":"Jason Nunnally","lead_tid":"T0294MO"},"T0458AG":{"lead_name":"Jason Nunnally","lead_tid":"T0294MO"},"T0475Q3":{"lead_name":"Todd Howe","lead_tid":"T0440PG"},"T0322OR":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0471OP":{"lead_name":"Daniel Peper","lead_tid":"T0390ZI"},"T0423HH":{"lead_name":"Kumasi Rayford","lead_tid":"T0390ZG"},"T0322OQ":{"lead_name":"Jason Nunnally","lead_tid":"T0294MO"},"T0471OI":{"lead_name":"Carlos Cordero","lead_tid":"T0294MH"},"T0300P3":{"lead_name":"Jonathan Castillo","lead_tid":"T0300P2"},"T0320I5":{"lead_name":"Jason Nunnally","lead_tid":"T0294MO"},"T0453V4":{"lead_name":"Carlos Cordero","lead_tid":"T0294MH"},"T0306FK":{"lead_name":"Jason Nunnally","lead_tid":"T0294MO"},"T0471OJ":{"lead_name":"Jonathan Castillo","lead_tid":"T0300P2"},"T0351T6":{"lead_name":"Jonathan Castillo","lead_tid":"T0300P2"},"T0378EV":{"lead_name":"Kenneth Hawkes","lead_tid":"T0314R4"},"T0332YY":{"lead_name":"William Wood","lead_tid":"T0332YY"},"T0311PD":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0419PW":{"lead_name":"Daniel Peper","lead_tid":"T0390ZI"},"T0294M5":{"lead_name":"Kenneth Hawkes","lead_tid":"T0314R4"},"T0312AE":{"lead_name":"Carlos Cordero","lead_tid":"T0294MH"},"T0346ZR":{"lead_name":"Kenneth Hawkes","lead_tid":"T0314R4"},"T0317U0":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0338N1":{"lead_name":"Jason Nunnally","lead_tid":"T0294MO"},"T0304KU":{"lead_name":"Kevin Sack","lead_tid":"T0294MP"},"T0304KV":{"lead_name":"Todd Howe","lead_tid":"T0440PG"},"T0485U0":{"lead_name":"Todd Howe","lead_tid":"T0440PG"},"T0318DR":{"lead_name":"Carlos Cordero","lead_tid":"T0294MH"},"T0294MI":{"lead_name":"Carlos Cordero","lead_tid":"T0294MH"},"T0311PU":{"lead_name":"Todd Howe","lead_tid":"T0440PG"},"T0306V9":{"lead_name":"Carlos Cordero","lead_tid":"T0294MH"},"T0300H0":{"lead_name":"Carlos Cordero","lead_tid":"T0294MH"},"T0390ZG":{"lead_name":"Kumasi Rayford","lead_tid":"T0390ZG"},"T0294M8":{"lead_name":"Paul Brown","lead_tid":"T0294M6"},"T0304XT":{"lead_name":"Carlos Cordero","lead_tid":"T0294MH"},"T0300HT":{"lead_name":"Jonathan Castillo","lead_tid":"T0300P2"}};
 
 
   // ── TEAM LEAD CONTACT DATA ────────────────────────────────────────────────
