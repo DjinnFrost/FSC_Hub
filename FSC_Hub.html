@@ -1690,7 +1690,7 @@
         <div class="resource-link" onclick="openCDAModal()">CDA Overview &amp; Setup Guide</div>
         <div class="resource-link" onclick="openSFModal()">Get Started with Salesforce</div>
         <div class="resource-link" onclick="openMFAModal()">Microsoft MFA Setup</div>
-        <div class="resource-link" onclick="openAsgnModal()">FSC Assignment Matrix</div>
+        <div class="resource-link" onclick="openAsgnModal()" id="asgn-matrix-link" style="display:none;">FSC Assignment Matrix</div>
       </div>
     </section>
   </div>
@@ -2198,7 +2198,9 @@
 
       errorEl.textContent = '';
 
-      // Detect TL vs FSC login
+      // FSC Assignment Matrix — restricted to Jonathan Castillo (T0300P2)
+      const asgnLink = document.getElementById('asgn-matrix-link');
+      if (asgnLink) asgnLink.style.display = tid === 'T0300P2' ? '' : 'none';
       const myFSCs = Object.entries(FSC_LEAD_MAP)
         .filter(([, v]) => v.lead_tid === tid)
         .map(([k]) => k);
@@ -3442,6 +3444,8 @@
 
     // Reset TL-specific state
     _tlMyFSCs = [];
+    const asgnLink = document.getElementById('asgn-matrix-link');
+    if (asgnLink) asgnLink.style.display = 'none';
     const gaugeTitle = document.getElementById('gauge-panel-title');
     if (gaugeTitle) gaugeTitle.textContent = 'My Case Pace';
     const calHeader = document.getElementById('calendar-panel-header');
