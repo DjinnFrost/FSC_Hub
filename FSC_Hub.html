@@ -1637,10 +1637,7 @@
   </div>
 
   <div class="right-col">
-    <section class="panel side-card">
-      <div class="side-title">Today's Meetings</div>
-      <div class="side-list" id="today-meetings"></div>
-    </section>
+
 
     <section class="panel side-card">
       <div class="side-title">Recent Highlights</div>
@@ -2296,8 +2293,9 @@
   }
 
   function renderTodayMeetings() {
-    const events = getEventsForDate(now.getFullYear(), now.getMonth(), now.getDate());
     const container = document.getElementById('today-meetings');
+    if (!container) return;
+    const events = getEventsForDate(now.getFullYear(), now.getMonth(), now.getDate());
     if (!events.length) {
       container.innerHTML = '<div class="side-item"><span class="dot sm"></span><span>No Stellantis meetings today</span></div>';
       return;
