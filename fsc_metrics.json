@@ -1,6 +1,12 @@
 {
   "updated_at": "2026-06-25T13:02:51.799039-04:00",
   "users": {
+    "T000000": {
+      "name": "Universal User",
+      "qtd_pct_to_goal": "0.0%",
+      "qtd_repairs": 0,
+      "mtd_repairs": 0
+    },
     "T0475Q3": {
       "name": "Adam Schmidt",
       "qtd_pct_to_goal": "55.6%",
